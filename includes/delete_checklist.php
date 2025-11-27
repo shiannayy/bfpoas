@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             } 
         } 
         else if($disableOnly == 1){
-            $aff = update_data("checklist_items",['chk_item_status' => 0 ],['item_id' => $item_id]);
+            $aff = update_data("checklist_items",['chk_item_status' => 0, "updated_at" => date("Y-m-d H:i:s") ],['item_id' => $item_id]);
             if($aff > 0){
                 echo json_encode(["status" => "success", "message" => "Checklist Item Disabled Successfully","action" => "disable"]);
                 exit;   
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             } 
         }
         else{
-            $aff = update_data("checklist_items",['chk_item_status' => 1 ],['item_id' => $item_id]);
+            $aff = update_data("checklist_items",['chk_item_status' => 1 , "updated_at" => date("Y-m-d H:i:s") ],['item_id' => $item_id]);
             if($aff > 0){
                 echo json_encode(["status" => "success", "message" => "Checklist Item Re-Enabled Successfully", "action" => "enable"]);
                 exit;   
