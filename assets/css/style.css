@@ -1,0 +1,119 @@
+/*@import url("https://db.onlinewebfonts.com/c/93675a81c6df32a0c3410546ee9f1ab5?family=Argesta+Display");*/
+
+@font-face {
+  font-family: "Argesta";
+  src: url("../fonts/argesta2.woff2") format("woff2"),
+       url("../fonts/argesta1.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Argesta";
+  src: url("../fonts/argesta2.woff2") format("woff2"),
+       url("../fonts/argesta1.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+}
+
+.fnt-argesta {
+  font-family: "Argesta", serif;
+}
+
+.no-focus {
+  outline: none !important;
+  pointer-events: none !important;
+  user-select: none !important;
+}
+ 
+
+/* Navbar background using gradient */
+    .navbar-custom {
+      background: linear-gradient(90deg, #00296b, #003f88, #00509d);
+    }
+
+    /* Brand styling */
+    .navbar-brand {
+      font-weight: bold;
+      color: #ffd500 !important;
+    }
+
+    /* Nav links styling */
+    .nav-link {
+      position: relative;
+      font-weight: 500;
+      color: #ffffff !important;
+      transition: color 0.3s ease-in-out;
+      margin: 0 5px;
+    }
+
+    /* Underline animation */
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 0;
+      height: 3px;
+      background-color: #fdc500; /* gold underline */
+      transition: width 0.3s ease-in-out;
+    }
+
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+
+    .nav-link:hover {
+      color: #ffd500 !important; /* brighter gold hover */
+    }
+
+    /* For navbar toggler in mobile */
+    .navbar-toggler {
+      border-color: #ffd500;
+    }
+    .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' 
+        xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255,213,0, 1)' 
+        stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' 
+        d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+    }
+
+
+.modal-slide-up .modal-dialog {
+  position: fixed;
+  bottom: 0;
+  margin: 0;
+  width: 100%;
+  max-width: none;
+  height: 75vh;
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 2.9s ease-in-out, opacity 1.7s ease-in-out;
+}
+
+.modal-slide-up.show .modal-dialog {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+
+
+/* Ensure carousel images scale fully into view */
+   
+.offcanvas-bottom {
+    border-top-left-radius: 30px !important;
+    border-top-right-radius: 30px !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.offcanvas-bottom {
+    transform: translateY(100%);
+    transition: transform 0.35s ease-in-out;
+}
+
+.offcanvas-bottom.show {
+    transform: translateY(0);
+}
+     

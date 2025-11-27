@@ -1,0 +1,372 @@
+/* ================================
+   Color Palette Utility Classes
+   ================================ */
+
+/* Background Colors */
+.bg-navy-dark   { background-color: #00296b !important; }
+.bg-navy        { background-color: #003f88 !important; }
+.bg-blue        { background-color: #00509d !important; }
+.bg-gold        { background-color: #fdc500 !important; }
+.bg-gold-light  { background-color: #ffd500 !important; }
+
+/* Background Colors with Opacity */
+.bg-navy-dark-25 { background-color: rgba(0, 41, 107, 0.25) !important; }
+.bg-navy-dark-50 { background-color: rgba(0, 41, 107, 0.50) !important; }
+.bg-navy-dark-75 { background-color: rgba(0, 41, 107, 0.75) !important; }
+
+.bg-navy-25 { background-color: rgba(0, 63, 136, 0.25) !important; }
+.bg-navy-50 { background-color: rgba(0, 63, 136, 0.50) !important; }
+.bg-navy-75 { background-color: rgba(0, 63, 136, 0.75) !important; }
+
+.bg-blue-25 { background-color: rgba(0, 80, 157, 0.25) !important; }
+.bg-blue-50 { background-color: rgba(0, 80, 157, 0.50) !important; }
+.bg-blue-75 { background-color: rgba(0, 80, 157, 0.75) !important; }
+
+.bg-gold-25 { background-color: rgba(253, 197, 0, 0.25) !important; }
+.bg-gold-50 { background-color: rgba(253, 197, 0, 0.50) !important; }
+.bg-gold-75 { background-color: rgba(253, 197, 0, 0.75) !important; }
+
+.bg-gold-light-25 { background-color: rgba(255, 213, 0, 0.25) !important; }
+.bg-gold-light-50 { background-color: rgba(255, 213, 0, 0.50) !important; }
+.bg-gold-light-75 { background-color: rgba(255, 213, 0, 0.75) !important; }
+
+
+/* Text Colors */
+.text-navy-dark { color: #00296b !important; }
+.text-navy      { color: #003f88 !important; }
+.text-blue      { color: #00509d !important; }
+.text-gold      { color: #fdc500 !important; }
+.text-gold-light{ color: #ffd500 !important; }
+
+/* Text Colors with Opacity */
+.text-navy-dark-25 { color: rgba(0, 41, 107, 0.25) !important; }
+.text-navy-dark-50 { color: rgba(0, 41, 107, 0.50) !important; }
+.text-navy-dark-75 { color: rgba(0, 41, 107, 0.75) !important; }
+
+.text-navy-25 { color: rgba(0, 63, 136, 0.25) !important; }
+.text-navy-50 { color: rgba(0, 63, 136, 0.50) !important; }
+.text-navy-75 { color: rgba(0, 63, 136, 0.75) !important; }
+
+.text-blue-25 { color: rgba(0, 80, 157, 0.25) !important; }
+.text-blue-50 { color: rgba(0, 80, 157, 0.50) !important; }
+.text-blue-75 { color: rgba(0, 80, 157, 0.75) !important; }
+
+.text-gold-25 { color: rgba(253, 197, 0, 0.25) !important; }
+.text-gold-50 { color: rgba(253, 197, 0, 0.50) !important; }
+.text-gold-75 { color: rgba(253, 197, 0, 0.75) !important; }
+
+.text-gold-light-25 { color: rgba(255, 213, 0, 0.25) !important; }
+.text-gold-light-50 { color: rgba(255, 213, 0, 0.50) !important; }
+.text-gold-light-75 { color: rgba(255, 213, 0, 0.75) !important; }
+
+
+/* Border Colors */
+.border-navy-dark { border-color: #00296b !important; }
+.border-navy      { border-color: #003f88 !important; }
+.border-blue      { border-color: #00509d !important; }
+.border-gold      { border-color: #fdc500 !important; }
+.border-gold-light{ border-color: #ffd500 !important; }
+
+/* Border Colors with Opacity */
+.border-navy-dark-25 { border-color: rgba(0, 41, 107, 0.25) !important; }
+.border-navy-dark-50 { border-color: rgba(0, 41, 107, 0.50) !important; }
+.border-navy-dark-75 { border-color: rgba(0, 41, 107, 0.75) !important; }
+
+.border-navy-25 { border-color: rgba(0, 63, 136, 0.25) !important; }
+.border-navy-50 { border-color: rgba(0, 63, 136, 0.50) !important; }
+.border-navy-75 { border-color: rgba(0, 63, 136, 0.75) !important; }
+
+.border-blue-25 { border-color: rgba(0, 80, 157, 0.25) !important; }
+.border-blue-50 { border-color: rgba(0, 80, 157, 0.50) !important; }
+.border-blue-75 { border-color: rgba(0, 80, 157, 0.75) !important; }
+
+.border-gold-25 { border-color: rgba(253, 197, 0, 0.25) !important; }
+.border-gold-50 { border-color: rgba(253, 197, 0, 0.50) !important; }
+.border-gold-75 { border-color: rgba(253, 197, 0, 0.75) !important; }
+
+.border-gold-light-25 { border-color: rgba(255, 213, 0, 0.25) !important; }
+.border-gold-light-50 { border-color: rgba(255, 213, 0, 0.50) !important; }
+.border-gold-light-75 { border-color: rgba(255, 213, 0, 0.75) !important; }
+
+/* ================================
+   Outline Button Variants
+   ================================ */
+
+.btn-outline-navy-dark {
+  color: #00296b !important;
+  border-color: #00296b !important;
+  background-color: transparent !important;
+}
+.btn-outline-navy-dark:hover {
+  color: #fff !important;
+  background-color: #00296b !important;
+  border-color: #00296b !important;
+}
+
+.btn-outline-navy {
+  color: #003f88 !important;
+  border-color: #003f88 !important;
+  background-color: transparent !important;
+}
+.btn-outline-navy:hover {
+  color: #fff !important;
+  background-color: #003f88 !important;
+  border-color: #003f88 !important;
+}
+
+.btn-outline-blue {
+  color: #00509d !important;
+  border-color: #00509d !important;
+  background-color: transparent !important;
+}
+.btn-outline-blue:hover {
+  color: #fff !important;
+  background-color: #00509d !important;
+  border-color: #00509d !important;
+}
+
+.btn-outline-gold {
+  color: #fdc500 !important;
+  border-color: #fdc500 !important;
+  background-color: transparent !important;
+}
+.btn-outline-gold:hover {
+  color: #212529 !important;
+  background-color: #fdc500 !important;
+  border-color: #fdc500 !important;
+}
+
+.btn-outline-gold-light {
+  color: #ffd500 !important;
+  border-color: #ffd500 !important;
+  background-color: transparent !important;
+}
+.btn-outline-gold-light:hover {
+  color: #212529 !important;
+  background-color: #ffd500 !important;
+  border-color: #ffd500 !important;
+}
+
+/* ============================================
+   Active (Checked) States for .btn-check radios
+   ============================================ */
+
+/* When a .btn-check (radio/checkbox) is checked, 
+   apply the filled version of the outline color. */
+
+/* Navy variant */
+.btn-check:checked + .btn-outline-navy {
+  color: #fff !important;
+  background-color: #003f88 !important;
+  border-color: #003f88 !important;
+}
+
+/* Navy Dark variant */
+.btn-check:checked + .btn-outline-navy-dark {
+  color: #fff !important;
+  background-color: #00296b !important;
+  border-color: #00296b !important;
+}
+
+/* Blue variant */
+.btn-check:checked + .btn-outline-blue {
+  color: #fff !important;
+  background-color: #00509d !important;
+  border-color: #00509d !important;
+}
+
+/* Gold variant */
+.btn-check:checked + .btn-outline-gold {
+  color: #212529 !important;
+  background-color: #fdc500 !important;
+  border-color: #fdc500 !important;
+}
+
+/* Light Gold variant */
+.btn-check:checked + .btn-outline-gold-light {
+  color: #212529 !important;
+  background-color: #ffd500 !important;
+  border-color: #ffd500 !important;
+}
+
+
+/* ================================
+   Custom Button Variants
+   ================================ */
+
+.btn-navy-dark {
+  color: #fff !important;
+  background-color: #00296b !important;
+  border-color: #00296b !important;
+}
+.btn-navy-dark:hover {
+  color: #fff !important;
+  background-color: #001f4e !important; /* darker shade */
+  border-color: #001a42 !important;
+}
+
+.btn-navy {
+  color: #fff !important;
+  background-color: #003f88 !important;
+  border-color: #003f88 !important;
+}
+.btn-navy:hover {
+  color: #fff !important;
+  background-color: #00326c !important;
+  border-color: #002b5d !important;
+}
+
+.btn-blue {
+  color: #fff !important;
+  background-color: #00509d !important;
+  border-color: #00509d !important;
+}
+.btn-blue:hover {
+  color: #fff !important;
+  background-color: #00417d !important;
+  border-color: #00396d !important;
+}
+
+.btn-gold {
+  color: #212529 !important;
+  background-color: #fdc500 !important;
+  border-color: #fdc500 !important;
+}
+.btn-gold:hover {
+  color: #212529 !important;
+  background-color: #e6b100 !important;
+  border-color: #d9a600 !important;
+}
+
+.btn-gold-light {
+  color: #212529 !important;
+  background-color: #ffd500 !important;
+  border-color: #ffd500 !important;
+}
+.btn-gold-light:hover {
+  color: #212529 !important;
+  background-color: #e6c000 !important;
+  border-color: #d9b400 !important;
+}
+
+
+/* ================================
+   Table Variants
+   ================================ */
+
+/* Navy Dark Table */
+.table-navy-dark {
+  --bs-table-bg: #00296b;
+  --bs-table-striped-bg: rgba(0, 41, 107, 0.05);
+  --bs-table-striped-color: #fff;
+  --bs-table-hover-bg: rgba(0, 41, 107, 0.15);
+  --bs-table-hover-color: #fff;
+  --bs-table-color: #fff;
+  --bs-table-border-color: #001f4e;
+}
+
+/* Navy Table */
+.table-navy {
+  --bs-table-bg: #003f88;
+  --bs-table-striped-bg: rgba(0, 63, 136, 0.05);
+  --bs-table-striped-color: #fff;
+  --bs-table-hover-bg: rgba(0, 63, 136, 0.15);
+  --bs-table-hover-color: #fff;
+  --bs-table-color: #fff;
+  --bs-table-border-color: #002c63;
+}
+
+/* Blue Table */
+.table-blue {
+  --bs-table-bg: #00509d;
+  --bs-table-striped-bg: rgba(0, 80, 157, 0.05);
+  --bs-table-striped-color: #fff;
+  --bs-table-hover-bg: rgba(0, 80, 157, 0.15);
+  --bs-table-hover-color: #fff;
+  --bs-table-color: #fff;
+  --bs-table-border-color: #003c75;
+}
+
+/* Gold Table */
+.table-gold {
+  --bs-table-bg: #fdc500;
+  --bs-table-striped-bg: rgba(253, 197, 0, 0.05);
+  --bs-table-striped-color: #212529;
+  --bs-table-hover-bg: rgba(253, 197, 0, 0.15);
+  --bs-table-hover-color: #212529;
+  --bs-table-color: #212529;
+  --bs-table-border-color: #e6b100;
+}
+
+/* Gold Light Table */
+.table-gold-light {
+  --bs-table-bg: #ffd500;
+  --bs-table-striped-bg: rgba(255, 213, 0, 0.05);
+  --bs-table-striped-color: #212529;
+  --bs-table-hover-bg: rgba(255, 213, 0, 0.15);
+  --bs-table-hover-color: #212529;
+  --bs-table-color: #212529;
+  --bs-table-border-color: #e6c000;
+}
+
+
+/* ================================
+   Form Control Border Outline Colors
+   ================================ */
+
+/* Navy Dark */
+.focus-outline-navy-dark:focus {
+  border-color: #00296b !important;
+  box-shadow: 0 0 0 0.25rem rgba(0, 41, 107, 0.25) !important;
+}
+
+/* Navy */
+.focus-outline-navy:focus {
+  border-color: #003f88 !important;
+  box-shadow: 0 0 0 0.25rem rgba(0, 63, 136, 0.25) !important;
+}
+
+/* Blue */
+.focus-outline-blue:focus {
+  border-color: #00509d !important;
+  box-shadow: 0 0 0 0.25rem rgba(0, 80, 157, 0.25) !important;
+}
+
+/* Gold */
+.focus-outline-gold:focus {
+  border-color: #fdc500 !important;
+  box-shadow: 0 0 0 0.25rem rgba(253, 197, 0, 0.25) !important;
+}
+
+/* Gold Light */
+.focus-outline-gold-light:focus {
+  border-color: #ffd500 !important;
+  box-shadow: 0 0 0 0.25rem rgba(255, 213, 0, 0.25) !important;
+}
+
+/* === Custom Border Colors using RGBA === */
+
+/* Blue */
+.border-blue {
+  border-color: rgba(0, 123, 255, 1) !important;
+}
+
+/* Navy */
+.border-navy {
+  border-color: rgba(0, 31, 63, 1) !important;
+}
+
+/* Dark Navy */
+.border-dark-navy {
+  border-color: rgba(0, 19, 43, 1) !important;
+}
+
+/* Gold */
+.border-gold {
+  border-color: rgba(255, 204, 0, 1) !important;
+}
+
+/* Yellow */
+.border-yellow {
+  border-color: rgba(255, 235, 59, 1) !important;
+}

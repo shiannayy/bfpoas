@@ -1,0 +1,12 @@
+{
+    "name": "rllagas/bfpoas",
+    "description": "This is for a project",
+    "autoload": {
+        "psr-4": {
+            "Rllagas\\Bfpoas\\": "src/"
+        }
+    },
+    "require": {
+        "vlucas/phpdotenv": "^5.6"
+    }
+}

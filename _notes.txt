@@ -1,0 +1,31 @@
+//function of more-details - need to see the details of the Scheduled Inspection
+//disabled users can still login (must not)
+
+//preferred schedule - add time as well.
+
+Notify Clients
+
+//get logs that involves schedules of logged user. notify users of their action or other people action
+
+//after inspection
+//if certificate is now ready for download.
+
+select  l.*
+   from `inspection_schedule` ins
+   join `logs` as l
+	on (ins.schedule_id = l.schedule_id)
+left join general_info gi
+  on ins.gen_info_id = gi.gen_info_id
+ left join users u 
+  on gi.owner_id = u.user_id
+   where l.log_action = 'sch'
+and   u.user_id = 13
+   
+
+Notify Inspector
+//if an fsed-9f is assigned
+//if the assigned is already acknowledged.
+//if the assigned is ready for inspection
+
+notify Admin - Reco approver - Approver
+// if there is an action on their part.
