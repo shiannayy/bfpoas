@@ -14,6 +14,109 @@ $(document).ready(function () {
     createAlertContainer(info);
     
 });
+let currentDeleteId = null;
+
+$(document).on("click", ".btn-confirm-delete", function(e){
+    e.preventDefault();
+    currentDeleteId = $(this).data('delete-item');
+    
+    if( $(this).hasClass("disable-only") ){
+        $("#disableOnlyind").val(1);
+    }
+    
+    if( $(this).hasClass("enable-only")){
+        $("#disableOnlyind").val(2);
+    }
+    //disableOnlyind
+        // Show the modal
+        const modal = new bootstrap.Modal(document.getElementById('passwordConfirmModal'));
+        modal.show();    
+    
+});
+
+
+// Handle confirm delete button click
+$('#confirmDeleteBtn').on('click', function() {
+    const password = $('#passwordInput').val().trim();
+    const errorDiv = $('#passwordError');
+    const disableOnly = $("#disableOnlyind").val().trim();
+    // Validate password
+    if (!password) {
+        errorDiv.removeClass('d-none').text('Please enter your password.');
+        return;
+    }
+    
+    // Hide error if previously shown
+    errorDiv.addClass('d-none');
+    
+    // Disable button and show loading state
+    const $btn = $(this);
+    const originalText = $btn.html();
+    $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Deleting...');
+    
+    // Make the API call
+    fetchData('../includes/delete_checklist.php', 'POST', {
+        item_id: currentDeleteId,
+        password: password,
+        disableOnly : disableOnly
+    })
+    .then(response => {
+        // Re-enable button
+        $btn.prop('disabled', false).html(originalText);
+        let msg  = response.message;;
+        let alertClass = "danger";
+        if (response.status === 'success') {
+            // Hide modal
+            $('#passwordConfirmModal').modal('hide');
+            
+            
+            // Success handling
+            if(response.action == 'delete'){
+                $(`[data-delete-item="${currentDeleteId}"]`).closest(`li#${currentDeleteId}`).fadeOut(400, function() {
+                    $(this).remove();
+                });   
+                
+                
+            }else if(response.action == 'enable'){
+                $(`[data-delete-item="${currentDeleteId}"]`).closest(`li#${currentDeleteId}`).removeClass("bg-secondary bg-opacity-25");
+            }
+            else{
+                $(`[data-delete-item="${currentDeleteId}"]`).closest(`li#${currentDeleteId}`).addClass("bg-secondary bg-opacity-25");
+                
+            }
+            
+            // Show success message
+            showAlert(response.message, alertClass);
+        } else {
+            // Show error message
+            errorDiv.removeClass('d-none').text(response.message || 'Delete failed. Please try again.');
+        }
+    })
+    .catch(error => {
+        console.warn("Error fetching data:", error);
+        $btn.prop('disabled', false).html(originalText);
+        errorDiv.removeClass('d-none').text('An error occurred while deleting the item.');
+    });
+});
+
+// Reset modal when hidden
+$('#passwordConfirmModal').on('hidden.bs.modal', function () {
+    $('#passwordInput').val('');
+    $('#passwordError').addClass('d-none');
+    $('#confirmDeleteBtn').prop('disabled', false).html('Delete Item');
+    currentDeleteId = null;
+});
+
+// Optional: Allow Enter key to trigger deletion
+$('#passwordInput').on('keypress', function(e) {
+    if (e.which === 13) { // Enter key
+        $('#confirmDeleteBtn').click();
+    }
+});
+
+// Optional: Helper function for showing alerts
+
+
 
 function fetchData(url, method = 'POST', payload = {}) {
     return new Promise((resolve, reject) => {
@@ -1076,3 +1179,51 @@ function bindExportButtonHandler(scheduleId) {
         });
     });
 }
+
+
+
+ function toggleThresholdFields(itemId, criteria) {
+
+        // itemId for edit is numeric (e.g. 123)
+        // itemId for add is composite 'checklistId-sectionId'
+        let box;
+        if (String(itemId).indexOf('-') === -1) {
+            // edit
+            box = $("#threshold-edit-" + itemId);
+        } else {
+            // add
+            box = $("#threshold-add-" + itemId);
+        }
+
+        if (!box.length) return;
+
+        // Hide all threshold sub-blocks inside this box
+        box.find(".range-fields, .minval-field, .maxval-field, .yesno-field, .days-field, .textvalue-field").addClass("d-none");
+
+        switch (criteria) {
+            case "range":
+                box.find(".range-fields").removeClass("d-none");
+                break;
+            case "min_val":
+                box.find(".minval-field").removeClass("d-none");
+                break;
+            case "max_val":
+                box.find(".maxval-field").removeClass("d-none");
+                break;
+            case "yes_no":
+                box.find(".yesno-field").removeClass("d-none");
+                break;
+            case "days":
+                box.find(".days-field").removeClass("d-none");
+                break;
+            case "textvalue":
+                box.find(".textvalue-field").removeClass("d-none");
+                break;
+            default:
+                // none
+                break;
+        }
+
+        // make sure container is visible for add/edit
+        box.show();
+    }

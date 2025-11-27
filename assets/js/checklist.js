@@ -340,51 +340,7 @@ $(document).ready(function () {
     });
 
     // The toggleThresholdFields function for both add & edit lives below so other handlers can call it
-    function toggleThresholdFields(itemId, criteria) {
-
-        // itemId for edit is numeric (e.g. 123)
-        // itemId for add is composite 'checklistId-sectionId'
-        let box;
-        if (String(itemId).indexOf('-') === -1) {
-            // edit
-            box = $("#threshold-edit-" + itemId);
-        } else {
-            // add
-            box = $("#threshold-add-" + itemId);
-        }
-
-        if (!box.length) return;
-
-        // Hide all threshold sub-blocks inside this box
-        box.find(".range-fields, .minval-field, .maxval-field, .yesno-field, .days-field, .textvalue-field").addClass("d-none");
-
-        switch (criteria) {
-            case "range":
-                box.find(".range-fields").removeClass("d-none");
-                break;
-            case "min_val":
-                box.find(".minval-field").removeClass("d-none");
-                break;
-            case "max_val":
-                box.find(".maxval-field").removeClass("d-none");
-                break;
-            case "yes_no":
-                box.find(".yesno-field").removeClass("d-none");
-                break;
-            case "days":
-                box.find(".days-field").removeClass("d-none");
-                break;
-            case "textvalue":
-                box.find(".textvalue-field").removeClass("d-none");
-                break;
-            default:
-                // none
-                break;
-        }
-
-        // make sure container is visible for add/edit
-        box.show();
-    }
+   
 
     // Because toggleThresholdFields is declared inside this ready block above, we need a global reference for earlier code.
     // Expose globally (so other code above can call it)

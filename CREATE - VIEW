@@ -1,0 +1,124 @@
+create or replace view view_inspections as
+SELECT
+`inspections`.`created_at` AS `created_at`,
+`inspection_schedule`.`schedule_id` AS `schedule_id`,
+`inspection_schedule`.`order_number` AS `order_number`,
+`inspection_schedule`.`scheduled_date` AS `scheduled_date`,
+`inspection_schedule`.`schedule_time` AS `schedule_time`,
+`inspection_schedule`.`inspection_sched_status` AS `schedule_status`,
+`inspections`.`inspection_id` AS `inspection_id`,
+`inspections`.`started_at` AS `started_at`,
+`inspections`.`completed_at` AS `completed_at`,
+`inspections`.`status` AS `inspection_status`,
+`inspections`.`has_Defects` AS `has_Defects`,
+`inspections`.`inspection_score` AS `inspection_score`,
+`inspections`.`hasRecoApproval` AS `hasRecoApproval`,
+`inspections`.`dateRecommended` AS `dateRecommended`,
+`inspections`.`hasFinalApproval` AS `hasFinalApproval`,
+`inspections`.`dateApproved` AS `dateApproved`,
+`inspections`.`hasBeenReceived` AS `hasBeenReceived`,
+`inspections`.`dateReceived` AS `dateReceived`,
+`inspections`.`total_items` AS `total_items`,
+`inspections`.`passed_items` AS `passed_items`,
+`inspections`.`failed_items` AS `failed_items`,
+`inspections`.`not_applicable_items` AS `not_applicable_items`,
+`inspections`.`required_items` AS `required_items`,
+`inspections`.`required_passed` AS `required_passed`,
+`inspections`.`required_failed` AS `required_failed`,
+`inspections`.`compliance_rate` AS `compliance_rate`,
+`general_info`.`building_name` AS `building_name`,
+`general_info`.`owner_name` AS `owner_name`,
+`general_info`.`location_of_construction` AS `location_of_construction`,
+`checklists`.`fsed_code` AS `checklist_type`,
+`full_name` AS `inspector_name`,
+`general_info`.`owner_id` AS `owner_id`,
+`inspections`.`inspector_id` AS `inspector_id`
+FROM
+    (
+        (
+            (
+                (
+                    `inspections`
+                JOIN `inspection_schedule` ON
+                    (
+                        `inspection_schedule`.`schedule_id` = `inspections`.`schedule_id`
+                    )
+                )
+            JOIN `general_info` ON
+                (
+                    `inspection_schedule`.`gen_info_id` = `general_info`.`gen_info_id`
+                )
+            )
+        JOIN `checklists` ON
+            (
+                `inspection_schedule`.`checklist_id` = `checklists`.`checklist_id`
+            )
+        )
+    JOIN `users` `ins`
+    ON
+        (
+            `ins`.`user_id` = `inspections`.`inspector_id`
+        )
+    );
+    
+    
+CREATE OR REPLACE VIEW view_uncomplete_inspections AS
+SELECT
+    `inspections`.`inspection_id` AS `inspection_id`,
+    `inspections`.`fsic_no` AS `fsic_no`,
+    `inspections`.`gen_info_id` AS `gen_info_id`,
+    `inspections`.`schedule_id` AS `schedule_id`,
+    `inspections`.`checklist_id` AS `checklist_id`,
+    `inspections`.`inspector_id` AS `inspector_id`,
+    `inspections`.`started_at` AS `started_at`,
+    `inspections`.`completed_at` AS `completed_at`,
+    `inspections`.`status` AS `status`,
+    `inspections`.`hasRecoApproval` AS `hasRecoApproval`,
+    `inspections`.`dateRecommended` AS `dateRecommended`,
+    `inspections`.`recommended_by` AS `recommended_by`,
+    `inspections`.`hasFinalApproval` AS `hasFinalApproval`,
+    `inspections`.`dateApproved` AS `dateApproved`,
+    `inspections`.`approved_by` AS `approved_by`,
+    `inspections`.`hasBeenReceived` AS `hasBeenReceived`,
+    `inspections`.`dateReceived` AS `dateReceived`,
+    `inspections`.`received_by` AS `received_by`,
+    `inspections`.`inspection_score` AS `inspection_score`,
+    `inspections`.`total_items` AS `total_items`,
+    `inspections`.`passed_items` AS `passed_items`,
+    `inspections`.`failed_items` AS `failed_items`,
+    `inspections`.`not_applicable_items` AS `not_applicable_items`,
+    `inspections`.`required_items` AS `required_items`,
+    `inspections`.`required_passed` AS `required_passed`,
+    `inspections`.`required_failed` AS `required_failed`,
+    `inspections`.`compliance_rate` AS `compliance_rate`,
+    `inspections`.`cancellation_reason` AS `cancellation_reason`,
+    `inspections`.`has_Defects` AS `has_Defects`,
+    `inspections`.`defects_details` AS `defects_details`,
+    `inspections`.`reference_no` AS `reference_no`,
+    `inspections`.`created_by` AS `created_by`,
+    `inspections`.`created_at` AS `created_at`,
+    `inspections`.`updated_at` AS `updated_at`
+FROM
+    `inspections`
+WHERE
+    `inspections`.`completed_at` IS NULL OR `inspections`.`status` NOT IN('completed', 'Completed');
+    
+    
+    
+    
+CREATE OR REPLACE VIEW view_uncomplete_inspection_schedule AS
+SELECT
+    `inspection_schedule`.`schedule_id` AS `schedule_id`,
+    `inspection_schedule`.`checklist_id` AS `checklist_id`,
+    `inspection_schedule`.`inspector_id` AS `inspector_id`,
+    `inspection_schedule`.`to_officer` AS `to_officer`,
+    `inspection_schedule`.`assigned_to_officer_id` AS `assigned_to_officer_id`,
+    `inspection_schedule`.`remarks` AS `remarks`,
+    `inspection_schedule`.`inspection_sched_status` AS `status`,
+    `inspection_schedule`.`created_by` AS `created_by`,
+    `inspection_schedule`.`created_at` AS `created_at`,
+    `inspection_schedule`.`updated_at` AS `updated_at`
+FROM
+    `inspection_schedule`
+WHERE
+    `inspection_schedule`.`inspection_sched_status` NOT IN('Completed', 'completed');

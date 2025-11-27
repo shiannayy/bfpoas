@@ -37,7 +37,7 @@ $items = select_join(
             'type'  => 'INNER'                   // join type
         ]
     ],
-    ['ci.checklist_id' => $checklist_id],        // where clause
+    ['ci.checklist_id' => $checklist_id, 'ci.chk_item_status' => 1],        // where clause
     ['ci.section' => 'ASC', 'ci.item_no' => 'ASC'] // order by
 );
 $responses = getInspectionResponses($schedule_id); 
@@ -171,7 +171,10 @@ foreach ($items as $item) {
                 <input type="hidden" name="checklist_id" value="<?php echo $checklist_id; ?>">
                 <input type="hidden" name="schedule_id" value="<?php echo $schedule_id; ?>">
                 <input type="hidden" name="inspection_id" value="<?php echo $inspection_id; ?>">
-                <?php foreach ($grouped as $section_id => $sectionData) { ?>
+                
+                <?php 
+                if(!empty($grouped)){
+                foreach ($grouped as $section_id => $sectionData) { ?>
                 <div class="card mb-1 shadow border-0 bg-light" data-section="<?= htmlspecialchars($section_id) ?>">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="card-title text-primary mb-0">
@@ -182,34 +185,41 @@ foreach ($items as $item) {
                     </div>
 
                     <div class="card-body">
-                        <?php foreach ($sectionData['items'] as $item) { 
+                       
+                        <?php 
+                        if(!empty($sectionData['items'])){
+                        foreach ($sectionData['items'] as $item) { 
                            $savedValue   = $responses[$item['item_id']]['response_value'] ?? null;
                            $savedRemarks = $responses[$item['item_id']]['remarks'] ?? null;
                            $savedImg     = $responses[$item['item_id']]['response_proof_img'] ?? null;
                            $savedResponseId   = $responses[$item['item_id']]['response_id'] ?? null;
-
+                           $isRequired = $item['required'];
                             $colorBG = "";
                             $icon = "";
                             $manualOverride = null; //bool
                             $notapp = null;
+    
                             $isNotAppChecked = false;
                             $isManOverrideChecked = false;
                                         
+    
+                                    if($isRequired !== 1){
                                         if($savedRemarks == "1"){ //pass
                                             $colorBG = "text-bg-success"; 
                                             $icon = getIcon("patchcheck") . " Passed";
 
                                             //show or hide manual override and not applicable
-                                            $manualOverride = true;
+                                            $manualOverride = false;
                                             $notapp = false;
 
                                             $isNotAppChecked = false;
-                                            $isManOverrideChecked = true;
+                                            $isManOverrideChecked = false;
 
                                           } else if($savedRemarks == "0") { //failed
                                             $colorBG = "text-bg-danger"; 
                                             $icon = getIcon("patchcaution") ." Failed";
-                                            $manualOverride = true;
+                                            
+                                            $manualOverride = false;
                                             $notapp = true;
 
                                             $isManOverrideChecked = false;
@@ -218,7 +228,8 @@ foreach ($items as $item) {
                                           } else if($savedRemarks == "9") { //no criteria
                                             $colorBG = "text-bg-warning"; 
                                             $icon = "No Criteria Set";
-                                            $manualOverride = true;
+                                            
+                                            $manualOverride = false;
                                             $notapp = true;
 
                                             $isNotAppChecked = false;
@@ -227,7 +238,7 @@ foreach ($items as $item) {
                                           } else if($savedRemarks == "8") {  //not applicable
                                             $colorBG = "text-bg-info"; 
                                             $icon = "N/A";
-                                            $manualOverride = "";
+                                            $manualOverride = false;
                                             $notapp = true;
 
                                             $isNotAppChecked = true;
@@ -238,6 +249,14 @@ foreach ($items as $item) {
                                             $manualOverride = "";
                                             $notapp = null;
                                           } 
+                                    }
+                                    else{
+                                            $manualOverride = false;
+                                            $notapp = false;
+
+                                            $isNotAppChecked = false;
+                                            $isManOverrideChecked = false;
+                                    }
                             ?>
                         <div class="mb-2 input-group border border-1 align-content-center ">
                             <!-- Thumbnail / Preview Link -->
@@ -277,7 +296,7 @@ foreach ($items as $item) {
                                 </label>
                             </div>
 
-                            <div class="align-content-center d-inline manual-pass ms-1 p-0 <?= (!$manualOverride) ? 'd-none' : '' ?>"
+                            <div class="dropdown align-content-center d-inline manual-pass ms-1 p-0 <?= (!$manualOverride) ? 'd-none' : '' ?>"
                                 id="mp_<?= $item['item_id'] ?>">
                                 <input id="manual_pass_<?= $item['item_id'] ?>" 
                                     <?= $isManOverrideChecked ? 'checked' : ''?>
@@ -363,9 +382,17 @@ foreach ($items as $item) {
 
 
                         </div>
-                        <?php } ?>
+                        <?php } 
+                        }else{ ?>
+                            <div class="text-center">No Active Items Available</div>
+                        <?php }
+                        ?>
                     </div>
                 </div>
+                <?php } 
+                }
+                else{ ?>
+                    <div class="text-center">No Active Items Available</div>
                 <?php } ?>
 
                 <button type="submit"

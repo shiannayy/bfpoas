@@ -130,7 +130,7 @@ $(document).on("change", ".section-input, .proof-upload, .manualpassbtn, .notApp
 
                                 $(`.not-applicable#na_${itemId}`).addClass("d-none");
 
-                                $(`.manual-pass#mp_${itemId}`).removeClass("d-none");
+                                //$(`.manual-pass#mp_${itemId}`).removeClass("d-none");
                                 //$(`.manualpassbtn#manual_pass_${itemId}`).prop("checked",true);
                             }
                             else if (remark == 0) {
@@ -140,7 +140,7 @@ $(document).on("change", ".section-input, .proof-upload, .manualpassbtn, .notApp
                             }
                             else if (remark == 9){
                                 $badge.html("No Criteria").addClass("text-bg-warning text-dark");
-                                $(`.manual-pass#mp_${itemId}`).removeClass("d-none");
+                               // $(`.manual-pass#mp_${itemId}`).removeClass("d-none");
                                 $(`.not-applicable#na_${itemId}`).removeClass("d-none");
                                 console.log("MP:" + itemId + ":" + remark);
                             }
