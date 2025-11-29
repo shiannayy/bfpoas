@@ -1,74 +1,67 @@
+const roleCharts = {
+    "Admin_Assistant": [
+        { id: 'inspectionChartMonth', table: 'view_uncomplete_inspections', label: 'In Progress', group: 'month', type: 'doughnut', title: 'In Progress Inspections per Month' },
+        { id: 'inspectionChartWeek', table: 'view_uncomplete_inspections', label: 'In Progress', group: 'week', type: 'bar', title: 'In Progress Inspections per Week' },
+        { id: 'ScheduledInspectionByMonth', table: 'view_uncomplete_inspection_schedule', label: 'Scheduled', group: 'month', type: 'line', title: 'Scheduled Inspections per Month' },
+        { id: 'ScheduledInspectionByWeek', table: 'view_uncomplete_inspection_schedule', label: 'Scheduled', group: 'week', type: 'pie', title: 'Scheduled Inspections per Week' }
+    ],
+    "Recommending Approver": [
+        { id: 'ScheduledInspectionByMonth', table: 'view_uncomplete_inspection_schedule', label: 'Scheduled', group: 'month', type: 'line', title: 'Scheduled Inspections per Month' },
+        { id: 'ScheduledInspectionByWeek', table: 'view_uncomplete_inspection_schedule', label: 'Scheduled', group: 'week', type: 'pie', title: 'Scheduled Inspections per Week' }
+    ]
+};
 $(document).ready(function() {
 
     checkSession(function (user) {
-       // For view_uncomplete_inspections charts
-        if (document.getElementById('inspectionChartMonth') || document.getElementById('inspectionChartWeek')) {
-            fetchData('../includes/_get_table_data.php', 'POST', { table: 'view_uncomplete_inspections' })
-                .then(response => {
-                    let grouped = groupInspectionsByMonth(response.data, 'In Progress');
+    const userRoleLabel = getRoleLabel(user.role, user.subrole);
 
-                    // Only render if canvas exists
-                    if (document.getElementById('inspectionChartMonth')) {
-                        renderThresholdGraph(
-                            'inspectionChartMonth',
-                            grouped.values,
-                            grouped.labels,
-                            'In Progress Inspections per Month',
-                            'doughnut'
-                        );
-                    }
+    if (!roleCharts[userRoleLabel]) return;
 
-                    grouped = groupInspectionsByWeek(response.data, 'In Progress');
-
-                    if (document.getElementById('inspectionChartWeek')) {
-                        renderThresholdGraph(
-                            'inspectionChartWeek',
-                            grouped.values,
-                            grouped.labels,
-                            'Scheduled Inspections per Week',
-                            'bar'
-                        );
-                    }
-                })
-                .catch(error => {
-                    console.warn("Error fetching data:", error);
-                });
-        }
-
-        // For view_uncomplete_inspection_schedule charts
-        if (document.getElementById('ScheduledInspectionByMonth') || document.getElementById('ScheduledInspectionByWeek')) {
-            fetchData('../includes/_get_table_data.php', 'POST', { table: 'view_uncomplete_inspection_schedule' })
-                .then(response => {
-                    let grouped = groupInspectionsByMonth(response.data, 'Scheduled');
-
-                    if (document.getElementById('ScheduledInspectionByMonth')) {
-                        renderThresholdGraph(
-                            'ScheduledInspectionByMonth',
-                            grouped.values,
-                            grouped.labels,
-                            'Scheduled Inspections per Month',
-                            'line'
-                        );
-                    }
-
-                    grouped = groupInspectionsByWeek(response.data, 'Scheduled');
-
-                    if (document.getElementById('ScheduledInspectionByWeek')) {
-                        renderThresholdGraph(
-                            'ScheduledInspectionByWeek',
-                            grouped.values,
-                            grouped.labels,
-                            'Scheduled Inspections per Week',
-                            'pie'
-                        );
-                    }
-                })
-                .catch(error => {
-                    console.warn("Error fetching data:", error);
-                });
-        }
+    roleCharts[userRoleLabel].forEach(chart => {
+        createChart(
+            chart.id,
+            chart.table,
+            chart.label,
+            chart.group,
+            chart.type,
+            chart.title
+        );
     });
 });
+
+});
+
+
+function createChart(elementId, tableName, filterLabel, groupType, chartType, chartTitle) {
+    const canvas = document.getElementById(elementId);
+    if (!canvas) return; // If the element doesn't exist, skip
+
+    fetchData('../includes/_get_table_data.php', 'POST', { table: tableName })
+        .then(response => {
+            let grouped;
+
+            if (groupType === 'month') {
+                grouped = groupInspectionsByMonth(response.data, filterLabel);
+            } else if (groupType === 'week') {
+                grouped = groupInspectionsByWeek(response.data, filterLabel);
+            } else {
+                console.warn(`Unknown grouping type: ${groupType}`);
+                return;
+            }
+
+            renderThresholdGraph(
+                elementId,
+                grouped.values,
+                grouped.labels,
+                chartTitle,
+                chartType
+            );
+        })
+        .catch(error => {
+            console.warn(`Error creating chart ${elementId}:`, error);
+        });
+}
+
 
 function groupInspectionsByMonth(data, status = 'completed') {
     const counts = {};
@@ -136,6 +129,7 @@ function groupInspectionsByWeek(data, status = 'completed') {
 
             const key = `${year}-W${week}`;
             counts[key] = (counts[key] || 0) + 1;
+
         }
     });
 
@@ -235,7 +229,7 @@ function renderThresholdGraph(canvasId, xData, yData, label = 'Threshold Measure
             plugins: {
                 title: {
                     display: true,
-                    text: `${label} vs Time`
+                    text: `${label}`
                 },
                 tooltip: {
                     callbacks: {
@@ -250,7 +244,7 @@ function renderThresholdGraph(canvasId, xData, yData, label = 'Threshold Measure
                 }
             },
             scales: (type === 'pie' || type === 'doughnut') ? {} : {
-                x: { title: { display: true, text: 'Time' } },
+                x: { title: { display: true, text: '' } },
                 y: { beginAtZero: true }
             }
         }
