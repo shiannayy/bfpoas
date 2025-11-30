@@ -1,9 +1,9 @@
 <?php 
  class config {
      public const DB_HOST= "localhost";
-     public const DB_USER= "u444252215_fsed";
-     public const DB_PASS= "#4syzjWK";
-     public const DB_NAME= "u444252215_fsedoas";
+     public const DB_USER= "root";
+     public const DB_PASS= "";
+     public const DB_NAME= "fsed";
      
   //public const DB_HOST= "localhost";
   // public const DB_USER= "root";
