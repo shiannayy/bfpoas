@@ -4,6 +4,8 @@ let currentUserRole = null;
 let currentSubRole = null;
 
 $(document).ready(function () {
+
+loadFavicon("../assets/img/tagasalbar.ico");
     
     enforceRoleAccess();
     autoCleanupDaily();
@@ -1242,3 +1244,22 @@ function bindExportButtonHandler(scheduleId) {
         // make sure container is visible for add/edit
         box.show();
     }
+
+    function loadFavicon(faviconPath = "../assets/img/tagasalbar.ico") {
+    // Remove existing favicon if any
+    const existingFavicon = document.querySelector('link[rel="icon"], link[rel="shortcut icon"]');
+    if (existingFavicon) {
+        existingFavicon.remove();
+    }
+    
+    // Create new favicon link
+    const favicon = document.createElement('link');
+    favicon.rel = 'icon';
+    favicon.type = 'image/x-icon';
+    favicon.href = faviconPath;
+    
+    // Add to head
+    document.head.appendChild(favicon);
+    
+    console.log('Favicon loaded:', faviconPath);
+}
