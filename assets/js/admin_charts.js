@@ -119,7 +119,7 @@ function createChartContainers(chartConfigs) {
         const chartHtml = `
             <div class="${colSize} mb-3">
                 <div class="card border-0 shadow shadow-lg h-100">
-                    <div class="card-body">
+                    <div class="card-body chart-body">
                         <canvas id="${config.id}">
                             <div class="spinner-border"><span class="visually-hidden">Loading...</span></div>
                         </canvas>
@@ -743,11 +743,11 @@ const chartStyles = `
     z-index: 10;
     border-radius: 0.375rem;
 }
-.card-body {
+.chart-body {
     position: relative;
     min-height: 300px;
 }
-.card-body canvas {
+.chart-body canvas {
     width: 100% !important;
     height: 100% !important;
 }

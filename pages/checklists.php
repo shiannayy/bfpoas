@@ -7,11 +7,11 @@ require_once "../includes/_init.php";
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="passwordModalLabel">Confirm Deletion</h5>
+                <h5 class="modal-title" id="passwordModalLabel">Confirm <action></action></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete this item? This action cannot be undone.</p>
+                <p>Are you sure you want to <action></action> this item? This action cannot be undone.</p>
                 <div class="mb-3">
                     <label for="passwordInput" class="form-label">Enter your password to confirm:</label>
                     <input type="password" class="form-control" id="passwordInput" placeholder="Enter your password">
@@ -23,7 +23,7 @@ require_once "../includes/_init.php";
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete Item</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn"><action></action> Item</button>
             </div>
         </div>
     </div>
@@ -240,13 +240,13 @@ require_once "../includes/_init.php";
             
                                                             
                                                             <form class="editItemForm" data-item="<?= $item['item_id'] ?>">
-                                                                <div class="row g-2 align-items-center">
-                                                                    <div class="col-lg-3">
+                                                                <div class="row g-2">
+                                                                    <div class="col-lg-2">
                                                                         <input type="hidden" class="form-control" name="checklist_id" value="<?= $item['checklist_id'] ?>">
                                                                         <input type="hidden" class="form-control" name="section" value="<?= $s['checklist_section_id'] ?>">
                                                                         <input type="text" name="item_text" class=" <?= $disabledClass ?> form-control form-control-sm fw-bold" value="<?= htmlspecialchars($item['item_text']) ?>">
                                                                     </div>
-                                                                    <div class="col-lg-3">
+                                                                    <div class="col-lg-2">
                                                                         <select name="input_type" data-item-id="<?= $item['item_id']?>" class=" <?= $disabledClass ?> form-select form-select-sm edit-select-input-type">
                                                                             <?php
                                                                             $types = ['checkbox','text','number','date','select'];
@@ -263,29 +263,30 @@ require_once "../includes/_init.php";
                                                                     <div class="col-lg-2">
                                                                         <select name="checklist_criteria" id="editCriteriaSelect<?= $item['item_id']?>" class="<?= $disabledClass ?> form-select form-select-sm edit-criteria-select" data-item-id="<?= $item['item_id']?>" data-saved="<?= $item['checklist_criteria']?>"></select>
                                                                     </div>
-                                                                    <div class="col-lg-1 text-center">
-                                                                        <label for="isRequired<?= $item['item_id'] ?>" class="d-lg-none ">Required?</label>
-                                                                        <input type="checkbox" id="isRequired<?= $item['item_id'] ?>" name="required" value="1" <?= $item['required'] ? 'checked' : '' ?>>
+                                                                    <div class="col-lg-1 d-flex">
+                                                                        <input type="checkbox" class="btn-check" id="isRequired<?= $item['item_id'] ?>" name="required" value="1" <?= $item['required'] ? 'checked' : '' ?>>
+                                                                        <label class="rounded-0 btn btn-sm btn-outline-navy align-content-center align-middle" for="isRequired<?= $item['item_id'] ?>" class="d-lg-none ">Required?</label>
+                                                                        <span class="input-group-text rounded-0 border border-1 bg-navy text-light border-navy" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="tooltip" data-bs-title="if this is selected, this item should have a value during inspection or else it, inspection cannot be saved."> ! </span>
                                                                     </div>
-                                                                    <div class="col-lg-2 text-end d-flex">
-                                                                        <button type="submit" class="btn btn-sm btn-navy mx-auto">
+                                                                    <div class="col-lg-3 position-relative d-flex">
+                                                                        <button type="submit" class="btn btn-sm btn-navy ms-auto">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-floppy" viewBox="0 0 16 16">
                                                                                 <path d="M11 2H9v3h2z"/>
                                                                                 <path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v4.5A1.5 1.5 0 0 1 11.5 7h-7A1.5 1.5 0 0 1 3 5.5V1H1.5a.5.5 0 0 0-.5.5m3 4a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V1H4zM3 15h10v-4.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5z"/>
                                                                             </svg>
                                                                             <b class="">Save</b>
                                                                         </button>
-                                                                        <div class="dropdown">
-                                                                                  <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"></a>
-                                                                                  <ul class="dropdown-menu">
-                                                                                    
-                                                                                    <?php if($item['chk_item_status'] == 1) { ?>
-                                                                                    <li><a class="dropdown-item btn-confirm-delete disable-only" hhref="?page=view_checklists&checklist_id=<?= $item['checklist_id'] ?>" data-delete-item="<?= $item['item_id'] ?>">Disable</a></li>
-                                                                                    <?php } else { ?>
-                                                                                    <li><a class="dropdown-item btn-confirm-delete enable-only" hhref="?page=view_checklists&checklist_id=<?= $item['checklist_id'] ?>" data-delete-item="<?= $item['item_id'] ?>" >Enable </a></li>
-                                                                                        <?php }?>
-                                                                                    <li class="text-bg-danger"><a class="dropdown-item btn-confirm-delete" href="?page=view_checklists&checklist_id=<?= $item['checklist_id'] ?>" data-delete-item="<?= $item['item_id'] ?>">Delete</a></li>
-                                                                                  </ul>
+                                                                        <div class="dropdown ms-1">
+                                                                                  <a class="btn btn-outline-navy text-dark dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"></a>
+                                                                                    <ul class="dropdown-menu">
+                                                                                        
+                                                                                        <?php if($item['chk_item_status'] == 1) { ?>
+                                                                                        <li><a class="dropdown-item btn-confirm-delete disable-only" hhref="?page=view_checklists&checklist_id=<?= $item['checklist_id'] ?>" data-delete-item="<?= $item['item_id'] ?>">Disable</a></li>
+                                                                                        <?php } else { ?>
+                                                                                        <li><a class="dropdown-item btn-confirm-delete enable-only" hhref="?page=view_checklists&checklist_id=<?= $item['checklist_id'] ?>" data-delete-item="<?= $item['item_id'] ?>" >Enable </a></li>
+                                                                                            <?php }?>
+                                                                                        <li class="text-bg-danger"><a class="dropdown-item btn-confirm-delete" href="?page=view_checklists&checklist_id=<?= $item['checklist_id'] ?>" data-delete-item="<?= $item['item_id'] ?>">Delete</a></li>
+                                                                                    </ul>
                                                                         </div>
                                                                     </div>
 
@@ -331,7 +332,7 @@ require_once "../includes/_init.php";
                                                                 "item_id" => $item['item_id']
                                                             ], ["option_value" => "ASC"]);
                                                             ?>
-                                                            <div class="<?= $disabledClass ?> card m-0 border-1 shadow-sm d-none add-select-form" id="<?= $item['item_id'] ?>">
+                                                            <div class="card m-0 border-1 shadow-sm d-none add-select-form" id="<?= $item['item_id'] ?>" data-sel-option-id="<?= $item['item_id'] ?>">
                                                                 <div class="card-header border-0 my-0"><span class="small">Add Select Option</span></div>
                                                                 <div class="card-body border-0">
                                                                     <form class="addOptionForm mt-2" data-item="<?php echo $item['item_id']; ?>">

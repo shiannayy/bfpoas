@@ -8,6 +8,8 @@ document.onreadystatechange = function () {
             $("#checklistAccordion").removeClass("d-none").hide().fadeIn(20);
         });
     }
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 };
 
 /**
@@ -52,7 +54,7 @@ function getOptions(itemId, inputType, targetDropdown) {
             break;
 
         case 'date':
-            allowedCriteria = `<option selected >-SELECT-</option>
+            allowedCriteria = `<option selected>-SELECT-</option>
             <option value="days">Max Elapse No. of Days</option>`;
             break;
 
@@ -64,10 +66,13 @@ function getOptions(itemId, inputType, targetDropdown) {
                     targetDropdown = $("#criteria-add-" + itemId);
                 }
             }
-            
 
-            $(".add-select-form#"+ itemId).removeClass('d-none');
-            // AJAX load dynamic select options
+            //console.log("DEBUG: Loading select options for itemId " + itemId);
+            if((".add-select-form[data-sel-option-id="+ itemId + "]").length){
+                $(".add-select-form[data-sel-option-id="+ itemId +"]").removeClass("d-none").fadeIn(200);
+                console.log("DEBUG: Found add-select-form for itemId " + itemId);
+            }
+
             $.ajax({
                 url: "../includes/get_select_options.php",
                 type: "POST",
@@ -75,7 +80,7 @@ function getOptions(itemId, inputType, targetDropdown) {
                 dataType: "json",
                 success: function (res) {
 
-                    let html = `<option disabled>-SELECT-</option>`;
+                    let html = `<option selected>-SELECT-</option>`;
 
                     if (Array.isArray(res) && res.length > 0) {
                         res.forEach(opt => {
@@ -114,7 +119,6 @@ function getOptions(itemId, inputType, targetDropdown) {
                 }
             });
 
-            // stop here — AJAX will update dropdown
             return null;
 
         default:
@@ -137,6 +141,7 @@ $(document).ready(function () {
         const sectionId = $select.data("section");
         const compositeId = checklistId + "-" + sectionId;
         const inputType = $select.val();
+        console.log("compositeId: " + compositeId)
 
         const $criteriaDropdown = $("#criteria-add-" + compositeId);
         // Synchronous option HTML (if any)
@@ -183,10 +188,7 @@ $(document).ready(function () {
             }
             // show threshold fields based on saved or current value
             toggleThresholdFields(itemId, $criteriaDropdown.val());
-        } else {
-            // opts === null => AJAX path handled inside getOptions and will call toggleThresholdFields on success
-            // but we should still attempt to set saved if it exists after AJAX completes (handled in getOptions)
-        }
+        } 
     });
 });
 
@@ -239,7 +241,7 @@ $(document).on("change", ".edit-select-input-type", function () {
 $(document).on("change", ".criteria-select, .edit-criteria-select", function () {
     const $this = $(this);
     const idAttr = $this.attr("id") || "";
-    const dataItem = $this.data("item-id") || $this.data("checklist") || null;
+    //const dataItem = $this.data("item-id") || $this.data("checklist") || null;
 
     // Determine whether this is edit (id like editCriteriaSelect{itemId}) or add (criteria-add-{checklist}-{section})
     if (idAttr.indexOf("editCriteriaSelect") === 0) {

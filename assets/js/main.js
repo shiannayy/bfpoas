@@ -19,18 +19,33 @@ let currentDeleteId = null;
 $(document).on("click", ".btn-confirm-delete", function(e){
     e.preventDefault();
     currentDeleteId = $(this).data('delete-item');
+    let disableOnly = 0;
     
     if( $(this).hasClass("disable-only") ){
         $("#disableOnlyind").val(1);
+        disableOnly = 1;
     }
     
     if( $(this).hasClass("enable-only")){
         $("#disableOnlyind").val(2);
+        disableOnly = 2;
     }
     //disableOnlyind
         // Show the modal
         const modal = new bootstrap.Modal(document.getElementById('passwordConfirmModal'));
-        modal.show();    
+     if(disableOnly == 1){
+            $("action").text("Disable");
+        } 
+        else if(disableOnly == 2) {
+            $("action").text("Enable");
+        }
+        else{
+                $("action").text("Delete");
+        }
+        modal.show();   
+       
+    
+        
     
 });
 

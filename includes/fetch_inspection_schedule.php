@@ -23,6 +23,7 @@ $fields = [
     'ins.schedule_id',
     'ins.order_number',
     'ins.scheduled_date',
+    'ins.schedule_time',
     'ins.preferredSchedule',
     'ins.rescheduleReason',
     'g.owner_id AS owner_id',
