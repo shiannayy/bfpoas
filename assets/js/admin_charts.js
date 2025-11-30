@@ -571,21 +571,21 @@ function groupByTime(data, timeUnit, filter = '') {
 function generateColors(labels, columnType) {
     const colorMaps = {
         status: {
-            'Completed': '#28a745',
-            'In Progress': '#ffc107',
-            'Scheduled': '#17a2b8',
-            'Pending': '#6c757d',
-            'Cancelled': '#dc3545',
-            'Approved': '#28a745',
-            'Rejected': '#dc3545',
-            'Unknown': '#6c757d'
+            'Completed': '#E4985',
+            'In Progress': '#168BB0',
+            'Scheduled': '#55CC00',
+            'Pending': '#ffa00',
+            'Cancelled': '#881F2B',
+            'Approved': '#006d2c',
+            'Rejected': '#FA4e79',
+            'Unknown': '#8c5c47'
         },
         progress: {
-            'Client Acknowledged': '#6c757d',
-            'Inspector Acknowledged': '#17a2b8',
-            'Recommended': '#ffc107',
-            'Approved': '#28a745',
-            'Pending': '#dc3545'
+            'Client Acknowledged': '#6c757d'
+           ,'Inspector Acknowledged' : '#5c7aF5'
+           , 'Recommended' : '#f55c7a'
+           , 'Approved' : '#55d6c2'
+           , 'Pending' : '#ff8c00'
         }
     };
 
