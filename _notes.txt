@@ -29,3 +29,19 @@ Notify Inspector
 
 notify Admin - Reco approver - Approver
 // if there is an action on their part.
+
+
+
+SELECT
+    `inspection_schedule`.`schedule_id` AS `schedule_id`,
+    `inspection_schedule`.`order_number` AS `order_number`,
+    `inspection_schedule`.`scheduled_date` AS `schedule_date`,
+    `inspection_schedule`.`inspection_sched_status` AS `status`,
+    `inspection_schedule`.`HasClientAck` AS `HasClientAck`,
+    `inspection_schedule`.`hasInspectorAck` AS `hasInspectorAck`,
+    `inspection_schedule`.`hasRecommendingApproval` AS `hasRecommendingApproval`,
+    `inspection_schedule`.`hasFinalApproval` AS `hasFinalApproval`,
+    CASE WHEN `inspection_schedule`.`HasClientAck` = 'Y' AND `inspection_schedule`.`hasInspectorAck` = '0' AND `inspection_schedule`.`hasRecommendingApproval` = '0' AND `inspection_schedule`.`hasFinalApproval` = '0' THEN 'Client Acknowledged' WHEN `inspection_schedule`.`HasClientAck` = 'Y' AND `inspection_schedule`.`hasInspectorAck` = '1' AND `inspection_schedule`.`hasRecommendingApproval` = '0' AND `inspection_schedule`.`hasFinalApproval` = '0' THEN 'Inspector Acknowledged' WHEN `inspection_schedule`.`HasClientAck` = 'Y' AND `inspection_schedule`.`hasInspectorAck` = '1' AND `inspection_schedule`.`hasRecommendingApproval` = '1' AND `inspection_schedule`.`hasFinalApproval` = '0' THEN 'Recommended' WHEN `inspection_schedule`.`HasClientAck` = 'Y' AND `inspection_schedule`.`hasInspectorAck` = '1' AND `inspection_schedule`.`hasRecommendingApproval` = '1' AND `inspection_schedule`.`hasFinalApproval` = '1' THEN 'Approved' ELSE 'Pending'
+END AS `progress`
+FROM
+    `inspection_schedule`

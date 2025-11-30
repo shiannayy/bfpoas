@@ -44,7 +44,7 @@ enforceRoleAccess(['administrator']);
     </style>
 </head>
 
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column">
     <main class="flex-grow-1">
         <!-- Static Top Navbar -->
         <?php include_once "../includes/_nav_admin.php";
@@ -55,50 +55,9 @@ enforceRoleAccess(['administrator']);
             ?>
 
                 <div class="container">
-                    <div class="row mb-3">
-                        <div class="col-4">
-                           <div class="card border-0 shadow shadow-lg h-100">
-                               <div class="card-body">
-                                    <canvas id="inspectionChartMonth">
-                                        <div class="loadcontainer"></div>
-                                    </canvas>
-                                    <br>
-                               </div>
-                           </div>
-                        </div>
-                        <div class="col-8 align-content-middle">
-                           <div class="card border-0 shadow shadow-lg h-100">
-                               <div class="card-body">
-                            <canvas id="inspectionChartWeek">
-                                <div class="spinner-border" role="status"> <span class="visually-hidden">Loading...</span> </div>
-                            </canvas>  
-                               </div>
-                           </div>
-                        </div>
+                    <div class="row" id="chartsContainer">
+                        
                     </div>
-
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="card border-0 shadow shadow-lg h-100">
-                                <div class="card-body">
-                                    <canvas id="ScheduledInspectionByMonth">
-                                        <div class="loadcontainer"></div>
-                                    </canvas>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="card border-0 shadow shadow-lg h-100">
-                                <div class="card-body">
-                                    <canvas id="ScheduledInspectionByWeek">
-                                        <div class="spinner-border"><span class="visually-hidden">Loading...</span></div>
-                                    </canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
                 </div>
         <?php }
         else{

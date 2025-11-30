@@ -541,6 +541,8 @@ $(document).on("click", ".startInspectionBtn", function (e) {
     }, "json");
 });
 
+
+
 $(document).on("click", ".cancel-btn", function () {
     const schedId = $(this).data("sched-id");
     if (!confirm("Are you sure you want to cancel this schedule?")) return;
