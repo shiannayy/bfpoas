@@ -1,14 +1,46 @@
 const roleCharts = {
     "Admin_Assistant": [
         { 
+            id: 'FSICStatusDistributionChart', 
+            table: 'view_fsic_progress',
+            type: 'pie', 
+            title: 'FSIC Applications Status Distribution',
+            group: 'status',
+            renderer: 'status',
+            colSize: 'col-4'
+        },
+        
+        { 
+            id: 'progressDistributionChart', 
+            table: 'view_fsic_progress',
+            type: 'doughnut', 
+            title: 'FSIC Applications Progress Distribution',
+            group: 'progress',
+            renderer: 'status',
+            colSize: 'col-4'
+        }
+        ,
+        { 
             id: 'statusDistributionChart1', 
             table: 'view_inspection_schedule',
             type: 'doughnut', 
             title: 'Scheduled Inspections by Progress',
             group: 'progress',
             renderer: 'status',
-            colSize: 'col-6'
+            colSize: 'col-4'
         },
+        
+        { 
+            id: 'ScheduledInspectionByWeek', 
+            table: 'view_uncomplete_inspection_schedule', 
+            filter: 'Scheduled',
+            group: 'week', 
+            type: 'bar', 
+            title: 'Scheduled Inspections per Week',
+            renderer: 'week',
+            colSize: 'col-12'
+        },
+
         { 
             id: 'statusDistributionChart2', 
             table: 'view_inspection_schedule',
@@ -18,68 +50,193 @@ const roleCharts = {
             renderer: 'status',
             colSize: 'col-6'
         },
+        { 
+            id: 'inspectionChartMonth', 
+            table: 'view_uncomplete_inspections', 
+            group: 'month', 
+            type: 'line', 
+            title: 'In Progress Inspections per Month',
+            renderer: 'month',
+            colSize: 'col-6'
+        },
+        { 
+            id: 'inspectionChartDay', 
+            title: 'Inspections per day',
+            filter: 'In Progress',
+            table: 'view_fsic_progress',
+            group: 'day', 
+            type: 'line', 
+            renderer: 'day',
+            colSize: 'col-12'
+        },
+        { 
+            id: 'ScheduledInspectionByMonth', 
+            table: 'view_uncomplete_inspection_schedule', 
+            group: 'month', 
+            type: 'line', 
+            title: 'Scheduled Inspections per Month',
+            renderer: 'month',
+            colSize: 'col-12'
+        }
+    ],
+    "Recommending Approver": [
+        { 
+            id: 'FSICStatusDistributionChart', 
+            table: 'view_fsic_progress',
+            type: 'pie', 
+            title: 'FSIC Applications Status Distribution',
+            group: 'status',
+            renderer: 'status',
+            colSize: 'col-4'
+        },
+        
+        { 
+            id: 'progressDistributionChart', 
+            table: 'view_fsic_progress',
+            type: 'doughnut', 
+            title: 'FSIC Applications Progress Distribution',
+            group: 'progress',
+            renderer: 'status',
+            colSize: 'col-4'
+        }
+        ,
+        { 
+            id: 'statusDistributionChart1', 
+            table: 'view_inspection_schedule',
+            type: 'doughnut', 
+            title: 'Scheduled Inspections by Progress',
+            group: 'progress',
+            renderer: 'status',
+            colSize: 'col-4'
+        },
         
         { 
             id: 'ScheduledInspectionByWeek', 
             table: 'view_uncomplete_inspection_schedule', 
             filter: 'Scheduled',
             group: 'week', 
-            type: 'doughnut', 
+            type: 'bar', 
             title: 'Scheduled Inspections per Week',
+            renderer: 'week',
+            colSize: 'col-12'
+        },
+
+        { 
+            id: 'statusDistributionChart2', 
+            table: 'view_inspection_schedule',
+            type: 'pie', 
+            title: 'Scheduled Inspections by Status',
+            group: 'status',
             renderer: 'status',
             colSize: 'col-6'
         },
         { 
             id: 'inspectionChartMonth', 
             table: 'view_uncomplete_inspections', 
-            filter: 'In Progress',
             group: 'month', 
             type: 'line', 
             title: 'In Progress Inspections per Month',
-            renderer: 'progress',
+            renderer: 'month',
             colSize: 'col-6'
         },
         { 
-            id: 'inspectionChartWeek', 
-            table: 'view_uncomplete_inspections', 
+            id: 'inspectionChartDay', 
+            title: 'Inspections per day',
             filter: 'In Progress',
-            group: 'week', 
-            type: 'bar', 
-            title: 'In Progress Inspections per Week',
-            renderer: 'progress',
+            table: 'view_fsic_progress',
+            group: 'day', 
+            type: 'line', 
+            renderer: 'day',
             colSize: 'col-12'
         },
         { 
             id: 'ScheduledInspectionByMonth', 
             table: 'view_uncomplete_inspection_schedule', 
-            filter: 'Scheduled',
             group: 'month', 
             type: 'line', 
             title: 'Scheduled Inspections per Month',
-            renderer: 'progress',
+            renderer: 'month',
             colSize: 'col-12'
         }
     ],
-    "Recommending Approver": [
+     " Approver": [
         { 
-            id: 'ScheduledInspectionByMonth', 
-            table: 'view_uncomplete_inspection_schedule', 
-            filter: 'Scheduled',
-            group: 'month', 
-            type: 'line', 
-            title: 'Scheduled Inspections per Month',
-            renderer: 'progress',
-            colSize: 'col-12'
+            id: 'FSICStatusDistributionChart', 
+            table: 'view_fsic_progress',
+            type: 'pie', 
+            title: 'FSIC Applications Status Distribution',
+            group: 'status',
+            renderer: 'status',
+            colSize: 'col-4'
         },
+        
+        { 
+            id: 'progressDistributionChart', 
+            table: 'view_fsic_progress',
+            type: 'doughnut', 
+            title: 'FSIC Applications Progress Distribution',
+            group: 'progress',
+            renderer: 'status',
+            colSize: 'col-4'
+        }
+        ,
+        { 
+            id: 'statusDistributionChart1', 
+            table: 'view_inspection_schedule',
+            type: 'doughnut', 
+            title: 'Scheduled Inspections by Progress',
+            group: 'progress',
+            renderer: 'status',
+            colSize: 'col-4'
+        },
+        
         { 
             id: 'ScheduledInspectionByWeek', 
             table: 'view_uncomplete_inspection_schedule', 
             filter: 'Scheduled',
             group: 'week', 
-            type: 'pie', 
+            type: 'bar', 
             title: 'Scheduled Inspections per Week',
+            renderer: 'week',
+            colSize: 'col-12'
+        },
+
+        { 
+            id: 'statusDistributionChart2', 
+            table: 'view_inspection_schedule',
+            type: 'pie', 
+            title: 'Scheduled Inspections by Status',
+            group: 'status',
             renderer: 'status',
             colSize: 'col-6'
+        },
+        { 
+            id: 'inspectionChartMonth', 
+            table: 'view_uncomplete_inspections', 
+            group: 'month', 
+            type: 'line', 
+            title: 'In Progress Inspections per Month',
+            renderer: 'month',
+            colSize: 'col-6'
+        },
+        { 
+            id: 'inspectionChartDay', 
+            title: 'Inspections per day',
+            filter: 'In Progress',
+            table: 'view_fsic_progress',
+            group: 'day', 
+            type: 'line', 
+            renderer: 'day',
+            colSize: 'col-12'
+        },
+        { 
+            id: 'ScheduledInspectionByMonth', 
+            table: 'view_uncomplete_inspection_schedule', 
+            group: 'month', 
+            type: 'line', 
+            title: 'Scheduled Inspections per Month',
+            renderer: 'month',
+            colSize: 'col-12'
         }
     ]
 };
@@ -177,7 +334,7 @@ function createChart(elementId, tableName, filter, groupBy, chartType, chartTitl
 
             console.log(`📈 Processed chart data for ${elementId}:`, chartData);
 
-            if (rendererType === 'status') {
+            if (rendererType === 'status' || rendererType === 'progress') {
                 renderStatusPieChart(
                     elementId,
                     chartData.labels,
@@ -499,6 +656,7 @@ function groupByColumn(data, columnName, filter = '') {
         return item.status === filter || item.progress === filter;
     });
     
+    
     filteredData.forEach(item => {
         const value = item[columnName] || 'Unknown';
         counts[value] = (counts[value] || 0) + 1;
@@ -506,6 +664,7 @@ function groupByColumn(data, columnName, filter = '') {
 
     const labels = Object.keys(counts);
     const values = Object.values(counts);
+    console.log(`FSIC Grouped by ${columnName}:`, { labels, values });
     
     return {
         labels: labels,
@@ -523,9 +682,9 @@ function groupByTime(data, timeUnit, filter = '') {
     });
 
     filteredData.forEach(item => {
-        if (!item.created_at) return;
+        if (!item.created_at  && !item.started_at) return;
         
-        const date = new Date(item.created_at);
+        const date = new Date(item.created_at || item.started_at);
         let key;
 
         switch (timeUnit) {
@@ -571,20 +730,21 @@ function groupByTime(data, timeUnit, filter = '') {
 function generateColors(labels, columnType) {
     const colorMaps = {
         status: {
-            'Completed': '#E4985',
-            'In Progress': '#168BB0',
-            'Scheduled': '#55CC00',
-            'Pending': '#ffa00',
+            'Completed': '#48b14dff',
+            'In Progress': '#e4be14ff',
+            'Scheduled': '#94a388ff',
+            'Pending': '#fab957ff',
             'Cancelled': '#881F2B',
             'Approved': '#006d2c',
-            'Rejected': '#FA4e79',
-            'Unknown': '#8c5c47'
+            'Rejected': '#752a3dff',
+            'Unknown': '#353535ff'
         },
         progress: {
             'Client Acknowledged': '#6c757d'
            ,'Inspector Acknowledged' : '#5c7aF5'
            , 'Recommended' : '#f55c7a'
            , 'Approved' : '#55d6c2'
+           , 'Claimed' : '#28a745'
            , 'Pending' : '#ff8c00'
         }
     };
