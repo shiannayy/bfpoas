@@ -10,6 +10,28 @@ document.onreadystatechange = function () {
     }
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+
+//  function showTemporaryTooltips(selectors, duration = 10000) {
+//     $(selectors).each(function() {
+//         const $element = $(this);
+        
+//         // Check if element is visible and not hidden by d-none or other means
+//         if ($element.is(':visible') && !$element.hasClass('d-none')) {
+//             $element.tooltip({
+//                 trigger: 'focus'
+//             }).tooltip('show');
+            
+//             setTimeout(function() {
+//                 $element.tooltip('hide');
+//             }, duration);
+//         }
+//     });
+// }
+
+// // Usage for multiple elements
+// showTemporaryTooltips('.tooltips', 10000);
+
 };
 
 /**
@@ -59,7 +81,16 @@ function getOptions(itemId, inputType, targetDropdown) {
             break;
 
         case 'select':
-            // If targetDropdown param not provided, attempt to resolve common IDs
+            //if($(this).hasClass("edit-select-item")){
+                $(".tooltip-for-select-type[data-tooltip-id="+ itemId +"]").removeClass("d-none");
+                console.log("DEBUG: Showing tooltip for edit itemId " + itemId);
+            //}
+            //if($(this).hasClass("new-select-item")){
+                let compositeId = itemId;
+                $(".tooltip-for-new-select-type[data-new-select-composite-id="+ compositeId +"]").removeClass("d-none");
+                console.log("DEBUG: Showing tooltip for new item compositeId " + compositeId);
+            //}
+            
             if (!targetDropdown) {
                 targetDropdown = $("#editCriteriaSelect" + itemId);
                 if (!targetDropdown.length) {
@@ -331,10 +362,13 @@ $(document).ready(function () {
     $(document).on("click", ".delete-option", function () {
         if (!confirm("Delete this option?")) return;
         let optionId = $(this).data("id");
+        let option_text = $(this).data("text") || "";
         $.post("../includes/delete_option.php", { option_id: optionId }, function (res) {
             if (res.success) {
-                alert("Option deleted!");
-                setTimeout(function(){ location.reload(); }, 3000);
+                showAlert(option_text + " deleted!");
+                $(".select-option-item[data-opt-id='" + optionId + "']").fadeOut().remove();
+                //setTimeout(function(){ location.reload(); }, 3000);
+
             } else {
                 alert("Error: " + res.message);
             }
