@@ -52,7 +52,7 @@ if($input_type == 'text'|| $input_type == 'textarea'){
         case 'textvalue': $data += ["threshold_text_value" => $threshold_text_value];
         break;
         default:
-        $data += ['threshold_text_value' => $checklist_criteria];
+        $data += ['threshold_text_value' => $threshold_text_value];
     }
 }
 else if($input_type == 'number'){

@@ -224,8 +224,9 @@ require_once "../includes/_init.php";
                                                                 break;
                                                             case 'textvalue':
                                                                 $criteria_text = $item['threshold_text_value'];
+                                                                break;
                                                             default:
-                                                                $criteria_text = $criteria;
+                                                                $criteria_text = '';
                                                         }
                                                          
                                                          $disabledClass = ($item['chk_item_status'] == 0 ? "bg-secondary bg-opacity-25" : '');

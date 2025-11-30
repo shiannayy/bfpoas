@@ -28,7 +28,7 @@ function getOptions(itemId, inputType, targetDropdown) {
 
         case 'checkbox':
             allowedCriteria = `
-             <option disabled>-SELECT-</option>
+             <option selected >-SELECT-</option>
              <option value="yes_no">Either Yes or No</option>
              `;
             break;
@@ -36,7 +36,7 @@ function getOptions(itemId, inputType, targetDropdown) {
         case 'text':
         case 'textarea':
             allowedCriteria = `
-            <option disabled>-SELECT-</option>
+            <option selected>-SELECT-</option>
             <option value="textvalue">Compare Text Value</option>
             `
             ;
@@ -44,7 +44,7 @@ function getOptions(itemId, inputType, targetDropdown) {
 
         case 'number':
             allowedCriteria = `
-                <option disabled>-SELECT-</option>
+                <option selected >-SELECT-</option>
                 <option value="range">Set Min - Max (Range)</option>
                 <option value="min_val">Set Minimum Value</option>
                 <option value="max_val">Set Maximum Value</option>
@@ -52,7 +52,7 @@ function getOptions(itemId, inputType, targetDropdown) {
             break;
 
         case 'date':
-            allowedCriteria = `<option disabled>-SELECT-</option>
+            allowedCriteria = `<option selected >-SELECT-</option>
             <option value="days">Max Elapse No. of Days</option>`;
             break;
 
