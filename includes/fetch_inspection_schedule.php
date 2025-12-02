@@ -14,7 +14,8 @@ $user_id = $_SESSION['user_id'];
 $user_role = $_SESSION['role'];
 $user_subrole = $_SESSION['subrole'];
 $roleLabel = getRoleLabel($user_role, $user_subrole);
-
+$order = [];
+$order += ['ins.scheduled_date' => 'DESC'];
 // ---------- MAIN TABLE ----------
 $main_table = ['inspection_schedule ins'];
 
@@ -72,10 +73,12 @@ switch ($roleLabel) {
     case 'Recommending Approver':
         $where[] = "ins.hasInspectorAck = 1";
         $where[] = "ins.scheduled_date >= CURDATE()";
+        $order += ["ins.hasRecommendingApproval" => "DESC"];
         break;
     case 'Approver':
         $where[] = "ins.hasRecommendingApproval = 1";
         $where[] = "ins.scheduled_date >= CURDATE()";
+        $order += ["ins.hasFinalApproval" => "DESC"];
         break;
     case 'Admin_Assistant':
         // Admin sees all
@@ -110,7 +113,7 @@ if(isset($_POST['schedule_id'])){
 $whereSQL = !empty($where) ? implode(' AND ', $where) : '';
 
 // ---------- ORDER & LIMIT ----------
-$order = ['ins.scheduled_date' => 'DESC'];
+
 $limit = 1000;
 
 // ---------- FETCH ----------
