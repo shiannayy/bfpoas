@@ -135,6 +135,7 @@ $('#passwordInput').on('keypress', function(e) {
 
 
 
+
 function fetchData(url, method = 'POST', payload = {}) {
     return new Promise((resolve, reject) => {
         $.ajax({

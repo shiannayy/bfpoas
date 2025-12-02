@@ -45,3 +45,72 @@ SELECT
 END AS `progress`
 FROM
     `inspection_schedule`
+
+
+
+
+
+
+create or replace view view_fsic_progress as
+SELECT
+    `inspections`.`inspection_id` AS `inspection_id`,
+    `inspections`.`fsic_no` AS `fsic_no`,
+    `inspections`.`schedule_id` AS `schedule_id`,
+    `inspections`.`started_at` AS `started_at`,
+    `inspections`.`completed_at` AS `completed_at`,
+    `inspections`.`status` AS `status`,
+    `inspections`.`hasRecoApproval` AS `hasRecoApproval`,
+    `inspections`.`hasFinalApproval` AS `hasFinalApproval`,
+    `inspections`.`hasBeenReceived` AS `hasBeenReceived`,
+    `inspections`.`compliance_rate` AS `compliance_rate`,
+    `inspections`.`has_Defects` AS `has_Defects`,
+    CASE WHEN `inspections`.`hasBeenReceived` = 1 THEN 'Claimed' WHEN `inspections`.`hasFinalApproval` = 1 THEN 'Approved' WHEN `inspections`.`hasRecoApproval` = 1 THEN 'Recommended' ELSE 'Pending'
+END AS `progress`
+FROM
+    `inspections`
+    WHERE status NOT IN ('In Progress')
+
+
+
+
+
+
+    SELECT
+   `inspections`.`inspection_id` AS `inspection_id`,
+   `inspections`.`fsic_no` AS `fsic_no`,
+   `inspections`.`gen_info_id` AS `gen_info_id`,
+   `inspections`.`schedule_id` AS `schedule_id`,
+   `inspections`.`checklist_id` AS `checklist_id`,
+   `inspections`.`inspector_id` AS `inspector_id`,
+   `inspections`.`started_at` AS `started_at`,
+   `inspections`.`completed_at` AS `completed_at`,
+   `inspections`.`status` AS `status`,
+   `inspections`.`hasRecoApproval` AS `hasRecoApproval`,
+   `inspections`.`dateRecommended` AS `dateRecommended`,
+   `inspections`.`recommended_by` AS `recommended_by`,
+   `inspections`.`hasFinalApproval` AS `hasFinalApproval`,
+   `inspections`.`dateApproved` AS `dateApproved`,
+   `inspections`.`approved_by` AS `approved_by`,
+   `inspections`.`hasBeenReceived` AS `hasBeenReceived`,
+   `inspections`.`dateReceived` AS `dateReceived`,
+   `inspections`.`received_by` AS `received_by`,
+   `inspections`.`inspection_score` AS `inspection_score`,
+   `inspections`.`total_items` AS `total_items`,
+   `inspections`.`passed_items` AS `passed_items`,
+   `inspections`.`failed_items` AS `failed_items`,
+   `inspections`.`not_applicable_items` AS `not_applicable_items`,
+   `inspections`.`required_items` AS `required_items`,
+   `inspections`.`required_passed` AS `required_passed`,
+   `inspections`.`required_failed` AS `required_failed`,
+   `inspections`.`compliance_rate` AS `compliance_rate`,
+   `inspections`.`cancellation_reason` AS `cancellation_reason`,
+   `inspections`.`has_Defects` AS `has_Defects`,
+   `inspections`.`defects_details` AS `defects_details`,
+   `inspections`.`reference_no` AS `reference_no`,
+   `inspections`.`created_by` AS `created_by`,
+   `inspections`.`created_at` AS `created_at`,
+   `inspections`.`updated_at` AS `updated_at`
+FROM
+   `inspections`
+WHERE
+   `inspections`.`completed_at` IS NULL OR`inspections`.`status` NOT IN('completed', 'Completed')

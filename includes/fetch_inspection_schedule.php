@@ -13,6 +13,7 @@ $loggedIn = isLoggedin();
 $user_id = $_SESSION['user_id'];
 $user_role = $_SESSION['role'];
 $user_subrole = $_SESSION['subrole'];
+$roleLabel = getRoleLabel($user_role, $user_subrole);
 
 // ---------- MAIN TABLE ----------
 $main_table = ['inspection_schedule ins'];
@@ -61,7 +62,7 @@ $joins = [
 $where = [];
 
 // --- Role-based filter
-switch ($user_role) {
+switch ($roleLabel) {
     case 'Client':
         $where[] = "g.owner_id = '$user_id'";
         break;
@@ -69,13 +70,14 @@ switch ($user_role) {
         $where[] = "inspector.user_id = '$user_id'";
         break;
     case 'Recommending Approver':
-    case 'Fire Marshall':
-        $where[] = "ra.user_id = '$user_id'";
+        $where[] = "ins.hasRecommendingApproval = 0";
+        $where[] = "ins.scheduled_date >= CURDATE()";
         break;
-    case 'Final Approver':
-        $where[] = "fa.user_id = '$user_id'";
+    case 'Approver':
+        $where [] = "ins.hasFinalApproval = 0";
+        $where[] = "ins.scheduled_date >= CURDATE()";
         break;
-    case 'Administrator':
+    case 'Admin_Assistant':
         // Admin sees all
         break;
     default:

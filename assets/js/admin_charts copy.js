@@ -9,7 +9,7 @@ const roleCharts = {
             renderer: 'status',
             colSize: 'col-6'
         },
-        { 
+        {
             id: 'statusDistributionChart2', 
             table: 'view_inspection_schedule',
             type: 'pie', 
@@ -18,8 +18,7 @@ const roleCharts = {
             renderer: 'status',
             colSize: 'col-6'
         },
-        
-        { 
+        {
             id: 'ScheduledInspectionByWeek', 
             table: 'view_uncomplete_inspection_schedule', 
             filter: 'Scheduled',
@@ -88,10 +87,10 @@ $(document).ready(function() {
     checkSession(function (user) {
         const userRoleLabel = getRoleLabel(user.role, user.subrole);
 
-        if (!roleCharts[userRoleLabel]) {
-            showNoChartsMessage();
-            return;
-        }
+        // if (!roleCharts[userRoleLabel]) {
+        //     showNoChartsMessage();
+        //     return;
+        // }
 
         createChartContainers(roleCharts[userRoleLabel]);
         
@@ -134,17 +133,17 @@ function createChartContainers(chartConfigs) {
     chartsContainer.empty().append(row);
 }
 
-function showNoChartsMessage() {
-    const chartsContainer = $('#chartsContainer');
-    chartsContainer.html(`
-        <div class="col-12 mb-3">
-            <div class="alert alert-info text-center">
-                <h4>No charts available for your role</h4>
-                <p class="mb-0">Chart is not yet available for your role.</p>
-            </div>
-        </div>
-    `);
-}
+// function showNoChartsMessage() {
+//     const chartsContainer = $('#chartsContainer');
+//     chartsContainer.html(`
+//         <div class="col-12 mb-3">
+//             <div class="alert alert-info text-center">
+//                 <h4>No charts available for your role</h4>
+//                 <p class="mb-0">Chart is not yet available for your role.</p>
+//             </div>
+//         </div>
+//     `);
+// }
 
 function createChart(elementId, tableName, filter, groupBy, chartType, chartTitle, rendererType = 'progress') {
     const canvas = document.getElementById(elementId);

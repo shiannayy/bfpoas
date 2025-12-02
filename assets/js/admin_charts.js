@@ -1,35 +1,23 @@
 const roleCharts = {
     "Admin_Assistant": [
         { 
-            id: 'FSICStatusDistributionChart', 
-            table: 'view_fsic_progress',
-            type: 'pie', 
-            title: 'FSIC Applications Status Distribution',
-            group: 'status',
-            renderer: 'status',
-            colSize: 'col-4'
-        },
-        
-        { 
             id: 'progressDistributionChart', 
             table: 'view_fsic_progress',
             type: 'doughnut', 
             title: 'FSIC Applications Progress Distribution',
             group: 'progress',
             renderer: 'status',
-            colSize: 'col-4'
-        }
-        ,
-        { 
+            colSize: 'col-12 col-sm-12 col-md-6 col-lg-6'
+        },
+        {
             id: 'statusDistributionChart1', 
             table: 'view_inspection_schedule',
             type: 'doughnut', 
             title: 'Scheduled Inspections by Progress',
             group: 'progress',
             renderer: 'status',
-            colSize: 'col-4'
+            colSize: 'col-12 col-sm-6 col-md-6 col-lg-6'
         },
-        
         { 
             id: 'ScheduledInspectionByWeek', 
             table: 'view_uncomplete_inspection_schedule', 
@@ -38,9 +26,8 @@ const roleCharts = {
             type: 'bar', 
             title: 'Scheduled Inspections per Week',
             renderer: 'week',
-            colSize: 'col-12'
+            colSize: 'col-12 col-sm-12 col-md-6 col-lg-6'
         },
-
         { 
             id: 'statusDistributionChart2', 
             table: 'view_inspection_schedule',
@@ -48,7 +35,7 @@ const roleCharts = {
             title: 'Scheduled Inspections by Status',
             group: 'status',
             renderer: 'status',
-            colSize: 'col-6'
+            colSize: 'col-12 col-sm-12 col-md-6 col-lg-6'
         },
         { 
             id: 'inspectionChartMonth', 
@@ -57,186 +44,7 @@ const roleCharts = {
             type: 'line', 
             title: 'In Progress Inspections per Month',
             renderer: 'month',
-            colSize: 'col-6'
-        },
-        { 
-            id: 'inspectionChartDay', 
-            title: 'Inspections per day',
-            filter: 'In Progress',
-            table: 'view_fsic_progress',
-            group: 'day', 
-            type: 'line', 
-            renderer: 'day',
-            colSize: 'col-12'
-        },
-        { 
-            id: 'ScheduledInspectionByMonth', 
-            table: 'view_uncomplete_inspection_schedule', 
-            group: 'month', 
-            type: 'line', 
-            title: 'Scheduled Inspections per Month',
-            renderer: 'month',
-            colSize: 'col-12'
-        }
-    ],
-    "Recommending Approver": [
-        { 
-            id: 'FSICStatusDistributionChart', 
-            table: 'view_fsic_progress',
-            type: 'pie', 
-            title: 'FSIC Applications Status Distribution',
-            group: 'status',
-            renderer: 'status',
-            colSize: 'col-4'
-        },
-        
-        { 
-            id: 'progressDistributionChart', 
-            table: 'view_fsic_progress',
-            type: 'doughnut', 
-            title: 'FSIC Applications Progress Distribution',
-            group: 'progress',
-            renderer: 'status',
-            colSize: 'col-4'
-        }
-        ,
-        { 
-            id: 'statusDistributionChart1', 
-            table: 'view_inspection_schedule',
-            type: 'doughnut', 
-            title: 'Scheduled Inspections by Progress',
-            group: 'progress',
-            renderer: 'status',
-            colSize: 'col-4'
-        },
-        
-        { 
-            id: 'ScheduledInspectionByWeek', 
-            table: 'view_uncomplete_inspection_schedule', 
-            filter: 'Scheduled',
-            group: 'week', 
-            type: 'bar', 
-            title: 'Scheduled Inspections per Week',
-            renderer: 'week',
-            colSize: 'col-12'
-        },
-
-        { 
-            id: 'statusDistributionChart2', 
-            table: 'view_inspection_schedule',
-            type: 'pie', 
-            title: 'Scheduled Inspections by Status',
-            group: 'status',
-            renderer: 'status',
-            colSize: 'col-6'
-        },
-        { 
-            id: 'inspectionChartMonth', 
-            table: 'view_uncomplete_inspections', 
-            group: 'month', 
-            type: 'line', 
-            title: 'In Progress Inspections per Month',
-            renderer: 'month',
-            colSize: 'col-6'
-        },
-        { 
-            id: 'inspectionChartDay', 
-            title: 'Inspections per day',
-            filter: 'In Progress',
-            table: 'view_fsic_progress',
-            group: 'day', 
-            type: 'line', 
-            renderer: 'day',
-            colSize: 'col-12'
-        },
-        { 
-            id: 'ScheduledInspectionByMonth', 
-            table: 'view_uncomplete_inspection_schedule', 
-            group: 'month', 
-            type: 'line', 
-            title: 'Scheduled Inspections per Month',
-            renderer: 'month',
-            colSize: 'col-12'
-        }
-    ],
-     " Approver": [
-        { 
-            id: 'FSICStatusDistributionChart', 
-            table: 'view_fsic_progress',
-            type: 'pie', 
-            title: 'FSIC Applications Status Distribution',
-            group: 'status',
-            renderer: 'status',
-            colSize: 'col-4'
-        },
-        
-        { 
-            id: 'progressDistributionChart', 
-            table: 'view_fsic_progress',
-            type: 'doughnut', 
-            title: 'FSIC Applications Progress Distribution',
-            group: 'progress',
-            renderer: 'status',
-            colSize: 'col-4'
-        }
-        ,
-        { 
-            id: 'statusDistributionChart1', 
-            table: 'view_inspection_schedule',
-            type: 'doughnut', 
-            title: 'Scheduled Inspections by Progress',
-            group: 'progress',
-            renderer: 'status',
-            colSize: 'col-4'
-        },
-        
-        { 
-            id: 'ScheduledInspectionByWeek', 
-            table: 'view_uncomplete_inspection_schedule', 
-            filter: 'Scheduled',
-            group: 'week', 
-            type: 'bar', 
-            title: 'Scheduled Inspections per Week',
-            renderer: 'week',
-            colSize: 'col-12'
-        },
-
-        { 
-            id: 'statusDistributionChart2', 
-            table: 'view_inspection_schedule',
-            type: 'pie', 
-            title: 'Scheduled Inspections by Status',
-            group: 'status',
-            renderer: 'status',
-            colSize: 'col-6'
-        },
-        { 
-            id: 'inspectionChartMonth', 
-            table: 'view_uncomplete_inspections', 
-            group: 'month', 
-            type: 'line', 
-            title: 'In Progress Inspections per Month',
-            renderer: 'month',
-            colSize: 'col-6'
-        },
-        { 
-            id: 'inspectionChartDay', 
-            title: 'Inspections per day',
-            filter: 'In Progress',
-            table: 'view_fsic_progress',
-            group: 'day', 
-            type: 'line', 
-            renderer: 'day',
-            colSize: 'col-12'
-        },
-        { 
-            id: 'ScheduledInspectionByMonth', 
-            table: 'view_uncomplete_inspection_schedule', 
-            group: 'month', 
-            type: 'line', 
-            title: 'Scheduled Inspections per Month',
-            renderer: 'month',
-            colSize: 'col-12'
+            colSize: 'col-12 col-sm-12 col-md-12 col-lg-12'
         }
     ]
 };
@@ -244,14 +52,7 @@ const roleCharts = {
 $(document).ready(function() {
     checkSession(function (user) {
         const userRoleLabel = getRoleLabel(user.role, user.subrole);
-
-        if (!roleCharts[userRoleLabel]) {
-            showNoChartsMessage();
-            return;
-        }
-
         createChartContainers(roleCharts[userRoleLabel]);
-        
         roleCharts[userRoleLabel].forEach(chart => {
             createChart(
                 chart.id,
@@ -289,18 +90,6 @@ function createChartContainers(chartConfigs) {
     });
     
     chartsContainer.empty().append(row);
-}
-
-function showNoChartsMessage() {
-    const chartsContainer = $('#chartsContainer');
-    chartsContainer.html(`
-        <div class="col-12 mb-3">
-            <div class="alert alert-info text-center">
-                <h4>No charts available for your role</h4>
-                <p class="mb-0">Chart is not yet available for your role.</p>
-            </div>
-        </div>
-    `);
 }
 
 function createChart(elementId, tableName, filter, groupBy, chartType, chartTitle, rendererType = 'progress') {
@@ -910,6 +699,7 @@ const chartStyles = `
 .chart-body canvas {
     width: 100% !important;
     height: 100% !important;
+    max-height: 300px;
 }
 `;
 

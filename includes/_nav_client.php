@@ -54,16 +54,19 @@ if (isset($_SESSION['user_id'])) {
                                 echo navBarBtn($btns['link'],$btns['icon'],$btns['label']);
                             }
                          ?>
-                <li class="nav-item">
+                 <li class="nav-item">
                     <a class="nav-link" href="?page=map_loc" data-link="locator"><svg xmlns="http://www.w3.org/2000/svg"
                             width="20" height="20" fill="currentColor" class="bi bi-map" viewBox="0 0 16 16">
                             <path fill-rule="evenodd"
                                 d="M15.817.113A.5.5 0 0 1 16 .5v14a.5.5 0 0 1-.402.49l-5 1a.5.5 0 0 1-.196 0L5.5 15.01l-4.902.98A.5.5 0 0 1 0 15.5v-14a.5.5 0 0 1 .402-.49l5-1a.5.5 0 0 1 .196 0L10.5.99l4.902-.98a.5.5 0 0 1 .415.103M10 1.91l-4-.8v12.98l4 .8zm1 12.98 4-.8V1.11l-4 .8zm-6-.8V1.11l-4 .8v12.98z" />
-                        </svg></a>
+                        </svg>
+                        <small class="d-inline d-lg-none d-md-none">BUILDING LOCATOR</small>
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a id="inspectorLogout" class="nav-link" href="../pages/logout_process.php">
-                        Logout
+                    <?= getIcon("logout") ?>   
+                    <small class="d-inline d-lg-none d-md-none">LOGOUT</small>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -75,7 +78,8 @@ if (isset($_SESSION['user_id'])) {
                             <path
                                 d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.73 1.73 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.73 1.73 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.73 1.73 0 0 0 1.097-1.097zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.16 1.16 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.16 1.16 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732z" />
                         </svg>
-                    </a>
+                        <small class="d-inline d-lg-none d-md-none">DARK THEME</small>
+                    </a> 
                 </li>
                 <li class="nav-item d-none d-lg-inline">
                     <a id="notifications_desktop" href="#" class="nav-link">
