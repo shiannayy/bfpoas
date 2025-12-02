@@ -20,7 +20,8 @@ if (empty($username) || empty($password)) {
 // Fetch user from DB
 $user = select("users", ["email" => $username ], null, 1);
 
-if(!empty($user) && $user[0]['is_active'] === 0 ){
+// Check if user exists and is disabled
+if (!empty($user) && !$user[0]['is_active']) {
   echo json_encode([
         "status" => "error",
         "message" => "Unable to Login, User has been Disabled",
@@ -29,7 +30,8 @@ if(!empty($user) && $user[0]['is_active'] === 0 ){
     exit;
 }
 
-if ($user && password_verify($password, $user[0]['password_hash'])) {
+// Check if user exists and password is correct
+if (!empty($user) && password_verify($password, $user[0]['password_hash'])) {
     $user = $user[0];
 
     // Store session data
