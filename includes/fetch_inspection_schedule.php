@@ -15,7 +15,7 @@ $user_role = $_SESSION['role'];
 $user_subrole = $_SESSION['subrole'];
 $roleLabel = getRoleLabel($user_role, $user_subrole);
 $order = [];
-$order += ['ins.scheduled_date' => 'DESC'];
+
 // ---------- MAIN TABLE ----------
 $main_table = ['inspection_schedule ins'];
 
@@ -69,6 +69,7 @@ switch ($roleLabel) {
         break;
     case 'Inspector':
         $where[] = "inspector.user_id = '$user_id'";
+        $order += ["ins.hasInspectorAck" => "DESC"];
         break;
     case 'Recommending Approver':
         $where[] = "ins.hasInspectorAck = 1";
@@ -109,6 +110,7 @@ if(isset($_POST['schedule_id'])){
 
 
 
+$order += ['ins.scheduled_date' => 'DESC'];
 // --- Combine all
 $whereSQL = !empty($where) ? implode(' AND ', $where) : '';
 
