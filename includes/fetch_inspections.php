@@ -59,11 +59,11 @@ if (isChiefFSES()) {
         'value' => date('Y-m-d')
     ];
     // Awaiting recommendation approval
-    $where[] = [
-        'column' => 'hasRecoApproval',
-        'operator' => '=',
-        'value' => 0
-    ];
+    // $where[] = [
+    //     'column' => 'hasRecoApproval',
+    //     'operator' => '=',
+    //     'value' => 0
+    // ];
 }
 
 if (isFireMarshall()) {
@@ -80,11 +80,11 @@ if (isFireMarshall()) {
         'value' => date('Y-m-d')
     ];
     // Awaiting final approval
-    $where[] = [
-        'column' => 'hasFinalApproval',
-        'operator' => '=',
-        'value' => 0
-    ];
+    // $where[] = [
+    //     'column' => 'hasFinalApproval',
+    //     'operator' => '=',
+    //     'value' => 0
+    // ];
 }
 
 

@@ -201,7 +201,7 @@ function getRoleCounts(data, userRole) {
             }
             
             // Pending FSIC Recommendations (fsic_hasRecoApproval == 0 and completed_at is not null and has_defects == 0)
-            if (item.fsic_hasRecoApproval === 0 && item.completed_at && item.has_defects === 0) {
+            if (item.fsic_hasRecoApproval === 0 && item.completed_at !== null && item.has_defects === 0) {
                 counts.pending_fsic_rec++;
             }
             

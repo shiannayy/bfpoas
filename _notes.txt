@@ -114,3 +114,107 @@ FROM
    `inspections`
 WHERE
    `inspections`.`completed_at` IS NULL OR`inspections`.`status` NOT IN('completed', 'Completed')
+
+
+
+
+   CREATE OR REPLACE VIEW view_schedule_notif as
+SELECT l.log_ts,l.log_message as notif_message,
+			ow.user_id, 
+			ins.HasClientAck, ins.DateAckbyClient, ins.AckByClient_id,
+            ins.hasInspectorAck, ins.dateInspectorAck, ins.inspector_id,
+            ins.hasRecommendingApproval, ins.dateRecommendedForApproval, ins.RecommendingApprover,
+            ins.hasFinalApproval, ins.dateFinalApproval, ins.FinalApprover,
+          gi.building_name, gi.location_of_construction
+ FROM `logs` as l
+ LEFT join inspection_schedule AS ins
+   on l.schedule_id = ins.schedule_id
+ LEFT join general_info as gi 
+   on ins.gen_info_id = gi.gen_info_id
+ left join users as ow
+   on gi.owner_id = ow.user_id
+WHERE l.schedule_id is not null
+order by log_ts DESC;
+
+
+
+Inspector Rules
+    Count as Completed Inspection: 
+        When the inspection status is "Completed"
+    Check for Overdue Inspection:
+        When inspection is Scheduled or Pending AND schedule has final approval AND scheduled date is more than 1 day ago (overdue)
+    Count as Pending Inspection:
+        When client has acknowledged the schedule AND inspector hasn't acknowledged yet
+
+Chief FSES / Recommending Approver Rules
+    Count as Pending Schedule Acknowledgement:
+        When client has acknowledged the schedule
+        AND inspector has acknowledged
+        BUT recommending approver hasn't approved yet
+
+    Count as Complete Schedule Acknowledgement:
+        When recommending approver has approved the schedule
+    
+    Count as Pending FSIC Recommendation:
+        When FSIC recommendation approval is still pending
+(Note: Original code has logic error here - needs correction)
+
+Count as Completed FSIC Recommendation:
+
+When FSIC recommendation has been approved
+
+Fire Marshal / Approver Rules
+    Count as Pending Schedule Acknowledgement:
+    When final approval is NOT given
+    BUT recommending approver HAS approved
+    AND scheduled date was 1+ days ago (overdue for final approval)
+    
+    Count as Complete Schedule Acknowledgement:
+    When final approval HAS been given to the schedule
+    
+    Count as Pending FSIC Final Approval:
+    When FSIC final approval is NOT given yet
+
+    Count as Completed FSIC Final Approval:
+    When FSIC final approval HAS been given
+
+Admin Assistant Rules
+    Count as Total Inspections Due Today:
+
+    When scheduled date is exactly today
+
+    Count as Overdue Inspections:
+
+    When scheduled date was more than 1 day ago
+
+    AND schedule has final approval already
+
+    Count as Pending Recommendation:
+
+    When recommending approval is NOT given
+
+    AND scheduled date is today or in the future (not overdue)
+
+    AND inspector HAS acknowledged
+
+    Count as Pending Approval:
+
+    When final approval is NOT given
+
+    BUT recommending approver HAS approved
+
+    Count as Pending FSIC Recommendation:
+
+    When FSIC recommendation approval is NOT given
+
+    AND inspection was completed
+
+    AND there are NO defects found
+
+    Count as Pending FSIC Approval:
+
+    When FSIC final approval is NOT given
+
+    BUT FSIC recommendation HAS been approved
+
+    AND there are NO defects found

@@ -71,12 +71,10 @@ switch ($roleLabel) {
         break;
     case 'Recommending Approver':
         $where[] = "ins.hasInspectorAck = 1";
-        $where[] = "ins.hasRecommendingApproval = 0";
         $where[] = "ins.scheduled_date >= CURDATE()";
         break;
     case 'Approver':
         $where[] = "ins.hasRecommendingApproval = 1";
-        $where [] = "ins.hasFinalApproval = 0";
         $where[] = "ins.scheduled_date >= CURDATE()";
         break;
     case 'Admin_Assistant':
