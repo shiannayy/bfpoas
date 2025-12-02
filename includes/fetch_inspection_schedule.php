@@ -74,12 +74,12 @@ switch ($roleLabel) {
     case 'Recommending Approver':
         $where[] = "ins.hasInspectorAck = 1";
         $where[] = "ins.scheduled_date >= CURDATE()";
-        $order += ["ins.hasRecommendingApproval" => "DESC"];
+        $order += ["ins.hasRecommendingApproval" => "ASC"];
         break;
     case 'Approver':
         $where[] = "ins.hasRecommendingApproval = 1";
         $where[] = "ins.scheduled_date >= CURDATE()";
-        $order += ["ins.hasFinalApproval" => "DESC"];
+        $order += ["ins.hasFinalApproval" => "ASC"];
         break;
     case 'Admin_Assistant':
         // Admin sees all
