@@ -28,23 +28,65 @@ if (isClient()) {
         'operator' => '=',
         'value' => $user_id
     ];
- }
+}
 
-if ( isInspector() ) {
+if (isInspector()) {
+    // Inspector: must be assigned inspector AND within 5-day inspection window
     $where[] = [
         'column' => 'inspector_id',
         'operator' => '=',
         'value' => $user_id
     ];
-}
-
-if( isChiefFSES() || isFireMarshall()){
-        $where[] = [
-        'column' => 'has_Defects',
-        'operator' => '=',
-        'value' => '0'
+    // Inspection must be within 5 days from today (scheduled_date > CURRENT_DATE - 5)
+    $where[] = [
+        'column' => 'scheduled_date',
+        'operator' => '>',
+        'value' => date('Y-m-d', strtotime('-5 days'))
     ];
 }
+
+if (isChiefFSES()) {
+    // Chief FSES: no defects, scheduled for future, and awaiting recommendation
+    $where[] = [
+        'column' => 'has_Defects',
+        'operator' => '=',
+        'value' => 0
+    ];
+    // Scheduled date must be greater than current day
+    $where[] = [
+        'column' => 'scheduled_date',
+        'operator' => '>',
+        'value' => date('Y-m-d')
+    ];
+    // Awaiting recommendation approval
+    $where[] = [
+        'column' => 'hasRecoApproval',
+        'operator' => '=',
+        'value' => 0
+    ];
+}
+
+if (isFireMarshall()) {
+    // Fire Marshal: no defects, scheduled for future, and awaiting final approval
+    $where[] = [
+        'column' => 'has_Defects',
+        'operator' => '=',
+        'value' => 0
+    ];
+    // Scheduled date must be greater than current day
+    $where[] = [
+        'column' => 'scheduled_date',
+        'operator' => '>',
+        'value' => date('Y-m-d')
+    ];
+    // Awaiting final approval
+    $where[] = [
+        'column' => 'hasFinalApproval',
+        'operator' => '=',
+        'value' => 0
+    ];
+}
+
 
 // Add search conditions if provided
 if (!empty($search)) {

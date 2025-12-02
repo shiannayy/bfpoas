@@ -1,3 +1,6 @@
+<!-- Argesta Font CDN -->
+<link href="https://fonts.googleapis.com/css2?family=Argesta:wght@400;700&display=swap" rel="stylesheet">
+
 <div class="container-fluid g-1 m-0 px-0" style="margin-top:60px; min-height:720px;">
     <div class="row">
       <div class="col-12">
@@ -7,8 +10,8 @@
                    <div class="position-relative">
                   <img src="../assets/img/banner/bfp-oas-bldg.jpg" class="d-block w-100 mobile-carousel-img" alt="...">
 
-                  <div class="p-5 bg-light bg-opacity-75 rounded position-absolute top-50 start-50 translate-middle w-75 shadow-sm border-0">
-                        <span class="fnt-argesta"> <span class="text-navy-dark mb-0 fw-bold display-1">Fire Inspection</span><br> <small class="text-navy mt-0 pt-0 display-5">System</small></span>
+                  <div class="p-5 bg-light bg-opacity-75 rounded position-absolute top-50 start-50 translate-middle w-75 shadow-sm border-0"> 
+                            <span class="fnt-argesta text-navy-dark mb-0 fw-bold display-1">Fire Safety Inspection System</span>                        
                   </div>
                 </div>
             </div>
@@ -61,3 +64,9 @@
       </div>
     </div>
   </div>
+
+<style>
+  .fnt-argesta {
+    font-family: 'Argesta', serif;
+  }
+</style>

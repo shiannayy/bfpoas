@@ -66,7 +66,7 @@ if (isset($_SESSION['user_id'])) {
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a id="inspectorLogout" class="nav-link" href="../pages/logout_process.php">
+                    <a id="inspectorLogout" class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">
                     <?= getIcon("logout") ?>   
                     <small class="d-inline d-lg-none d-md-none">LOGOUT</small>
                     </a>
