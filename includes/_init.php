@@ -1061,11 +1061,12 @@ function startInspection($schedule_id, $inspector_id, $user_id) {
     error_log("DEBUG: Attempting to insert inspection data: " . json_encode($data));
 
     if (insert_data("inspections", $data)) {
-        error_log("DEBUG: Insert successful, fetching new inspection");
         $new = select("inspections", ["schedule_id" => $schedule_id], null, 1);
+        $sched = select("inspection_schedule", ["schedule_id" => $schedule_id], null, 1);
+sys_log("Inspection started: for " . $sched[0]['order_number'] . " by Inspector " . $sched[0]['to_officer'], 'ins', $new[0]['inspection_id']);
         return $new ? $new[0] : null;
     } else {
-        error_log("ERROR: insert_data() failed for inspections table");
+        
         return null;
     }
 }
@@ -1451,8 +1452,15 @@ function completeInspection ($inspection_id, $hasdefects=null, $reference_no=nul
              "reference_no" => $reference_no
             ];
     $where = ["inspection_id" => $inspection_id ];
+
+
+
     if($existing){
         return update_data("inspections", $data, $where);
+        
+        $new = select("inspections", ["inspection_id" => $inspection_id], null, 1);
+        $sched = select("inspection_schedule", ["schedule_id" => $new[0]['schedule_id']], null, 1);
+         sys_log("Inspection Completed for " . $sched[0]['order_number'] . " by Inspector " . $sched[0]['to_officer'], 'ins', $new[0]['inspection_id']);
     }
     else{
         return 0;

@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
     if ($inspection) {
         error_log("DEBUG: Inspection started successfully - ID: " . $inspection['inspection_id']);
+        
         echo json_encode([
             "success" => true,
             "message" => "Inspection started.",

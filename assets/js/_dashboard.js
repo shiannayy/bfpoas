@@ -124,7 +124,9 @@ function getRoleCounts(data, userRole) {
                
                 if (scheduledDate < oneDayAgo) {
                     counts.overdue_inspection++;
-                } else {
+                } 
+                
+                if (item.sched_HasClientAck === "Y" && item.sched_hasInspectorAck === 0) {
                     counts.pending_inspection++;
                 }
             }
@@ -132,7 +134,7 @@ function getRoleCounts(data, userRole) {
         else if (userRole === 'Chief FSES' || userRole === 'Recommending Approver') {
             // Chief FSES / Recommending Approver counts
             // Pending Schedule Acknowledgement
-            if (item.sched_HasClientAck === 1 && item.sched_hasInspectorAck === 1 && item.sched_hasRecommendingApproval === 0) {
+            if (item.sched_HasClientAck === "Y" && item.sched_hasInspectorAck === 1 && item.sched_hasRecommendingApproval === 0) {
                 counts.pending_ack++;
             }
             if (item.sched_hasRecommendingApproval) {
