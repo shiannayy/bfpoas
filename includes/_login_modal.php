@@ -37,7 +37,7 @@
         </form>
       </div>
       <div class="modal-footer bg-light d-flex align-content-center">
-        <div id="loginfo" class="alert py-1 d-none"></div>
+        <div id="loginfo" class="badge py-1 d-none"></div>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
       </div>
     </div>

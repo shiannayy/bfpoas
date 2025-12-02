@@ -26,7 +26,7 @@ $(document).ready(function() {
     // Show loading message
     $loginfo
       .removeClass()
-      .addClass("alert alert-info")
+      .addClass("badge bg-navy-dark text-light")
       .html("Authenticating... Please wait. " + firetruck)
       .show();
     
@@ -55,7 +55,7 @@ $(document).ready(function() {
 
           $loginfo
             .removeClass()
-            .addClass("alert alert-success")
+            .addClass("badge bg-navy text-light")
             .html(response.message + firetruck);
           
           // Redirect after a short delay
@@ -65,14 +65,14 @@ $(document).ready(function() {
         } else {
           $loginfo
             .removeClass()
-            .addClass("alert alert-danger")
+            .addClass("badge bg-danger text-light")
             .html(response.message);
         }
       },
       error: function() {
         $loginfo
           .removeClass()
-          .addClass("alert alert-danger")
+          .addClass("badge bg-danger text-light")
           .html("Something went wrong. Please try again.");
       }
     });
