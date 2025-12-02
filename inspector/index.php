@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fire Inspection System</title>
+    <title>Fire Safety Inspection System</title>
 
     <!-- Bootstrap CSS -->
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
@@ -60,59 +60,18 @@
 
 <body class="d-flex flex-column min-vh-100">
     <main class="flex-grow-1">
-        <!-- Static Top Navbar -->
+        
         <?php include_once "../includes/_nav_ins.php";
-        
-        
         if(!isset($_GET['page'])){
             include_once "app_nav.php";
             ?>
-                  <div class="container">
-                    <div class="row mb-3">
-                        <div class="col-4">
-                           <div class="card border-0 shadow shadow-lg h-100">
-                               <div class="card-body">
-                                    <canvas id="inspectionChartMonth">
-                                        <div class="loadcontainer"></div>
-                                    </canvas>
-                                    <br>
-                               </div>
-                           </div>
-                        </div>
-                        <div class="col-8 align-content-middle">
-                           <div class="card border-0 shadow shadow-lg h-100">
-                               <div class="card-body">
-                            <canvas id="inspectionChartWeek">
-                                <div class="spinner-border" role="status"> <span class="visually-hidden">Loading...</span> </div>
-                            </canvas>  
-                               </div>
-                           </div>
-                        </div>
-                    </div>
+            <!-- Static Top Navbar -->
+         <div class="container">
+            <div class="row" id="counts">
 
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="card border-0 shadow shadow-lg h-100">
-                                <div class="card-body">
-                                    <canvas id="ScheduledInspectionByMonth">
-                                        <div class="loadcontainer"></div>
-                                    </canvas>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="card border-0 shadow shadow-lg h-100">
-                                <div class="card-body">
-                                    <canvas id="ScheduledInspectionByWeek">
-                                        <div class="spinner-border"><span class="visually-hidden">Loading...</span></div>
-                                    </canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                </div>
+            </div>
+         </div>
+                
         <?php }
         else{
             switch($_GET['page']){
@@ -170,6 +129,7 @@
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/admin_charts.js"></script>
     <script src="../assets/js/navbar.js"></script>
+    <script src="../assets/js/_dashboard.js"></script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script> -->
  
     <?php if(isset($_GET['page'])){

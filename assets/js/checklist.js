@@ -8,6 +8,30 @@ document.onreadystatechange = function () {
             $("#checklistAccordion").removeClass("d-none").hide().fadeIn(20);
         });
     }
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+
+//  function showTemporaryTooltips(selectors, duration = 10000) {
+//     $(selectors).each(function() {
+//         const $element = $(this);
+        
+//         // Check if element is visible and not hidden by d-none or other means
+//         if ($element.is(':visible') && !$element.hasClass('d-none')) {
+//             $element.tooltip({
+//                 trigger: 'focus'
+//             }).tooltip('show');
+            
+//             setTimeout(function() {
+//                 $element.tooltip('hide');
+//             }, duration);
+//         }
+//     });
+// }
+
+// // Usage for multiple elements
+// showTemporaryTooltips('.tooltips', 10000);
+
 };
 
 /**
@@ -28,7 +52,7 @@ function getOptions(itemId, inputType, targetDropdown) {
 
         case 'checkbox':
             allowedCriteria = `
-             <option disabled>-SELECT-</option>
+             <option selected >-SELECT-</option>
              <option value="yes_no">Either Yes or No</option>
              `;
             break;
@@ -36,7 +60,7 @@ function getOptions(itemId, inputType, targetDropdown) {
         case 'text':
         case 'textarea':
             allowedCriteria = `
-            <option disabled>-SELECT-</option>
+            <option selected>-SELECT-</option>
             <option value="textvalue">Compare Text Value</option>
             `
             ;
@@ -44,7 +68,7 @@ function getOptions(itemId, inputType, targetDropdown) {
 
         case 'number':
             allowedCriteria = `
-                <option disabled>-SELECT-</option>
+                <option selected >-SELECT-</option>
                 <option value="range">Set Min - Max (Range)</option>
                 <option value="min_val">Set Minimum Value</option>
                 <option value="max_val">Set Maximum Value</option>
@@ -52,22 +76,34 @@ function getOptions(itemId, inputType, targetDropdown) {
             break;
 
         case 'date':
-            allowedCriteria = `<option disabled>-SELECT-</option>
+            allowedCriteria = `<option selected>-SELECT-</option>
             <option value="days">Max Elapse No. of Days</option>`;
             break;
 
         case 'select':
-            // If targetDropdown param not provided, attempt to resolve common IDs
+            //if($(this).hasClass("edit-select-item")){
+                $(".tooltip-for-select-type[data-tooltip-id="+ itemId +"]").removeClass("d-none");
+                console.log("DEBUG: Showing tooltip for edit itemId " + itemId);
+            //}
+            //if($(this).hasClass("new-select-item")){
+                let compositeId = itemId;
+                $(".tooltip-for-new-select-type[data-new-select-composite-id="+ compositeId +"]").removeClass("d-none");
+                console.log("DEBUG: Showing tooltip for new item compositeId " + compositeId);
+            //}
+            
             if (!targetDropdown) {
                 targetDropdown = $("#editCriteriaSelect" + itemId);
                 if (!targetDropdown.length) {
                     targetDropdown = $("#criteria-add-" + itemId);
                 }
             }
-            
 
-            $(".add-select-form#"+ itemId).removeClass('d-none');
-            // AJAX load dynamic select options
+            //console.log("DEBUG: Loading select options for itemId " + itemId);
+            if((".add-select-form[data-sel-option-id="+ itemId + "]").length){
+                $(".add-select-form[data-sel-option-id="+ itemId +"]").removeClass("d-none").fadeIn(200);
+                console.log("DEBUG: Found add-select-form for itemId " + itemId);
+            }
+
             $.ajax({
                 url: "../includes/get_select_options.php",
                 type: "POST",
@@ -75,7 +111,7 @@ function getOptions(itemId, inputType, targetDropdown) {
                 dataType: "json",
                 success: function (res) {
 
-                    let html = `<option disabled>-SELECT-</option>`;
+                    let html = `<option selected>-SELECT-</option>`;
 
                     if (Array.isArray(res) && res.length > 0) {
                         res.forEach(opt => {
@@ -114,7 +150,6 @@ function getOptions(itemId, inputType, targetDropdown) {
                 }
             });
 
-            // stop here — AJAX will update dropdown
             return null;
 
         default:
@@ -137,6 +172,7 @@ $(document).ready(function () {
         const sectionId = $select.data("section");
         const compositeId = checklistId + "-" + sectionId;
         const inputType = $select.val();
+        console.log("compositeId: " + compositeId)
 
         const $criteriaDropdown = $("#criteria-add-" + compositeId);
         // Synchronous option HTML (if any)
@@ -183,10 +219,7 @@ $(document).ready(function () {
             }
             // show threshold fields based on saved or current value
             toggleThresholdFields(itemId, $criteriaDropdown.val());
-        } else {
-            // opts === null => AJAX path handled inside getOptions and will call toggleThresholdFields on success
-            // but we should still attempt to set saved if it exists after AJAX completes (handled in getOptions)
-        }
+        } 
     });
 });
 
@@ -239,7 +272,7 @@ $(document).on("change", ".edit-select-input-type", function () {
 $(document).on("change", ".criteria-select, .edit-criteria-select", function () {
     const $this = $(this);
     const idAttr = $this.attr("id") || "";
-    const dataItem = $this.data("item-id") || $this.data("checklist") || null;
+    //const dataItem = $this.data("item-id") || $this.data("checklist") || null;
 
     // Determine whether this is edit (id like editCriteriaSelect{itemId}) or add (criteria-add-{checklist}-{section})
     if (idAttr.indexOf("editCriteriaSelect") === 0) {
@@ -329,10 +362,13 @@ $(document).ready(function () {
     $(document).on("click", ".delete-option", function () {
         if (!confirm("Delete this option?")) return;
         let optionId = $(this).data("id");
+        let option_text = $(this).data("text") || "";
         $.post("../includes/delete_option.php", { option_id: optionId }, function (res) {
             if (res.success) {
-                alert("Option deleted!");
-                setTimeout(function(){ location.reload(); }, 3000);
+                showAlert(option_text + " deleted!");
+                $(".select-option-item[data-opt-id='" + optionId + "']").fadeOut().remove();
+                //setTimeout(function(){ location.reload(); }, 3000);
+
             } else {
                 alert("Error: " + res.message);
             }

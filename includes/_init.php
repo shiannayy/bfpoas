@@ -2017,6 +2017,12 @@ function getIcon( $type, $size = ["16", "16","px"]) {
                             <path d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/>
                         </svg>";
                 break;
+            case "logout":
+                return "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-door-open' viewBox='0 0 16 16'>
+                            <path d='M8.5 10c-.276 0-.5-.448-.5-1s.224-1 .5-1 .5.448.5 1-.224 1-.5 1'/>
+                            <path d='M10.828.122A.5.5 0 0 1 11 .5V1h.5A1.5 1.5 0 0 1 13 2.5V15h1.5a.5.5 0 0 1 0 1h-13a.5.5 0 0 1 0-1H3V1.5a.5.5 0 0 1 .43-.495l7-1a.5.5 0 0 1 .398.117M11.5 2H11v13h1V2.5a.5.5 0 0 0-.5-.5M4 1.934V15h6V1.077z'/>
+                        </svg>";
+                break;
             default: return;
         }
 }
@@ -2102,9 +2108,9 @@ function appNavBtn( $linkHref = "#", $icon = "menu", $label = NULL,  $externalEl
 
 
 
-function navBarBtn ($linkhref = '#', $icon = 'menu') {
+function navBarBtn ($linkhref = '#', $icon = 'menu', $label = NULL) {
     return ' <li class="nav-item">
-                    <a class="nav-link" href="' . $linkhref .'" data-link="home">' .  getIcon($icon, [20,20,'px']).'</a>
+                    <a class="nav-link" href="' . $linkhref .'" data-link="home">' .  getIcon($icon, [20,20,'px']) . ' <small class="d-lg-none d-md-none d-inline">' . $label .'</small>' .'</a>
             </li>';
 }
 

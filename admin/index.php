@@ -7,7 +7,7 @@ enforceRoleAccess(['administrator']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fire Inspection System</title>
+    <title>Fire Safety Inspection System</title>
 
     <!-- Bootstrap CSS -->
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
@@ -53,6 +53,11 @@ enforceRoleAccess(['administrator']);
         if(!isset($_GET['page'])){
             include_once "app_nav.php";
             ?>
+                <div class="container mb-3">
+                    <div class="row" id="counts">
+
+                    </div>
+                </div>
 
                 <div class="container">
                     <div class="row" id="chartsContainer">
@@ -117,6 +122,7 @@ enforceRoleAccess(['administrator']);
     <!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
     
     <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/_dashboard.js"></script>
     <script src="../assets/js/admin_charts.js"></script>
     
     <script src="../assets/js/navbar.js"></script>

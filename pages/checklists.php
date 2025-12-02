@@ -7,11 +7,11 @@ require_once "../includes/_init.php";
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="passwordModalLabel">Confirm Deletion</h5>
+                <h5 class="modal-title" id="passwordModalLabel">Confirm <action></action></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete this item? This action cannot be undone.</p>
+                <p>Are you sure you want to <action></action> this item? This action cannot be undone.</p>
                 <div class="mb-3">
                     <label for="passwordInput" class="form-label">Enter your password to confirm:</label>
                     <input type="password" class="form-control" id="passwordInput" placeholder="Enter your password">
@@ -23,7 +23,7 @@ require_once "../includes/_init.php";
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete Item</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn"><action></action> Item</button>
             </div>
         </div>
     </div>
@@ -60,28 +60,27 @@ require_once "../includes/_init.php";
 
                 <!-- CHECKLIST LEVEL -->
                 <div class="container-fluid card border-0 shadow mb-1">
-                    <div class="card-header" id="heading-<?php echo $chklist['checklist_id']; ?>">
-                        <h5 class="fw-bold">
+                    <div class="card-header my-0 py-0" id="heading-<?php echo $chklist['checklist_id']; ?>">
+                        <h5 class="fw-bold text-navy">
                             <?php echo htmlspecialchars($chklist['fsed_code'] . " - " . $chklist['title']); ?>
                         </h5>
                     </div>
-                    <div class="card-body">
-
+                    <div class="card-body p-0">
                         <!-- ADD SECTION FORM -->
-                        <div class="card mb-3" id="forSection">
+                        <div class="card mb-3 mt-0" id="forSection">
                             <div class="card-header bg-navy text-gold">
                                 <small class="small">+ Section</small>
                             </div>
                             <div class="card-body">
                                 <form class="addSectionForm" data-checklist="<?php echo $chklist['checklist_id']; ?>">
                                     <div class="row g-2 align-items-center">
-                                        <div class="col-10">
+                                        <div class="col-9">
                                             <input type="text" name="section_name" class="form-control form-control-sm"
                                                    placeholder="New Section" required>
                                         </div>
-                                        <div class="col-2 d-flex">
+                                        <div class="col-3 d-flex d-inline justify-content-between align-items-center">
                                             <input type="hidden" name="checklist_id" value="<?php echo $chklist['checklist_id']; ?>">
-                                            <button type="submit" class="btn btn-sm btn-navy">+ <span class="d-none d-lg-inline">Add Section</span></button>
+                                            <button type="submit" class="btn btn-sm btn-navy ms-auto">+ Add Section</span></button>
                                             <button class="btn btn-sm btn-gold ms-2" type="reset">Reset</button>
                                         </div>
                                     </div>
@@ -95,30 +94,34 @@ require_once "../includes/_init.php";
                         if (!empty($sections)) {
                             foreach ($sections as $s) { //section list
                                 ?>
-                                <div class="section-block mb-3">
-                                    <h6 class="fw-bold text-uppercase text-navy">
+                                <div class="section-block">
+                                    <h5 class="fw-bold text-uppercase text-light bg-navy p-1 mb-0">
                                         <a href="#section<?php echo $s['checklist_section_id'].$s['checklist_id']; ?>"
                                            data-bs-toggle="collapse" role="button" aria-expanded="false"
                                            aria-controls="section<?php echo $s['checklist_section_id'].$s['checklist_id']; ?>"
-                                           class="btn btn-outline-navy me-2 py-1 px-2"><?php echo getIcon("checklist");?></a>
-                                        <?php echo htmlspecialchars($s['section']); ?>
-                                    </h6>
+                                           class="btn btn-outline-gold me-2 py-1 px-2"><?php echo getIcon("checklist");?>
+                                        </a>
+                                        SECTION: <?php echo htmlspecialchars($s['section']); ?>
+                                    </h5>
 
                                     <!-- ADD CHECKLIST ITEM FORM -->
                                     <div class="card mb-3 collapse show"
                                          id=section<?php echo $s['checklist_section_id'] . $s['checklist_id']; ?>>
                                         <div class="card-header bg-navy text-gold">
-                                            <small class="small">+ New Checklist Item</small>
+                                            <small class="card-title">+ Add New Checklist Item for  <?php echo htmlspecialchars($s['section']); ?></small>
                                         </div>
                                         <div class="card-body">
                                             <form class="addItemForm" data-checklist="<?php echo $chklist['checklist_id']; ?>" data-section="<?php echo $s['checklist_section_id']; ?>">
                                                 <div class="row g-2 align-items-center">
-                                                    <div class="col-3">
+                                                    <div class="mb-0 col-12 col-lg-2 d-flex justify-content-between align-items-center">
                                                         <input type="hidden" name="section" value="<?php echo $s['checklist_section_id']; ?>">
-                                                        <input type="text" name="item_text" class="form-control form-control-sm" placeholder="New item text" required>
+                                                        <label for="item_text<?= $chklist['checklist_id'] . $s['checklist_section_id']; ?>" class="small mb-0 form-label d-lg-none d-md-none">Checklist Name</label>
+                                                        <input type="text" id="item_text<?= $chklist['checklist_id'] . $s['checklist_section_id']; ?>" name="item_text" class="form-control form-control-sm" placeholder="New item text" required>
                                                     </div>
-                                                    <div class="col-3">
-                                                        <select name="input_type" class="form-select form-select-sm select-input-type" data-checklist="<?= $chklist['checklist_id']?>" data-section="<?= $s['checklist_section_id']?>">
+                                                    <div class="col-12 col-lg-2 d-flex justify-content-between align-items-center">
+                                                        <label for="input_type<?= $chklist['checklist_id'] . $s['checklist_section_id']; ?>" class="me-auto form-label small d-lg-none d-md-none">Input Type</label>
+                                                        <select id="input_type<?= $chklist['checklist_id'] . $s['checklist_section_id']; ?>" name="input_type" class="me-auto new-select-item form-select form-select-sm select-input-type" data-checklist="<?= $chklist['checklist_id']?>" data-section="<?= $s['checklist_section_id']?>">
+                                                            <option class="text-muted text-secondary">**INPUT TYPE**</option>
                                                             <option value="checkbox">checkbox</option>
                                                             <option value="text">text</option>
                                                             <option value="number">number</option>
@@ -126,20 +129,34 @@ require_once "../includes/_init.php";
                                                             <option value="textarea">textarea</option>
                                                             <option value="select">select</option>
                                                         </select>
+                                                        <span data-new-select-composite-id="<?php echo $chklist['checklist_id']; ?>-<?php echo $s['checklist_section_id']; ?>" class="tooltips input-group-text tooltip-for-new-select-type d-none rounded-0 border border-1 bg-gold text-light border-gold" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="tooltip" data-bs-title="You need to save this checklist item first to add new options to it."> <?= getIcon("patchcaution") ?> </span>
                                                     </div>
-                                                    <div class="col-1">
-                                                        <input type="text" name="unit_label" class="form-control form-control-sm" placeholder="Unit (optional)">
+                                                    <div class="col-12 col-lg-2 d-flex justify-content-between align-items-center">
+                                                         <label for="unit_label<?= $chklist['checklist_id'] . $s['checklist_section_id']; ?>" class="me-auto form-label small d-lg-none d-md-none">Unit Label</label>
+                                                        <input type="text" id="unit_label<?= $chklist['checklist_id'] . $s['checklist_section_id']; ?>" name="unit_label" class="form-control form-control-sm fst-italic" placeholder="meter, pcs, liters, etc.">
                                                     </div>
-                                                    <div class="col-3">
+                                                    <div class="col-12 col-lg-2 d-flex justify-content-between align-items-center gx-2">
+                                                        <label for="criteria-add-<?= $chklist['checklist_id'] . '-' . $s['checklist_section_id']; ?>" class="me-3 form-label small d-lg-none d-md-none">Criteria</label>
                                                         <select name="checklist_criteria"
                                                                 id="criteria-add-<?php echo $chklist['checklist_id'] . '-' . $s['checklist_section_id']; ?>"
                                                                 data-section="<?php echo $s['checklist_section_id'];?>"
                                                                 data-checklist="<?php echo $chklist['checklist_id']; ?>"
                                                                 class="form-select form-select-sm criteria-select"></select>
                                                     </div>
-                                                    <div class="col-1 text-center">
-                                                        <input id="crit-check-<?php echo $chklist['checklist_id']; ?>-<?php echo $s['checklist_section_id']; ?>" class="form-check-input border border-2 border-dark" type="checkbox" name="required" value="1">
-                                                        <label for="crit-check-<?php echo $chklist['checklist_id']; ?>-<?php echo $s['checklist_section_id']; ?>">Required?</label>
+                                                    <div class="col-12 col-lg-1 d-flex align-items-center">
+                                                        <input id="crit-check-<?php echo $chklist['checklist_id']; ?>-<?php echo $s['checklist_section_id']; ?>" 
+                                                                class="btn-check form-check-input border border-2 border-dark" 
+                                                                type="checkbox" 
+                                                                name="required" 
+                                                                value="1">
+                                                        <label class="rounded-0 btn btn-outline-navy align-content-center align-middle"
+                                                                for="crit-check-<?php echo $chklist['checklist_id']; ?>-<?php echo $s['checklist_section_id']; ?>">Required?</label>
+                                                        <span class="input-group-text rounded-0 border border-1 bg-navy text-light border-navy" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="tooltip" data-bs-title="if this is selected, this item should have a value during inspection or else it, inspection cannot be saved."> <?= getIcon("patchcaution");?> </span>
+                                                    </div>
+                                                    
+                                                    <div class="col-12 col-lg-2 text-end">
+                                                        <input type="hidden" name="checklist_id" value="<?php echo $chklist['checklist_id']; ?>">
+                                                        <button class="btn btn-sm btn-navy-dark">+ <span class="">Add Checklist Item</span></button>
                                                     </div>
 
                                                     <!-- THRESHOLD FIELDS -->
@@ -172,10 +189,6 @@ require_once "../includes/_init.php";
                                                         </div>
                                                     </div>
 
-                                                    <div class="mt-2 col-1 text-end">
-                                                        <input type="hidden" name="checklist_id" value="<?php echo $chklist['checklist_id']; ?>">
-                                                        <button class="btn btn-sm btn-primary">+ <span class="d-none d-lg-inline">Add Item</span></button>
-                                                    </div>
                                                 </div>
                                             </form>
                                         </div>
@@ -193,12 +206,12 @@ require_once "../includes/_init.php";
                                                 <ul class="mb-3 shadow list-group section-checklist-items" data-section-id=<?= $s['checklist_section_id'] ?>>
                                                     <li class="list-group-item bg-navy text-gold d-none d-md-inline d-lg-inline">
                                                         <div class="row g-2 align-items-center">
-                                                            <div class="col-3 text-center">Checklist Item</div>
-                                                            <div class="col-3 text-center">Input Type</div>
+                                                            <div class="col-2 text-center">Checklist Item</div>
+                                                            <div class="col-2 text-center">Input Type</div>
                                                             <div class="col-1 text-center">Unit</div>
                                                             <div class="col-2 text-center">Criteria</div>
                                                             <div class="col-1 text-center">Req?</div>
-                                                            <div class="col-2 text-center"></div>
+                                                            <div class="col-3 text-center"></div>
                                                         </div>
                                                     </li>
                                                     <?php foreach ($items as $item):
@@ -224,8 +237,9 @@ require_once "../includes/_init.php";
                                                                 break;
                                                             case 'textvalue':
                                                                 $criteria_text = $item['threshold_text_value'];
+                                                                break;
                                                             default:
-                                                                $criteria_text = $criteria;
+                                                                $criteria_text = '';
                                                         }
                                                          
                                                          $disabledClass = ($item['chk_item_status'] == 0 ? "bg-secondary bg-opacity-25" : '');
@@ -239,14 +253,14 @@ require_once "../includes/_init.php";
             
                                                             
                                                             <form class="editItemForm" data-item="<?= $item['item_id'] ?>">
-                                                                <div class="row g-2 align-items-center">
-                                                                    <div class="col-lg-3">
+                                                                <div class="row g-2">
+                                                                    <div class="col-lg-2">
                                                                         <input type="hidden" class="form-control" name="checklist_id" value="<?= $item['checklist_id'] ?>">
                                                                         <input type="hidden" class="form-control" name="section" value="<?= $s['checklist_section_id'] ?>">
                                                                         <input type="text" name="item_text" class=" <?= $disabledClass ?> form-control form-control-sm fw-bold" value="<?= htmlspecialchars($item['item_text']) ?>">
                                                                     </div>
-                                                                    <div class="col-lg-3">
-                                                                        <select name="input_type" data-item-id="<?= $item['item_id']?>" class=" <?= $disabledClass ?> form-select form-select-sm edit-select-input-type">
+                                                                    <div class="col-lg-2 d-flex">
+                                                                        <select name="input_type" data-item-id="<?= $item['item_id']?>" class=" <?= $disabledClass ?> form-select form-select-sm edit-select-item edit-select-input-type">
                                                                             <?php
                                                                             $types = ['checkbox','text','number','date','select'];
                                                                             foreach($types as $type) {
@@ -255,6 +269,7 @@ require_once "../includes/_init.php";
                                                                             }
                                                                             ?>
                                                                         </select>
+                                                                        <span data-tooltip-id="<?= $item['item_id'] ?>" class="tooltips input-group-text tooltip-for-select-type d-none rounded-0 border border-1 bg-gold text-light border-gold" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="tooltip" data-bs-title="Add Options below, only 1 of them can be the criteria"> <?= getIcon("patchcaution")?> </span>
                                                                     </div>
                                                                     <div class="col-lg-1">
                                                                         <input type="text" name="unit_label" class="<?= $disabledClass ?> form-control form-control-sm" value="<?= htmlspecialchars($item['unit_label']) ?>">
@@ -262,29 +277,30 @@ require_once "../includes/_init.php";
                                                                     <div class="col-lg-2">
                                                                         <select name="checklist_criteria" id="editCriteriaSelect<?= $item['item_id']?>" class="<?= $disabledClass ?> form-select form-select-sm edit-criteria-select" data-item-id="<?= $item['item_id']?>" data-saved="<?= $item['checklist_criteria']?>"></select>
                                                                     </div>
-                                                                    <div class="col-lg-1 text-center">
-                                                                        <label for="isRequired<?= $item['item_id'] ?>" class="d-lg-none ">Required?</label>
-                                                                        <input type="checkbox" id="isRequired<?= $item['item_id'] ?>" name="required" value="1" <?= $item['required'] ? 'checked' : '' ?>>
+                                                                    <div class="col-lg-1 d-flex">
+                                                                        <input type="checkbox" class="btn-check" id="isRequired<?= $item['item_id'] ?>" name="required" value="1" <?= $item['required'] ? 'checked' : '' ?>>
+                                                                        <label class="rounded-0 btn btn-sm btn-outline-navy align-content-center align-middle" for="isRequired<?= $item['item_id'] ?>" class="d-lg-none ">Required?</label>
+                                                                        <span class="input-group-text rounded-0 border border-1 bg-navy text-light border-navy" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="tooltip" data-bs-title="if this is selected, this item should have a value during inspection or else it, inspection cannot be saved."> ! </span>
                                                                     </div>
-                                                                    <div class="col-lg-2 text-end d-flex">
-                                                                        <button type="submit" class="btn btn-sm btn-navy mx-auto">
+                                                                    <div class="col-lg-3 position-relative d-flex">
+                                                                        <button type="submit" class="btn btn-sm btn-navy ms-auto">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-floppy" viewBox="0 0 16 16">
                                                                                 <path d="M11 2H9v3h2z"/>
                                                                                 <path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v4.5A1.5 1.5 0 0 1 11.5 7h-7A1.5 1.5 0 0 1 3 5.5V1H1.5a.5.5 0 0 0-.5.5m3 4a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V1H4zM3 15h10v-4.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5z"/>
                                                                             </svg>
                                                                             <b class="">Save</b>
                                                                         </button>
-                                                                        <div class="dropdown">
-                                                                                  <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"></a>
-                                                                                  <ul class="dropdown-menu">
-                                                                                    
-                                                                                    <?php if($item['chk_item_status'] == 1) { ?>
-                                                                                    <li><a class="dropdown-item btn-confirm-delete disable-only" hhref="?page=view_checklists&checklist_id=<?= $item['checklist_id'] ?>" data-delete-item="<?= $item['item_id'] ?>">Disable</a></li>
-                                                                                    <?php } else { ?>
-                                                                                    <li><a class="dropdown-item btn-confirm-delete enable-only" hhref="?page=view_checklists&checklist_id=<?= $item['checklist_id'] ?>" data-delete-item="<?= $item['item_id'] ?>" >Enable </a></li>
-                                                                                        <?php }?>
-                                                                                    <li class="text-bg-danger"><a class="dropdown-item btn-confirm-delete" href="?page=view_checklists&checklist_id=<?= $item['checklist_id'] ?>" data-delete-item="<?= $item['item_id'] ?>">Delete</a></li>
-                                                                                  </ul>
+                                                                        <div class="dropdown ms-1">
+                                                                                  <a class="btn btn-outline-navy text-dark dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"></a>
+                                                                                    <ul class="dropdown-menu">
+                                                                                        
+                                                                                        <?php if($item['chk_item_status'] == 1) { ?>
+                                                                                        <li><a class="dropdown-item btn-confirm-delete disable-only" hhref="?page=view_checklists&checklist_id=<?= $item['checklist_id'] ?>" data-delete-item="<?= $item['item_id'] ?>">Disable</a></li>
+                                                                                        <?php } else { ?>
+                                                                                        <li><a class="dropdown-item btn-confirm-delete enable-only" hhref="?page=view_checklists&checklist_id=<?= $item['checklist_id'] ?>" data-delete-item="<?= $item['item_id'] ?>" >Enable </a></li>
+                                                                                            <?php }?>
+                                                                                        <li class="text-bg-danger"><a class="dropdown-item btn-confirm-delete" href="?page=view_checklists&checklist_id=<?= $item['checklist_id'] ?>" data-delete-item="<?= $item['item_id'] ?>">Delete</a></li>
+                                                                                    </ul>
                                                                         </div>
                                                                     </div>
 
@@ -330,8 +346,8 @@ require_once "../includes/_init.php";
                                                                 "item_id" => $item['item_id']
                                                             ], ["option_value" => "ASC"]);
                                                             ?>
-                                                            <div class="<?= $disabledClass ?> card m-0 border-1 shadow-sm d-none add-select-form" id="<?= $item['item_id'] ?>">
-                                                                <div class="card-header border-0 my-0"><span class="small">Add Select Option</span></div>
+                                                            <div class="card m-0 border-1 shadow-sm d-none add-select-form" id="<?= $item['item_id'] ?>" data-sel-option-id="<?= $item['item_id'] ?>">
+                                                                <div class="card-header border-0 my-0 bg-navy text-gold"><span class="fw-bold small">+ Add Select Option</span></div>
                                                                 <div class="card-body border-0">
                                                                     <form class="addOptionForm mt-2" data-item="<?php echo $item['item_id']; ?>">
                                                                         <div class="input-group input-group-sm">
@@ -351,10 +367,10 @@ require_once "../includes/_init.php";
                                                                     <ul class="d-inline my-0">
                                                                         <li class="decoration-none d-inline my-0 p-0">Options: </li>
                                                                         <?php foreach ($options as $opt) { ?>
-                                                                            <li class="decoration-none d-inline my-0 p-0">
+                                                                            <li class="decoration-none d-inline my-0 p-0 select-option-item" data-opt-id="<?php echo $opt['option_id']; ?>">
                                                                                 <span class="badge rounded-pill bg-navy text-light ps-2 pt-2">
                                                                                     <?php echo htmlspecialchars($opt['option_value']); ?>
-                                                                                    <button class="btn btn-sm decoration-none delete-option m-0 p-0 text-small" data-id="<?php echo $opt['option_id']; ?>">
+                                                                                    <button class="btn btn-sm decoration-none delete-option m-0 p-0 text-small" data-text="<?= $opt['option_value']?>" data-id="<?= $opt['option_id'] ?>">
                                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x mb-1 text-light" viewBox="0 0 16 16">
                                                                                             <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" /></svg>
                                                                                     </button>

@@ -1,13 +1,32 @@
 const roleCharts = {
     "Admin_Assistant": [
         { 
+            id: 'progressDistributionChart', 
+            table: 'view_fsic_progress',
+            type: 'doughnut', 
+            title: 'FSIC Applications Progress Distribution',
+            group: 'progress',
+            renderer: 'status',
+            colSize: 'col-12 col-sm-12 col-md-6 col-lg-6'
+        },
+        {
             id: 'statusDistributionChart1', 
             table: 'view_inspection_schedule',
             type: 'doughnut', 
             title: 'Scheduled Inspections by Progress',
             group: 'progress',
             renderer: 'status',
-            colSize: 'col-6'
+            colSize: 'col-12 col-sm-6 col-md-6 col-lg-6'
+        },
+        { 
+            id: 'ScheduledInspectionByWeek', 
+            table: 'view_uncomplete_inspection_schedule', 
+            filter: 'Scheduled',
+            group: 'week', 
+            type: 'bar', 
+            title: 'Scheduled Inspections per Week',
+            renderer: 'week',
+            colSize: 'col-12 col-sm-12 col-md-6 col-lg-6'
         },
         { 
             id: 'statusDistributionChart2', 
@@ -16,70 +35,16 @@ const roleCharts = {
             title: 'Scheduled Inspections by Status',
             group: 'status',
             renderer: 'status',
-            colSize: 'col-6'
-        },
-        
-        { 
-            id: 'ScheduledInspectionByWeek', 
-            table: 'view_uncomplete_inspection_schedule', 
-            filter: 'Scheduled',
-            group: 'week', 
-            type: 'doughnut', 
-            title: 'Scheduled Inspections per Week',
-            renderer: 'status',
-            colSize: 'col-6'
+            colSize: 'col-12 col-sm-12 col-md-6 col-lg-6'
         },
         { 
             id: 'inspectionChartMonth', 
             table: 'view_uncomplete_inspections', 
-            filter: 'In Progress',
             group: 'month', 
             type: 'line', 
             title: 'In Progress Inspections per Month',
-            renderer: 'progress',
-            colSize: 'col-6'
-        },
-        { 
-            id: 'inspectionChartWeek', 
-            table: 'view_uncomplete_inspections', 
-            filter: 'In Progress',
-            group: 'week', 
-            type: 'bar', 
-            title: 'In Progress Inspections per Week',
-            renderer: 'progress',
-            colSize: 'col-12'
-        },
-        { 
-            id: 'ScheduledInspectionByMonth', 
-            table: 'view_uncomplete_inspection_schedule', 
-            filter: 'Scheduled',
-            group: 'month', 
-            type: 'line', 
-            title: 'Scheduled Inspections per Month',
-            renderer: 'progress',
-            colSize: 'col-12'
-        }
-    ],
-    "Recommending Approver": [
-        { 
-            id: 'ScheduledInspectionByMonth', 
-            table: 'view_uncomplete_inspection_schedule', 
-            filter: 'Scheduled',
-            group: 'month', 
-            type: 'line', 
-            title: 'Scheduled Inspections per Month',
-            renderer: 'progress',
-            colSize: 'col-12'
-        },
-        { 
-            id: 'ScheduledInspectionByWeek', 
-            table: 'view_uncomplete_inspection_schedule', 
-            filter: 'Scheduled',
-            group: 'week', 
-            type: 'pie', 
-            title: 'Scheduled Inspections per Week',
-            renderer: 'status',
-            colSize: 'col-6'
+            renderer: 'month',
+            colSize: 'col-12 col-sm-12 col-md-12 col-lg-12'
         }
     ]
 };
@@ -87,14 +52,7 @@ const roleCharts = {
 $(document).ready(function() {
     checkSession(function (user) {
         const userRoleLabel = getRoleLabel(user.role, user.subrole);
-
-        if (!roleCharts[userRoleLabel]) {
-            showNoChartsMessage();
-            return;
-        }
-
         createChartContainers(roleCharts[userRoleLabel]);
-        
         roleCharts[userRoleLabel].forEach(chart => {
             createChart(
                 chart.id,
@@ -119,7 +77,7 @@ function createChartContainers(chartConfigs) {
         const chartHtml = `
             <div class="${colSize} mb-3">
                 <div class="card border-0 shadow shadow-lg h-100">
-                    <div class="card-body">
+                    <div class="card-body chart-body">
                         <canvas id="${config.id}">
                             <div class="spinner-border"><span class="visually-hidden">Loading...</span></div>
                         </canvas>
@@ -132,18 +90,6 @@ function createChartContainers(chartConfigs) {
     });
     
     chartsContainer.empty().append(row);
-}
-
-function showNoChartsMessage() {
-    const chartsContainer = $('#chartsContainer');
-    chartsContainer.html(`
-        <div class="col-12 mb-3">
-            <div class="alert alert-info text-center">
-                <h4>No charts available for your role</h4>
-                <p class="mb-0">Chart is not yet available for your role.</p>
-            </div>
-        </div>
-    `);
 }
 
 function createChart(elementId, tableName, filter, groupBy, chartType, chartTitle, rendererType = 'progress') {
@@ -177,7 +123,7 @@ function createChart(elementId, tableName, filter, groupBy, chartType, chartTitl
 
             console.log(`📈 Processed chart data for ${elementId}:`, chartData);
 
-            if (rendererType === 'status') {
+            if (rendererType === 'status' || rendererType === 'progress') {
                 renderStatusPieChart(
                     elementId,
                     chartData.labels,
@@ -499,6 +445,7 @@ function groupByColumn(data, columnName, filter = '') {
         return item.status === filter || item.progress === filter;
     });
     
+    
     filteredData.forEach(item => {
         const value = item[columnName] || 'Unknown';
         counts[value] = (counts[value] || 0) + 1;
@@ -506,6 +453,7 @@ function groupByColumn(data, columnName, filter = '') {
 
     const labels = Object.keys(counts);
     const values = Object.values(counts);
+    console.log(`FSIC Grouped by ${columnName}:`, { labels, values });
     
     return {
         labels: labels,
@@ -523,9 +471,9 @@ function groupByTime(data, timeUnit, filter = '') {
     });
 
     filteredData.forEach(item => {
-        if (!item.created_at) return;
+        if (!item.created_at  && !item.started_at) return;
         
-        const date = new Date(item.created_at);
+        const date = new Date(item.created_at || item.started_at);
         let key;
 
         switch (timeUnit) {
@@ -571,21 +519,22 @@ function groupByTime(data, timeUnit, filter = '') {
 function generateColors(labels, columnType) {
     const colorMaps = {
         status: {
-            'Completed': '#28a745',
-            'In Progress': '#ffc107',
-            'Scheduled': '#17a2b8',
-            'Pending': '#6c757d',
-            'Cancelled': '#dc3545',
-            'Approved': '#28a745',
-            'Rejected': '#dc3545',
-            'Unknown': '#6c757d'
+            'Completed': '#48b14dff',
+            'In Progress': '#e4be14ff',
+            'Scheduled': '#94a388ff',
+            'Pending': '#fab957ff',
+            'Cancelled': '#881F2B',
+            'Approved': '#006d2c',
+            'Rejected': '#752a3dff',
+            'Unknown': '#353535ff'
         },
         progress: {
-            'Client Acknowledged': '#6c757d',
-            'Inspector Acknowledged': '#17a2b8',
-            'Recommended': '#ffc107',
-            'Approved': '#28a745',
-            'Pending': '#dc3545'
+            'Client Acknowledged': '#6c757d'
+           ,'Inspector Acknowledged' : '#5c7aF5'
+           , 'Recommended' : '#f55c7a'
+           , 'Approved' : '#55d6c2'
+           , 'Claimed' : '#28a745'
+           , 'Pending' : '#ff8c00'
         }
     };
 
@@ -743,13 +692,14 @@ const chartStyles = `
     z-index: 10;
     border-radius: 0.375rem;
 }
-.card-body {
+.chart-body {
     position: relative;
     min-height: 300px;
 }
-.card-body canvas {
+.chart-body canvas {
     width: 100% !important;
     height: 100% !important;
+    max-height: 300px;
 }
 `;
 
