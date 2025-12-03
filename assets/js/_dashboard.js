@@ -152,15 +152,12 @@ function getRoleCounts(data, userRole) {
         else if (userRole === 'Fire Marshall' || userRole === 'Approver') {
             // Fire Marshal / Approver counts
             // Pending Schedule Acknowledgement
-            if (item.sched_hasFinalApproval === 0 && item.sched_hasRecommendingApproval === 1 && scheduledDate <= oneDayAgo ) 
+            if (item.sched_hasFinalApproval === 0 && item.sched_hasRecommendingApproval === 1) 
             {
                 counts.pending_ack++;
             } 
-            else if (item.sched_hasFinalApproval === 1){
+            if (item.sched_hasFinalApproval === 1){
                 counts.complete_ack++;
-            }
-            else{
-                // Do nothing
             }
             
             // Pending/Completed FSIC Final Approval
