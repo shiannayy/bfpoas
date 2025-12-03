@@ -744,6 +744,21 @@ function select_join_bit(
     $values = [];
     $types = "";
 
+    // Helper function to properly quote column names
+    $quoteColumn = function($col) {
+        // If it contains a dot (table.column), quote each part separately
+        if (strpos($col, '.') !== false) {
+            $parts = explode('.', $col);
+            return '`' . implode('`.`', $parts) . '`';
+        }
+        // If already has backticks or is *, leave it alone
+        if (strpos($col, '`') !== false || $col === '*') {
+            return $col;
+        }
+        // Otherwise, wrap in backticks
+        return '`' . $col . '`';
+    };
+
     // 🧩 Base SELECT clause
     $main_table = $tables[0] ?? '';
     $columns_sql = implode(", ", $columns);
@@ -768,7 +783,7 @@ function select_join_bit(
     }
 
     // 🧠 WHERE clause builder with nested groups
-    $buildWhere = function ($conds, $parentLogic = 'AND') use (&$values, &$types, &$buildWhere) {
+    $buildWhere = function ($conds, $parentLogic = 'AND') use (&$values, &$types, &$buildWhere, $quoteColumn) {
         $parts = [];
 
         foreach ($conds as $cond) {
@@ -788,10 +803,13 @@ function select_join_bit(
 
             if (!$column) continue;
 
+            // Properly quote the column name (handles table.column and simple column)
+            $quotedColumn = $quoteColumn($column);
+
             // IN / NOT IN
             if (in_array($operator, ['IN', 'NOT IN']) && is_array($value)) {
                 $placeholders = implode(',', array_fill(0, count($value), '?'));
-                $expr = "$column $operator ($placeholders)";
+                $expr = "$quotedColumn $operator ($placeholders)";
                 foreach ($value as $v) {
                     $values[] = $v;
                     $types .= is_numeric($v) ? 'i' : 's';
@@ -799,11 +817,11 @@ function select_join_bit(
             }
             // IS NULL / IS NOT NULL
             elseif (in_array($operator, ['IS NULL', 'IS NOT NULL'])) {
-                $expr = "`$column` $operator";
+                $expr = "$quotedColumn $operator";
             }
             // Comparison / LIKE
             else {
-                $expr = "`$column` $operator ?";
+                $expr = "$quotedColumn $operator ?";
                 $values[] = $value;
                 $types .= is_numeric($value) ? 'i' : 's';
             }
@@ -826,7 +844,8 @@ function select_join_bit(
     if (!empty($order_by)) {
         $orders = [];
         foreach ($order_by as $col => $dir) {
-            $orders[] = "`$col` " . (strtoupper($dir) === 'DESC' ? 'DESC' : 'ASC');
+            $quotedCol = $quoteColumn($col);
+            $orders[] = "$quotedCol " . (strtoupper($dir) === 'DESC' ? 'DESC' : 'ASC');
         }
         $query .= " ORDER BY " . implode(", ", $orders);
     }
@@ -839,17 +858,25 @@ function select_join_bit(
     // ✅ Prepare + Bind + Execute
     $stmt = mysqli_prepare($CONN, $query);
     if (!$stmt) {
-        die("MySQL Prepare Error: " . mysqli_error($CONN));
+        error_log("MySQL Prepare Error: " . mysqli_error($CONN) . " - Query: " . $query);
+        return [];
     }
 
     if (!empty($values)) {
         mysqli_stmt_bind_param($stmt, $types, ...$values);
     }
 
-    mysqli_stmt_execute($stmt);
+    if (!mysqli_stmt_execute($stmt)) {
+        error_log("MySQL Execute Error: " . mysqli_stmt_error($stmt));
+        mysqli_stmt_close($stmt);
+        return [];
+    }
+
     $result = mysqli_stmt_get_result($stmt);
     if (!$result) {
-        die("MySQL Execution Error: " . mysqli_error($CONN));
+        error_log("MySQL Result Error: " . mysqli_error($CONN));
+        mysqli_stmt_close($stmt);
+        return [];
     }
 
     $data = [];
@@ -1457,7 +1484,7 @@ function completeInspection ($inspection_id, $hasdefects=null, $reference_no=nul
 
     if($existing){
         return update_data("inspections", $data, $where);
-        
+
         $new = select("inspections", ["inspection_id" => $inspection_id], null, 1);
         $sched = select("inspection_schedule", ["schedule_id" => $new[0]['schedule_id']], null, 1);
          sys_log("Inspection Completed for " . $sched[0]['order_number'] . " by Inspector " . $sched[0]['to_officer'], 'ins', $new[0]['inspection_id']);

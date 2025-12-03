@@ -161,7 +161,7 @@ function getRoleCounts(data, userRole) {
             }
             
             // Pending/Completed FSIC Final Approval
-            if (item.fsic_hasFinalApproval === 0) {
+            if (item.fsic_hasFinalApproval === 0 ) {
                 counts.pending_fsic_approval++;
             } 
             if (item.fsic_hasFinalApproval === 1){

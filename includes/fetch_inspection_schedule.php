@@ -8,78 +8,75 @@ if (!isset($_SESSION['user_id'], $_SESSION['role'])) {
     exit;
 }
 
-
 $loggedIn = isLoggedin();
 $user_id = $_SESSION['user_id'];
 $user_role = $_SESSION['role'];
 $user_subrole = $_SESSION['subrole'];
 $roleLabel = getRoleLabel($user_role, $user_subrole);
-$order = [];
 
 // ---------- MAIN TABLE ----------
-$main_table = ['inspection_schedule ins'];
+$main_table = ['inspection_schedule'];
 
 // ---------- SELECT FIELDS ----------
 $fields = [
-    'ins.created_at',
-    'ins.schedule_id',
-    'ins.order_number',
-    'ins.scheduled_date',
-    'ins.schedule_time',
-    'ins.preferredSchedule',
-    'ins.rescheduleReason',
-    'g.owner_id AS owner_id',
-    'g.owner_name AS gi_owner_name',
-    'u.full_name AS owner_full_name',
-    'ins.HasClientAck',
-    'ins.hasInspectorAck',
-    'ins.hasRecommendingApproval',
-    'ins.hasFinalApproval',
-    'inspector.full_name AS ins_full_name',
-    'ins.proceed_instructions',
-    'c.title AS checklist_title',
-    'ins.inspection_sched_status AS sched_status',
-    'ins.remarks AS sched_remarks',
-    'g.location_of_construction AS gi_location',
-    'i.has_defects as has_defects',
-    'i.status as Inspection_status',
-    'i.completed_at as completed_at',
-    'noi.noi_text as noi_desc',
-    'ins.fsic_purpose'
+    'inspection_schedule.created_at',
+    'inspection_schedule.schedule_id',
+    'inspection_schedule.order_number',
+    'inspection_schedule.scheduled_date',
+    'inspection_schedule.schedule_time',
+    'inspection_schedule.preferredSchedule',
+    'inspection_schedule.rescheduleReason',
+    'general_info.owner_id AS owner_id',
+    'general_info.owner_name AS gi_owner_name',
+    'users.full_name AS owner_full_name',
+    'inspection_schedule.HasClientAck',
+    'inspection_schedule.hasInspectorAck',
+    'inspection_schedule.hasRecommendingApproval',
+    'inspection_schedule.hasFinalApproval',
+    'inspection_schedule.to_officer AS ins_full_name',
+    'inspection_schedule.proceed_instructions',
+    'checklists.title AS checklist_title',
+    'inspection_schedule.inspection_sched_status AS sched_status',
+    'inspection_schedule.remarks AS sched_remarks',
+    'general_info.location_of_construction AS gi_location',
+    'inspections.has_defects as has_defects',
+    'inspections.status as Inspection_status',
+    'inspections.completed_at as completed_at',
+    'nature_of_inspection.noi_text as noi_desc',
+    'inspection_schedule.fsic_purpose'
 ];
 
 // ---------- JOINS ----------
 $joins = [
-    ['type' => 'INNER', 'table' => 'checklists c', 'on' => 'ins.checklist_id = c.checklist_id'],
-    ['type' => 'INNER', 'table' => 'general_info g', 'on' => 'ins.gen_info_id = g.gen_info_id'],
-    ['type' => 'LEFT', 'table' => 'users u', 'on' => 'g.owner_id = u.user_id'],
-    ['type' => 'LEFT', 'table' => 'users inspector', 'on' => 'ins.inspector_id = inspector.user_id'],
-    ['type' => 'LEFT', 'table' => 'inspections i', 'on' => 'ins.schedule_id = i.schedule_id'],
-    ['type' => 'LEFT', 'table' => 'nature_of_inspection noi', 'on' => 'ins.noi_id = noi.noi_id'],
-    
+    ['type' => 'INNER', 'table' => 'checklists', 'on' => 'inspection_schedule.checklist_id = checklists.checklist_id'],
+    ['type' => 'INNER', 'table' => 'general_info', 'on' => 'inspection_schedule.gen_info_id = general_info.gen_info_id'],
+    ['type' => 'LEFT', 'table' => 'users', 'on' => 'general_info.owner_id = users.user_id'],
+    //['type' => 'LEFT', 'table' => 'users', 'on' => 'inspection_schedule.inspector_id = inspector.user_id'],
+    ['type' => 'LEFT', 'table' => 'inspections', 'on' => 'inspection_schedule.schedule_id = inspections.schedule_id'],
+    ['type' => 'LEFT', 'table' => 'nature_of_inspection', 'on' => 'inspection_schedule.noi_id = nature_of_inspection.noi_id'],
 ];
 
-// ---------- UNIFIED WHERE CONDITIONS ----------
+// ---------- UNIFIED WHERE CONDITIONS (select_join_bit format) ----------
 $where = [];
 
 // --- Role-based filter
 switch ($roleLabel) {
     case 'Client':
-        $where[] = "g.owner_id = '$user_id'";
+        $where[] = ['column' => 'general_info.owner_id', 'operator' => '=', 'value' => $user_id, 'logic' => 'AND'];
         break;
     case 'Inspector':
-        $where[] = "inspector.user_id = '$user_id'";
-        $order += ["ins.hasInspectorAck" => "DESC"];
+        $where[] = ['column' => 'inspection_schedule.inspector_id', 'operator' => '=', 'value' => $user_id, 'logic' => 'AND'];
         break;
     case 'Recommending Approver':
-        $where[] = "ins.hasInspectorAck = 1";
-        //$where[] = "ins.scheduled_date >= CURDATE()";
-        $order += ["ins.hasRecommendingApproval" => "ASC"];
+        $where[] = ['column' => 'inspection_schedule.hasInspectorAck', 'operator' => '=', 'value' => 1, 'logic' => 'AND'];
+        //$where[] = ['column' => 'inspection_schedule.scheduled_date', 'operator' => '>', 'value' => date('Y-m-d'), 'logic' => 'AND'];
+        $where[] = ['column' => 'inspection_schedule.inspection_sched_status', 'operator' => 'NOT IN', 'value' => ['Archived', 'Cancelled'], 'logic' => 'AND'];
         break;
     case 'Approver':
-        $where[] = "ins.hasRecommendingApproval = 1";
-        //$where[] = "ins.scheduled_date >= CURDATE()";
-        $order += ["ins.hasFinalApproval" => "ASC"];
+        $where[] = ['column' => 'inspection_schedule.hasRecommendingApproval', 'operator' => '=', 'value' => 1, 'logic' => 'AND'];
+        // Exclude archived and cancelled schedules
+        //$where[] = ['column' => 'inspection_schedule.scheduled_date', 'operator' => '>', 'value' => date('Y-m-d'), 'logic' => 'AND'];
+        $where[] = ['column' => 'inspection_schedule.inspection_sched_status', 'operator' => 'NOT IN', 'value' => ['Archived', 'Cancelled'], 'logic' => 'AND'];
         break;
     case 'Admin_Assistant':
         // Admin sees all
@@ -93,38 +90,53 @@ switch ($roleLabel) {
 if (isset($_POST['search']) && !empty($_POST['search'])) {
     $rawSearch = trim($_POST['search']);
     $kw = '%' . $rawSearch . '%';
-    //$kw = mysqli_real_escape_string($CONN, $kw); // escape the final value
-    $where[] = "(ins.proceed_instructions LIKE '$kw' 
-             OR ins.order_number LIKE '$kw' 
-             OR g.building_name LIKE '$kw' 
-             OR g.owner_name LIKE '$kw'
-             OR ins.inspection_sched_status LIKE '$kw'
-             OR ins.scheduled_date LIKE '$kw')
-             ";
+    $where[] = [
+        'group' => [
+            ['column' => 'inspection_schedule.proceed_instructions', 'operator' => 'LIKE', 'value' => $kw, 'logic' => 'OR'],
+            ['column' => 'inspection_schedule.order_number', 'operator' => 'LIKE', 'value' => $kw, 'logic' => 'OR'],
+            ['column' => 'general_info.building_name', 'operator' => 'LIKE', 'value' => $kw, 'logic' => 'OR'],
+            ['column' => 'general_info.owner_name', 'operator' => 'LIKE', 'value' => $kw, 'logic' => 'OR'],
+            ['column' => 'inspection_schedule.inspection_sched_status', 'operator' => 'LIKE', 'value' => $kw, 'logic' => 'OR'],
+            ['column' => 'inspection_schedule.scheduled_date', 'operator' => 'LIKE', 'value' => $kw, 'logic' => 'OR']
+        ],
+        'logic' => 'AND'
+    ];
 }
 
-if(isset($_POST['schedule_id'])){
+if (isset($_POST['schedule_id'])) {
     $sched_id = intval($_POST['schedule_id'] ?? 0);
-    $where[] = "ins.schedule_id = '$sched_id'";
+    $where[] = ['column' => 'inspection_schedule.schedule_id', 'operator' => '=', 'value' => $sched_id, 'logic' => 'AND'];
 }
 
+// ---------- ORDER BY ----------
+$order_by = [];
 
+// Role-specific ordering (Pending items first)
+switch ($roleLabel) {
+    case 'Inspector':
+        $order_by['inspection_schedule.hasInspectorAck'] = 'ASC';  // 0 (pending) comes first
+        break;
+    case 'Recommending Approver':
+        $order_by['inspection_schedule.hasRecommendingApproval'] = 'ASC';  // 0 (pending) comes first
+        break;
+    case 'Approver':
+        $order_by['inspection_schedule.hasFinalApproval'] = 'ASC';  // 0 (pending) comes first
+        break;
+}
 
-$order += ['ins.scheduled_date' => 'DESC'];
-// --- Combine all
-$whereSQL = !empty($where) ? implode(' AND ', $where) : '';
+// Always sort by scheduled_date as secondary
+$order_by['inspection_schedule.scheduled_date'] = 'DESC';
 
-// ---------- ORDER & LIMIT ----------
-
+// ---------- LIMIT ----------
 $limit = 1000;
 
 // ---------- FETCH ----------
-$result = select_join(
+$result = select_join_bit(
     $main_table,
     $fields,
     $joins,
-    $whereSQL, 
-    $order,
+    $where,
+    $order_by,
     $limit
 );
 
@@ -136,5 +148,4 @@ echo json_encode([
     'count' => count($result),
     'data' => $result,
     'logged_in' => $loggedIn,
-    'whereSQL' => $whereSQL,
 ]);
