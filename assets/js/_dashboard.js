@@ -113,7 +113,7 @@ function getRoleCounts(data, userRole) {
          const scheduledDate = new Date(item.scheduled_date);
                 const today = new Date();
                 const oneDayAgo = new Date(today);
-                oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+                oneDayAgo.setDate(oneDayAgo.getDate() + 1);
                 
         if (userRole === 'Inspector') {
             // Inspector counts
