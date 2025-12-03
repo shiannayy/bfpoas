@@ -21,6 +21,9 @@ $main_table = ['inspection_schedule ins'];
 // Only columns checked by _dashboard.js are included
 $fields = [
     // Essential identifiers
+    'vi.inspection_status inspection_status',
+    'vi.hasRecoApproval fsic_hasRecoApproval',
+    'vi.hasFinalApproval fsic_hasFinalApproval',
         'ins.hasRecommendingApproval sched_hasRecommendingApproval',
     'ins.hasFinalApproval sched_hasFinalApproval',
     'ins.hasInspectorAck sched_hasInspectorAck',
@@ -40,9 +43,6 @@ $fields = [
     'vi.has_Defects has_defects',
     
     // Inspection status and FSIC approval flags
-    'vi.inspection_status inspection_status',
-    'vi.hasRecoApproval fsic_hasRecoApproval',
-    'vi.hasFinalApproval fsic_hasFinalApproval',
     'vi.completed_at'
 ];
 
