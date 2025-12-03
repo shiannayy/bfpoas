@@ -137,7 +137,7 @@ function getRoleCounts(data, userRole) {
             if (item.sched_hasRecommendingApproval === 0) {
                 counts.pending_ack++;
             }
-            if (item.sched_hasRecommendingApproval) {
+            if (item.sched_hasRecommendingApproval === 1) {
                 counts.complete_ack++;
             }
             
@@ -164,7 +164,7 @@ function getRoleCounts(data, userRole) {
             if (item.fsic_hasFinalApproval === 0 && item.inspection_status === 'Completed') {
                 counts.pending_fsic_approval++;
             } 
-            if (item.fsic_hasFinalApproval === 1){
+            if (item.fsic_hasFinalApproval === 1  && item.inspection_status === 'Completed'){
                 counts.completed_fsic_approval++;
             }
         }
@@ -203,7 +203,7 @@ function getRoleCounts(data, userRole) {
             }
             
             // Pending FSIC Approvals (fsic_hasFinalApproval == 0 and fsic_hasRecoApproval == 1 and has_defects == 0)
-            if (item.fsic_hasFinalApproval === 0 && item.fsic_hasRecoApproval === 1 && item.has_defects === 0) {
+            if (item.fsic_hasFinalApproval === 0 && item.fsic_hasRecoApproval === 1 && item.has_defects === 0 && item.inspection_status === 'Completed') {
                 counts.pending_fsic_approval++;
             }
         }
