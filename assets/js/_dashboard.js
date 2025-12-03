@@ -113,7 +113,7 @@ function getRoleCounts(data, userRole) {
          const scheduledDate = new Date(item.scheduled_date);
                 const today = new Date();
                 const oneDayAgo = new Date(today);
-                oneDayAgo.setDate(oneDayAgo.getDate() + 1);
+                oneDayAgo.setDate(oneDayAgo.getDate() - 1);
                 
         if (userRole === 'Inspector') {
             // Inspector counts
@@ -142,18 +142,17 @@ function getRoleCounts(data, userRole) {
             }
             
             // Pending/Completed FSIC Recommendation
-            if (item.fsic_hasRecoApproval === 0) {
+            if (item.fsic_hasRecoApproval === 0 || item.fsic_hasRecoApproval === null) {
                 counts.pending_fsic_rec++;
             } 
-            if (item.fsic_hasRecoApproval === 1) {
+            if (item.fsic_hasRecoApproval === 1 && item.inspection_status === 'Completed') {
                 counts.completed_fsic_rec++;
             }
         } 
         else if (userRole === 'Fire Marshall' || userRole === 'Approver') {
             // Fire Marshal / Approver counts
             // Pending Schedule Acknowledgement
-            if (item.sched_hasFinalApproval === 0) 
-            {
+            if (item.sched_hasFinalApproval === 0 && (item.sched_status !== 'Archived' && item.sched_status !== 'Cancelled')) {
                 counts.pending_ack++;
             } 
             if (item.sched_hasFinalApproval === 1){
@@ -161,10 +160,10 @@ function getRoleCounts(data, userRole) {
             }
             
             // Pending/Completed FSIC Final Approval
-            if (item.fsic_hasFinalApproval === 0 && item.inspection_status === 'Completed') {
+            if ((item.fsic_hasFinalApproval === 0 || item.fsic_hasFinalApproval === null) && item.inspection_status === 'Completed') {
                 counts.pending_fsic_approval++;
             } 
-            if (item.fsic_hasFinalApproval === 1  && item.inspection_status === 'Completed'){
+            if (item.fsic_hasFinalApproval === 1 && item.inspection_status === 'Completed'){
                 counts.completed_fsic_approval++;
             }
         }
