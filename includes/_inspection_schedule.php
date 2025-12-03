@@ -17,42 +17,32 @@ $roleLabel = getRoleLabel($user_role, $user_subrole);
 // ---------- MAIN TABLE ----------
 $main_table = ['inspection_schedule ins'];
 
-// ---------- SELECT FIELDS ----------
+// ---------- SELECT FIELDS (Optimized for Dashboard) ----------
+// Only columns checked by _dashboard.js are included
 $fields = [
+    // Essential identifiers
     'ins.schedule_id',
-    'ins.checklist_id',
-    'vi.inspection_id',
-    'ins.HasClientAck sched_HasClientAck',
-    'ins.DateAckbyClient sched_DateAckbyClient',
-    'ins.AckByClient_id sched_AckByClient_id',
-    'ins.hasRecommendingApproval sched_hasRecommendingApproval',
-    'ins.dateRecommendedForApproval sched_dateRecommendedForApproval',
-    'ins.RecommendingApprover sched_RecommendingApprover',
-    'ins.hasFinalApproval sched_hasFinalApproval',
-    'ins.dateFinalApproval sched_dateFinalApproval',
-    'ins.FinalApprover sched_FinalApprover',
-    'ins.hasInspectorAck sched_hasInspectorAck',
-    'ins.dateInspectorAck sched_dateInspectorAck',
     'ins.inspector_id',
+    
+    // Date fields for year filtering and date comparisons
     'ins.scheduled_date',
-    'ins.schedule_time',
-    'ins.rescheduleCount',
-    'ins.inspection_sched_status sched_status',
     'ins.created_at',
-    'vi.started_at',
-    'vi.completed_at',
-    'vi.inspection_status inspection_status',
+    
+    // Schedule approval status flags
+    'ins.HasClientAck sched_HasClientAck',
+    'ins.hasRecommendingApproval sched_hasRecommendingApproval',
+    'ins.hasFinalApproval sched_hasFinalApproval',
+    'ins.hasInspectorAck sched_hasInspectorAck',
+    
+    // Schedule status and defects
+    'ins.inspection_sched_status sched_status',
     'vi.has_Defects has_defects',
-    'vi.inspection_score',
+    
+    // Inspection status and FSIC approval flags
+    'vi.inspection_status inspection_status',
     'vi.hasRecoApproval fsic_hasRecoApproval',
-    'vi.hasFinalApproval as fsic_hasFinalApproval',
-    'vi.hasBeenReceived fsic_received',
-    'vi.compliance_rate fsic_compliance_rate',
-    'vi.building_name',
-    'vi.owner_name',
-    'vi.location_of_construction',
-    'vi.checklist_type',
-    'vi.inspector_name'
+    'vi.hasFinalApproval fsic_hasFinalApproval',
+    'vi.completed_at'
 ];
 
 // ---------- JOINS ----------
