@@ -21,8 +21,11 @@ $main_table = ['inspection_schedule ins'];
 // Only columns checked by _dashboard.js are included
 $fields = [
     // Essential identifiers
+        'ins.hasRecommendingApproval sched_hasRecommendingApproval',
+    'ins.hasFinalApproval sched_hasFinalApproval',
+    'ins.hasInspectorAck sched_hasInspectorAck',
     'ins.schedule_id',
-    'ins.inspector_id',
+    
     
     // Date fields for year filtering and date comparisons
     'ins.scheduled_date',
@@ -30,9 +33,7 @@ $fields = [
     
     // Schedule approval status flags
     'ins.HasClientAck sched_HasClientAck',
-    'ins.hasRecommendingApproval sched_hasRecommendingApproval',
-    'ins.hasFinalApproval sched_hasFinalApproval',
-    'ins.hasInspectorAck sched_hasInspectorAck',
+    'ins.inspector_id',
     
     // Schedule status and defects
     'ins.inspection_sched_status sched_status',
