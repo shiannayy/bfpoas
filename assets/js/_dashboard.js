@@ -134,7 +134,7 @@ function getRoleCounts(data, userRole) {
         else if (userRole === 'Chief FSES' || userRole === 'Recommending Approver') {
             // Chief FSES / Recommending Approver counts
             // Pending Schedule Acknowledgement
-            if (item.sched_hasRecommendingApproval === 0) {
+            if (item.sched_hasRecommendingApproval === 0 && (item.sched_status !== 'Archived' || item.sched_status !== 'Cancelled')) {
                 counts.pending_ack++;
             }
             if (item.sched_hasRecommendingApproval === 1) {
