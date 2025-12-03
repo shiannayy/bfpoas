@@ -159,8 +159,13 @@ function getRoleCounts(data, userRole) {
                 counts.complete_ack++;
             }
             
-            // Pending/Completed FSIC Final Approval
-            if ((item.fsic_hasFinalApproval === 0 || item.fsic_hasFinalApproval === null) && item.inspection_status === 'Completed') {
+            // for Final Approval
+            if ((item.fsic_hasFinalApproval === 0 || item.fsic_hasFinalApproval === null) 
+                    && item.inspection_status === 'Completed'
+                    && item.sched_status !== 'Cancelled'
+                    && item.sched_status !== 'Archived'
+                     && item.fsic_hasRecoApproval === 1) 
+            {
                 counts.pending_fsic_approval++;
             } 
             if (item.fsic_hasFinalApproval === 1 && item.inspection_status === 'Completed'){
