@@ -144,8 +144,8 @@ function getRoleCounts(data, userRole) {
             // Pending/Completed FSIC Recommendation
             if (item.fsic_hasRecoApproval === 0 && item.inspection_status === 'Completed' && item.sched_status === 'Completed') {
                 counts.pending_fsic_rec++;
-            } 
-            if (item.fsic_hasRecoApproval === 1) {
+            }   
+            if (item.fsic_hasRecoApproval == 1 || item.fsic_hasRecoApproval == '1') {
                 counts.completed_fsic_rec++;
             }
         } 
