@@ -138,12 +138,30 @@ if (!empty($search)) {
 /**
  * Fetch joined data for the Inspection Table
  */
+
+// Determine ORDER BY based on role
+$order_by = ['created_at' => 'DESC']; // Default ordering
+
+if (isChiefFSES()) {
+    // Chief FSES: Show pending recommendations first (0), then completed (1)
+    $order_by = [
+        'hasRecoApproval' => 'ASC',
+        'created_at' => 'DESC'
+    ];
+} elseif (isFireMarshall()) {
+    // Fire Marshal: Show pending approvals first (0), then completed (1)
+    $order_by = [
+        'hasFinalApproval' => 'ASC',
+        'created_at' => 'DESC'
+    ];
+}
+
 $inspections = select_join_bit(
     ['view_inspections'],
     ['*'], // Get all columns from view
     [],    // No joins - view already has everything
     $where,
-    ['created_at' => 'DESC']
+    $order_by
 );
 
 // Process inspections with default values
