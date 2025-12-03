@@ -134,7 +134,7 @@ function getRoleCounts(data, userRole) {
         else if (userRole === 'Chief FSES' || userRole === 'Recommending Approver') {
             // Chief FSES / Recommending Approver counts
             // Pending Schedule Acknowledgement
-            if (item.sched_HasClientAck === "Y" && item.sched_hasInspectorAck === 1 && item.sched_hasRecommendingApproval === 0) {
+            if (item.sched_hasRecommendingApproval === 0) {
                 counts.pending_ack++;
             }
             if (item.sched_hasRecommendingApproval) {
@@ -142,7 +142,7 @@ function getRoleCounts(data, userRole) {
             }
             
             // Pending/Completed FSIC Recommendation
-            if (item.fsic_hasRecoApproval === 0 && item.fsic_hasRecoApproval === 1) {
+            if (item.fsic_hasRecoApproval === 0) {
                 counts.pending_fsic_rec++;
             } 
             if (item.fsic_hasRecoApproval === 1) {
@@ -152,7 +152,7 @@ function getRoleCounts(data, userRole) {
         else if (userRole === 'Fire Marshall' || userRole === 'Approver') {
             // Fire Marshal / Approver counts
             // Pending Schedule Acknowledgement
-            if (item.sched_hasFinalApproval === 0 && item.sched_hasRecommendingApproval === 1) 
+            if (item.sched_hasFinalApproval === 0) 
             {
                 counts.pending_ack++;
             } 
