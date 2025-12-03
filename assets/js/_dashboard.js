@@ -259,7 +259,7 @@ function buildInspectorDisplay(counts, classes) {
             <div class="${classes} pending-card">
                 <div class="card border-0 shadow text-center"> 
                     <div class="card-header bg-navy text-gold">
-                        <h6 class="card-title text-uppercase">Pending Inspection</h6>
+                        <h6 class="card-title text-uppercase">Due for Inspection</h6>
                     </div>
                     <div class="card-body text-center content-align-center">
                         <h3 class="count-number">${counts.pending_inspection}</h3>
