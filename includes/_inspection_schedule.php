@@ -21,13 +21,14 @@ $main_table = ['inspection_schedule ins'];
 // Only columns checked by _dashboard.js are included
 $fields = [
     // Essential identifiers
-    'vi.inspection_status inspection_status',
+    'ins.schedule_id',
     'vi.hasRecoApproval fsic_hasRecoApproval',
     'vi.hasFinalApproval fsic_hasFinalApproval',
-        'ins.hasRecommendingApproval sched_hasRecommendingApproval',
+    'ins.hasRecommendingApproval sched_hasRecommendingApproval',
+    'vi.inspection_status inspection_status',
     'ins.hasFinalApproval sched_hasFinalApproval',
     'ins.hasInspectorAck sched_hasInspectorAck',
-    'ins.schedule_id',
+    
     
     
     // Date fields for year filtering and date comparisons
