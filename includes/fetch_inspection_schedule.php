@@ -87,18 +87,58 @@ switch ($roleLabel) {
 }
 
 // --- Search filter
+// --- Search filter
 if (isset($_POST['search']) && !empty($_POST['search'])) {
     $rawSearch = trim($_POST['search']);
     $kw = '%' . $rawSearch . '%';
+    
+    // Create the base search conditions
+    $searchConditions = [
+        ['column' => 'inspection_schedule.proceed_instructions', 'operator' => 'LIKE', 'value' => $kw, 'logic' => 'OR'],
+        ['column' => 'inspection_schedule.order_number', 'operator' => 'LIKE', 'value' => $kw, 'logic' => 'OR'],
+        ['column' => 'general_info.building_name', 'operator' => 'LIKE', 'value' => $kw, 'logic' => 'OR'],
+        ['column' => 'general_info.owner_name', 'operator' => 'LIKE', 'value' => $kw, 'logic' => 'OR'],
+        ['column' => 'inspection_schedule.inspection_sched_status', 'operator' => 'LIKE', 'value' => $kw, 'logic' => 'OR'],
+        ['column' => 'inspection_schedule.scheduled_date', 'operator' => 'LIKE', 'value' => $kw, 'logic' => 'OR']
+    ];
+    
+    // Try to detect if this is a month search
+    $searchLower = strtolower($rawSearch);
+    $monthMap = [
+        'january' => 1, 'jan' => 1,
+        'february' => 2, 'feb' => 2,
+        'march' => 3, 'mar' => 3,
+        'april' => 4, 'apr' => 4,
+        'may' => 5,
+        'june' => 6, 'jun' => 6,
+        'july' => 7, 'jul' => 7,
+        'august' => 8, 'aug' => 8,
+        'september' => 9, 'sep' => 9, 'sept' => 9,
+        'october' => 10, 'oct' => 10,
+        'november' => 11, 'nov' => 11,
+        'december' => 12, 'dec' => 12
+    ];
+    
+    // Check if the search term is a month name or abbreviation
+    $isMonthSearch = isset($monthMap[$searchLower]);
+    
+    // If it's a month search, add month-specific conditions
+    if ($isMonthSearch) {
+        $monthNumber = $monthMap[$searchLower];
+        
+        $searchConditions[] = [
+            'group' => [
+                ['column' => 'MONTH(inspection_schedule.scheduled_date)', 'operator' => '=', 'value' => $monthNumber, 'logic' => 'OR'],
+                ['column' => "DATE_FORMAT(inspection_schedule.scheduled_date, '%M')", 'operator' => 'LIKE', 'value' => $kw, 'logic' => 'OR'],
+                ['column' => "DATE_FORMAT(inspection_schedule.scheduled_date, '%b')", 'operator' => 'LIKE', 'value' => $kw, 'logic' => 'OR']
+            ],
+            'logic' => 'OR'
+        ];
+    }
+    
+    // Wrap all conditions in an AND group
     $where[] = [
-        'group' => [
-            ['column' => 'inspection_schedule.proceed_instructions', 'operator' => 'LIKE', 'value' => $kw, 'logic' => 'OR'],
-            ['column' => 'inspection_schedule.order_number', 'operator' => 'LIKE', 'value' => $kw, 'logic' => 'OR'],
-            ['column' => 'general_info.building_name', 'operator' => 'LIKE', 'value' => $kw, 'logic' => 'OR'],
-            ['column' => 'general_info.owner_name', 'operator' => 'LIKE', 'value' => $kw, 'logic' => 'OR'],
-            ['column' => 'inspection_schedule.inspection_sched_status', 'operator' => 'LIKE', 'value' => $kw, 'logic' => 'OR'],
-            ['column' => 'inspection_schedule.scheduled_date', 'operator' => 'LIKE', 'value' => $kw, 'logic' => 'OR']
-        ],
+        'group' => $searchConditions,
         'logic' => 'AND'
     ];
 }
