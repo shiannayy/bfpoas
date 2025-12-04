@@ -83,7 +83,7 @@ switch ($roleLabel) {
 $whereSQL = !empty($where) ? implode(' AND ', $where) : '';
 
 // ---------- ORDER & LIMIT ----------
-$order = ['ins.created_at' => 'ASC' ,'ins.scheduled_date' => 'ASC'];
+$order = ['ins.created_at' => 'DESC' ,'ins.scheduled_date' => 'ASC'];
 $limit = 100;
 
 // ---------- FETCH ----------
