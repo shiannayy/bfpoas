@@ -104,5 +104,6 @@ echo json_encode([
     'count' => count($result),
     'data' => $result,
     'logged_in' => $loggedIn,
+    'orderby' => $order
 ]);
 
