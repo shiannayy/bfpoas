@@ -125,7 +125,8 @@ switch ($roleLabel) {
 }
 
 // Always sort by scheduled_date as secondary
-$order_by['inspection_schedule.scheduled_date'] = 'DESC';
+$order_by = ['inspection_schedule.scheduled_date' => 'DESC', 'inspection_schedule.created_at' => 'DESC'];
+
 
 // ---------- LIMIT ----------
 $limit = 1000;
