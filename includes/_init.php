@@ -746,15 +746,22 @@ function select_join_bit(
 
     // Helper function to properly quote column names
     $quoteColumn = function($col) {
+        // If it's a function call (contains parentheses), don't quote it
+        if (strpos($col, '(') !== false || strpos($col, ')') !== false) {
+            return $col;
+        }
+        
         // If it contains a dot (table.column), quote each part separately
         if (strpos($col, '.') !== false) {
             $parts = explode('.', $col);
             return '`' . implode('`.`', $parts) . '`';
         }
+        
         // If already has backticks or is *, leave it alone
         if (strpos($col, '`') !== false || $col === '*') {
             return $col;
         }
+        
         // Otherwise, wrap in backticks
         return '`' . $col . '`';
     };
@@ -1466,8 +1473,6 @@ function updateInspectionWithStats($schedule_id, $inspectionStats) {
     ];
     return update_data('inspections', $updateData, ['schedule_id' => $schedule_id]);
 }
-
-
 function completeInspection ($inspection_id, $hasdefects=null, $reference_no=null){
     $existing = select("inspections",
                     ["inspection_id" => $inspection_id],
@@ -1522,8 +1527,6 @@ function getInspectionResponses($schedule_id) {
     }
     return $responses;
 }
-
-
 function handleRecommend($inspection, $role_label, $user_id, $inspection_id) {
     if (!in_array($role_label, ["Recommending Approver"])) {
         return errorResponse("You are not allowed to recommend approval.");
@@ -1543,7 +1546,6 @@ function handleRecommend($inspection, $role_label, $user_id, $inspection_id) {
         ? ["success" => true, "message" => "Inspection recommended successfully."]
         : errorResponse("Failed to update recommendation.");
 }
-
 function handleApprove($inspection, $role_label, $user_id, $inspection_id) {
     if (!in_array($role_label, ["Approver"])) {
         return errorResponse("You are not allowed to approve.");
@@ -1563,7 +1565,6 @@ function handleApprove($inspection, $role_label, $user_id, $inspection_id) {
         ? ["success" => true, "message" => "Inspection approved successfully."]
         : errorResponse("Failed to update approval.");
 }
-
 function handleReceive($inspection, $role_label, $user_id, $inspection_id) {
     if (!in_array($role_label, ["Client", "Admin_Assistant"])) {
         return errorResponse("You are not allowed to receive certificates.");
@@ -1583,18 +1584,14 @@ function handleReceive($inspection, $role_label, $user_id, $inspection_id) {
         ? ["success" => true, "message" => "Certificate received successfully."]
         : errorResponse("Failed to update receipt.");
 }
-
-
 function getInspection($inspection_id) {
     $inspections = select("inspections", ["inspection_id" => $inspection_id], null, 1);
     return $inspections[0] ?? null;
 }
-
 function errorResponse($message) {
     echo json_encode(["success" => false, "message" => $message]);
     exit;
 }
-
 function successResponse($result) {
     echo json_encode($result);
     exit;

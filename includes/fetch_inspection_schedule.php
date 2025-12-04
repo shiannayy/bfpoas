@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id'], $_SESSION['role'])) {
     echo json_encode(['success' => false, 'message' => 'Unauthorized access']);
     exit;
 }
-
+$searchConditions = null;
 $loggedIn = isLoggedin();
 $user_id = $_SESSION['user_id'];
 $user_role = $_SESSION['role'];
@@ -189,4 +189,5 @@ echo json_encode([
     'count' => count($result),
     'data' => $result,
     'logged_in' => $loggedIn,
+    'search' => $searchConditions
 ]);
