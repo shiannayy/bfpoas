@@ -388,6 +388,7 @@ function loadInspectionSchedules(user = {}, search = null, rpp = 25, sortBy = nu
                     </td>
                     <td>
                         <a href="#" class="text-decoration-none fw-bold showContactInfo" data-user-id="${item.owner_id}">${item.owner_full_name || ""}</a>
+                        <br>
                         <span>${item.proceed_instructions || ""} </span>
                     </td>
                     <td class="d-none d-md-table-cell">${badgedResponse(item.HasClientAck, "Acknowledged", "Pending", "Denied")}</td>
