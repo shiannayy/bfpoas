@@ -23,7 +23,7 @@ if(isset($_GET['action']) && isset($_GET['sched_id'])){
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>List of Establishments</title>
+    <title>Inspection Schedule</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Bootstrap CSS -->
@@ -284,7 +284,6 @@ if(isset($_GET['action']) && isset($_GET['sched_id'])){
                         <th class="d-none d-md-table-cell">Fire Marshall Acknowledgement</th>
                         
                         <th class="d-none d-md-table-cell">Assigned Inspector</th>
-                        <th class="d-none d-md-table-cell">Establishment</th>
                         <th class="d-none d-md-table-cell">Checklist Type</th>
                         <th class="d-none d-md-table-cell">FSIC Purpose</th>
                         <th class="d-none d-md-table-cell">Nature of Inspection</th>

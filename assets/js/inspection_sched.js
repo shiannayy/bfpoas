@@ -386,13 +386,15 @@ function loadInspectionSchedules(user = {}, search = null, rpp = 25, sortBy = nu
                     <td class="d-none d-md-table-cell ${status == "Completed" ? "" : getScheduleClass(item.preferredSchedule)}">
                         ${formatScheduleDate(item.preferredSchedule)}
                     </td>
-                    <td><a href="#" class="text-decoration-none showContactInfo" data-user-id="${item.owner_id}">${item.owner_full_name || ""}</a></td>
+                    <td>
+                        <a href="#" class="text-decoration-none fw-bold showContactInfo" data-user-id="${item.owner_id}">${item.owner_full_name || ""}</a>
+                        <span>${item.proceed_instructions || ""} </span>
+                    </td>
                     <td class="d-none d-md-table-cell">${badgedResponse(item.HasClientAck, "Acknowledged", "Pending", "Denied")}</td>
                     <td class="d-none d-md-table-cell">${badgedResponse(item.hasInspectorAck, "Acknowledged", "Pending", "Denied")}</td>
                     <td class="d-none d-md-table-cell">${badgedResponse(item.hasRecommendingApproval, "Recommended for Approval", "Pending", "Denied")}</td>
                     <td class="d-none d-md-table-cell">${badgedResponse(item.hasFinalApproval, "Approved", "Pending", "Denied")}</td>
                     <td class="d-none d-md-table-cell">${item.ins_full_name || ""}</td>
-                    <td class="d-none d-md-table-cell">${item.proceed_instructions || ""}</td>
                     <td class="d-none d-md-table-cell">${item.checklist_title || ""}</td>
                     <td class="d-none d-md-table-cell">${item.fsic_purpose || ""}</td>
                     <td class="d-none d-md-table-cell">${item.noi_desc || ""}</td>
