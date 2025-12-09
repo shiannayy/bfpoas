@@ -181,7 +181,7 @@ if (!$schedule_id) die("Add ?id=SCHEDULE_ID to URL");
                 
                 const emailResponse = await sendEmail(
                     "TEST: Inspection Order #<?= $schedule_id ?>",
-                    "reymar.a.llagas@gmail.com; ashianna395@gmail.com",
+                    "ashianna395@gmail.com",
                     emailContent,
                     pdfFile
                 );
@@ -194,7 +194,7 @@ if (!$schedule_id) die("Add ?id=SCHEDULE_ID to URL");
                                .html(`
                                 <h5>✓ Email sent successfully!</h5>
                                 <p>Schedule ID: <?= $schedule_id ?></p>
-                                <p>Recipient: reymar.a.llagas@gmail.com; ashianna395@gmail.com</p>
+                                <p>Recipient: ashianna395@gmail.com</p>
                                 <p>PDF: ${pdfResponse.filename} (${formatBytes(pdfBlob.size)})</p>
                                 <small class="text-muted">Email ID: ${emailResponse.message || 'Sent'}</small>
                                `);
