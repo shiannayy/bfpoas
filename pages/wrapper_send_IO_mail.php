@@ -1,7 +1,9 @@
 <?php 
 include_once "../includes/_init.php"; 
 // Get parameters
-if(!isset($_GET['schedule_id']) && !isset($_GET['step']))
+if(!isset($_GET['schedule_id']) || !isset($_GET['step']) || !isset($_GET['email_token']) ){
+    die("Seems something was not sent right.");
+}
 
 $schedule_id = isset($_GET['schedule_id']) ? intval($_GET['schedule_id']) : 0;
 $step = isset($_GET['step']) ? intval($_GET['step']) : 1;
