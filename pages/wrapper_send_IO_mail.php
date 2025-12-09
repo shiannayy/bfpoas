@@ -5,9 +5,22 @@ if(!isset($_GET['schedule_id']) || !isset($_GET['step']) || !isset($_GET['email_
     die("Seems something was not sent right.");
 }
 
-$schedule_id = isset($_GET['schedule_id']) ? intval($_GET['schedule_id']) : 0;
-$step = isset($_GET['step']) ? intval($_GET['step']) : 1;
+$schedule_id = htmlentities($_GET['schedule_id']);//isset($_GET['schedule_id']) ? intval($_GET['schedule_id']) : 0;
+$step = isset($_GET['step']) ? htmlentities($_GET['step']) : 1;
 $email_token = $_GET['email_token'] ?? '';
+$isEmailtoken = select("email_token",['email_token' => $email_token , 'schedule_id' => $schedule_id],null,1);
+if(empty($isEmailtoken)){ ?>
+                <h1 class="error">✗ Link Expired or Invalid</h1>
+                <p class="lead">This acknowledgement link has already been used or is no longer valid.</p>
+                <div class="alert alert-warning mt-4">
+                    <h5>What to do next:</h5>
+                    <ul class="text-start">
+                        <li>Check if you've already acknowledged this inspection order</li>
+                        <li>Contact BFP-OAS if you need to re-send the acknowledgement link</li>
+                        <li>Ensure you're using the most recent email link</li>
+                    </ul>
+                </div>
+<?php  } 
 
 if (!$schedule_id) die("undefined schedule_id");
 
@@ -31,6 +44,7 @@ $fm = select('users',['sub_role'=>'Fire Marshall'],null,1);
     $fm_email = $fm[0]['email'];
 
 $email_token_sched = select("email_token", ['email_token' => $email_token]);
+
 
 
 // Determine recipient based on step
@@ -96,12 +110,12 @@ switch($step) {
         ];
 }
 
-if($step > 1){
-    //prevent from resending the email
-    $old_email_token = $email_token;
-    $email_token = bin2hex(random_bytes(8));
-    update_data("email_token",['email_token' => $email_token], ['email_token' => $old_email_token]);
-}
+// if($step > 0 && $step < 4){
+//     //prevent from resending the email
+//     $old_email_token = $email_token;
+//     $email_token = bin2hex(random_bytes(8));
+//     update_data("email_token",['email_token' => $email_token], ['email_token' => $old_email_token]);
+// }
 
 $link = "http://localhost/bfpoas-online/email_ack/?email_token=" . $email_token . 
         "&schedule_id=" . $schedule_id . 
@@ -159,7 +173,7 @@ $link = "http://localhost/bfpoas-online/email_ack/?email_token=" . $email_token 
             <p>This is to inform you that an inspection order has been filed for your establishment:</p>
             <h5><?= $establishment ?></h5>
             <p>Please check the attached Inspection Order document and click the link below to acknowledge:</p>
-            <a class="btn btn-primary" href="<?= $link ?>">Acknowledge Inspection Order</a>
+            <a class="btn btn-primary" style="" href="<?= $link ?>">Acknowledge Inspection Order</a>
             <p><small>Inspection Order Number: <?= $order_number ?></small></p>
 
             <?php elseif($step === 2): ?>
@@ -194,7 +208,7 @@ $link = "http://localhost/bfpoas-online/email_ack/?email_token=" . $email_token 
         </button>
 
         <div id="loading" class="mt-3 loading-spinner">
-            <div class="spinner-border"></div>
+            <div class="spinner-border spinner-border-sm"></div>
             <span id="status-text">Processing...</span>
         </div>
 
@@ -214,297 +228,6 @@ $link = "http://localhost/bfpoas-online/email_ack/?email_token=" . $email_token 
     <script src="../assets/js/send_mail.js"></script>
 
     <script>
-    // $(document).ready(function(){
-    //     // Get data from hidden container
-    //     const dataContainer = $('#data-container');
-    //     const scheduleId = dataContainer.find('[data-name="scheduleId"]').text();
-    //     const orderNumber = dataContainer.find('[data-name="orderNumber"]').text();
-    //     const recipientName = dataContainer.find('[data-name="recipientName"]').text();
-    //     const recipientEmail = dataContainer.find('[data-name="recipientEmail"]').text();
-    //     const establishment = dataContainer.find('[data-name="establishment"]').text();
-    //     const step = parseInt(dataContainer.find('[data-name="step"]').text());
-    //     const nextStep = parseInt(dataContainer.find('[data-name="nextStep"]').text());
-    //     const emailContentHTML = $("emailContent").html();
-
-    //     console.log('Loaded data:', {
-    //         scheduleId,
-    //         orderNumber,
-    //         recipientName,
-    //         recipientEmail,
-    //         step,
-    //         nextStep
-    //     });
-
-    //     // Auto-trigger email sending after 1 second
-    //     setTimeout(() => {
-    //         $('#sendTestBtn').trigger('click');
-    //     }, 1000);
-
-    //     $('#sendTestBtn').click(async function(){
-    //         $('#loading').show();
-    //         $('#progress').show();
-    //         $('#result').html('').removeClass('alert-success alert-danger alert-warning');
-
-    //         updateProgress(0, 'Starting email process...');
-
-    //         try {
-    //             // STEP 1: Generate PDF
-    //             updateProgress(10, 'Generating PDF document...');
-
-    //             const pdfResponse = await $.ajax({
-    //                 url: '../includes/generate_pdf.php',
-    //                 type: 'POST',
-    //                 data: {
-    //                     schedule_id: scheduleId,
-    //                     generate_pdf: 1
-    //                 },
-    //                 dataType: 'json',
-    //                 timeout: 30000
-    //             });
-
-    //             console.log('PDF Generation Response:', pdfResponse);
-
-    //             if (!pdfResponse.success) {
-    //                 throw new Error('PDF Generation Failed: ' + pdfResponse.message);
-    //             }
-
-    //             updateProgress(30, 'PDF generated successfully');
-
-    //             // STEP 2: Check file accessibility
-    //             updateProgress(40, 'Verifying PDF file accessibility...');
-
-    //             const isFileAccessible = await checkFileAccessibility(pdfResponse.filepath, 5000, 10);
-
-    //             console.log('File accessibility check result:', isFileAccessible);
-
-    //             if (!isFileAccessible) {
-    //                 throw new Error('PDF file is not accessible.');
-    //             }
-
-    //             updateProgress(60, 'PDF file verified and accessible');
-
-    //             // STEP 3: Get PDF as File
-    //             updateProgress(70, 'Preparing PDF for email attachment...');
-
-    //             let pdfUrl = pdfResponse.filepath;
-    //             console.log('Original filepath:', pdfUrl);
-
-    //             // Convert absolute path to URL if needed
-    //             if (pdfUrl.startsWith('/')) {
-    //                 const currentUrl = window.location.href;
-    //                 const urlObj = new URL(currentUrl);
-    //                 const basePath = urlObj.pathname;
-
-    //                 const pathParts = basePath.split('/').filter(p => p);
-    //                 if (pathParts.length > 0) {
-    //                     const projectFolder = pathParts[0];
-    //                     const regex = new RegExp(`^.*?/${projectFolder}/`);
-    //                     if (regex.test(pdfUrl)) {
-    //                         pdfUrl = pdfUrl.replace(regex, `/${projectFolder}/`);
-    //                     } else {
-    //                         const htdocsIndex = pdfUrl.indexOf('/htdocs/');
-    //                         if (htdocsIndex !== -1) {
-    //                             pdfUrl = pdfUrl.substring(htdocsIndex + 7);
-    //                         }
-    //                     }
-    //                 }
-
-    //                 if (!pdfUrl.startsWith('/')) {
-    //                     pdfUrl = '/' + pdfUrl;
-    //                 }
-
-    //                 pdfUrl = window.location.origin + pdfUrl;
-    //             }
-
-    //             console.log('Fetching PDF from:', pdfUrl);
-
-    //             const pdfBlob = await fetch(pdfUrl, {
-    //                 cache: 'no-cache',
-    //                 headers: {
-    //                     'Pragma': 'no-cache',
-    //                     'Cache-Control': 'no-cache'
-    //                 }
-    //             }).then(response => {
-    //                 console.log('Fetch response status:', response.status, response.statusText);
-    //                 if (!response.ok) {
-    //                     throw new Error(`Failed to fetch PDF: ${response.status} ${response.statusText}`);
-    //                 }
-    //                 return response.blob();
-    //             });
-
-    //             console.log('PDF blob size:', pdfBlob.size);
-
-    //             if (pdfBlob.size === 0) {
-    //                 throw new Error('PDF file is empty or corrupted');
-    //             }
-
-    //             const pdfFile = new File([pdfBlob], 'Inspection_Order_' + orderNumber + '.pdf', { 
-    //                 type: 'application/pdf',
-    //                 lastModified: Date.now()
-    //             });
-
-    //             updateProgress(80, 'PDF attached successfully');
-
-    //             // STEP 4: Send email with attachment
-    //             updateProgress(90, 'Sending email with attachment...');
-
-    //             // Determine subject based on step
-    //             let subject = '';
-    //             switch(step) {
-    //                 case 1:
-    //                     subject = "Inspection Order #" + orderNumber + " - Acknowledgement Required";
-    //                     break;
-    //                 case 2:
-    //                     subject = "Inspection Assignment #" + orderNumber + " - Acknowledgement Required";
-    //                     break;
-    //                 case 3:
-    //                     subject = "Inspection Order #" + orderNumber + " - Recommendation Required";
-    //                     break;
-    //                 case 4:
-    //                     subject = "Inspection Order #" + orderNumber + " - Final Approval Required";
-    //                     break;
-    //                 default:
-    //                     subject = "Inspection Order #" + orderNumber;
-    //             }
-
-    //             const emailResponse = await sendEmail(
-    //                 subject,
-    //                 recipientEmail,
-    //                 emailContentHTML,
-    //                 pdfFile
-    //             );
-
-    //             // STEP 5: Process result
-    //             updateProgress(100, 'Email process completed');
-
-    //             if (emailResponse.success) {
-    //                 let successMessage = '';
-    //                 switch(step) {
-    //                     case 1:
-    //                         successMessage = 'Email sent to Client for acknowledgement.';
-    //                         break;
-    //                     case 2:
-    //                         successMessage = 'Email sent to Inspector for acknowledgement.';
-    //                         break;
-    //                     case 3:
-    //                         successMessage = 'Email sent to Chief FSES for recommendation.';
-    //                         break;
-    //                     case 4:
-    //                         successMessage = 'Email sent to Fire Marshal for approval.';
-    //                         break;
-    //                 }
-
-    //                 $('#result').addClass('alert alert-success')
-    //                            .html(`
-    //                             <h5>✓ ${successMessage}</h5>
-    //                             <p>Inspection Order Number: ${orderNumber}</p>
-    //                             <p>Recipient: ${recipientName} (${recipientEmail})</p>
-    //                             <p>Establishment: ${establishment}</p>
-    //                             <p>PDF: ${pdfResponse.filename} (${formatBytes(pdfBlob.size)})</p>
-    //                             ${nextStep > 0 ? `<p><small>Next: Step ${nextStep}</small></p>` : ''}
-    //                             <small class="text-muted">Email ID: ${emailResponse.message || 'Sent'}</small>
-    //                            `);
-
-    //                 // Cleanup PDF after 3 seconds
-    //                 setTimeout(() => {
-    //                     cleanupPDF(pdfResponse.filename, scheduleId);
-    //                 }, 3000);
-
-    //             } else {
-    //                 throw new Error('Email sending failed: ' + emailResponse.message);
-    //             }
-
-    //         } catch (error) {
-    //             console.error('Full error:', error);
-    //             updateProgress(0, 'Process failed');
-    //             $('#result').addClass('alert alert-danger')
-    //                        .html(`
-    //                         <h5>✗ Error in Step ${step}</h5>
-    //                         <p>${error.message}</p>
-    //                         <p><small>Please contact BFP-OAS support</small></p>
-    //                         <small class="text-muted">Inspection Order Number: ${orderNumber}</small>
-    //                        `);
-    //         } finally {
-    //             $('#loading').hide();
-    //             setTimeout(() => {
-    //                 $('#progress').hide();
-    //             }, 3000);
-    //         }
-    //     });
-
-    //     // File accessibility check function
-    //     async function checkFileAccessibility(filepath, timeout = 5000, maxRetries = 10) {
-    //         return new Promise((resolve) => {
-    //             let retries = 0;
-    //             const startTime = Date.now();
-
-    //             function checkFile() {
-    //                 retries++;
-
-    //                 $.ajax({
-    //                     url: '../includes/check_file.php',
-    //                     type: 'POST',
-    //                     data: { 
-    //                         filepath: filepath,
-    //                         schedule_id: scheduleId
-    //                     },
-    //                     dataType: 'json',
-    //                     success: function(response) {
-    //                         console.log('Check file response:', response);
-    //                         if (response.accessible) {
-    //                             resolve(true);
-    //                         } else if (retries < maxRetries && (Date.now() - startTime) < timeout) {
-    //                             $('#status-text').text(`Waiting for file... (attempt ${retries}/${maxRetries})`);
-    //                             setTimeout(checkFile, 500);
-    //                         } else {
-    //                             resolve(false);
-    //                         }
-    //                     },
-    //                     error: function() {
-    //                         if (retries < maxRetries && (Date.now() - startTime) < timeout) {
-    //                             $('#status-text').text(`Retrying file check... (attempt ${retries}/${maxRetries})`);
-    //                             setTimeout(checkFile, 500);
-    //                         } else {
-    //                             resolve(false);
-    //                         }
-    //                     }
-    //                 });
-    //             }
-
-    //             checkFile();
-    //         });
-    //     }
-
-    //     // Cleanup PDF function
-    //     async function cleanupPDF(filename, scheduleId) {
-    //         try {
-    //             await $.post('../includes/cleanup_pdf.php', {
-    //                 filename: filename,
-    //                 schedule_id: scheduleId
-    //             });
-    //             console.log('PDF cleanup successful');
-    //         } catch (error) {
-    //             console.log('PDF cleanup failed:', error);
-    //         }
-    //     }
-
-    //     // Progress update function
-    //     function updateProgress(percent, message) {
-    //         $('#progress-bar').css('width', percent + '%');
-    //         $('#step-text').text(message);
-    //         $('#status-text').text(message);
-    //     }
-
-    //     // Format file size
-    //     function formatBytes(bytes, decimals = 2) {
-    //         if (bytes === 0) return '0 Bytes';
-    //         const k = 1024;
-    //         const dm = decimals < 0 ? 0 : decimals;
-    //         const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    //         const i = Math.floor(Math.log(bytes) / Math.log(k));
-    //         return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-    //     }
-    // });
 
     $(document).ready(function() {
         // Get data from hidden container
@@ -530,6 +253,7 @@ $link = "http://localhost/bfpoas-online/email_ack/?email_token=" . $email_token 
         // Auto-trigger email sending immediately
         setTimeout(() => {
             $('#sendTestBtn').trigger('click');
+            $('#sendTestBtn').prop("disabled",true);
         }, 500); // Reduced from 1000ms to 500ms
 
         $('#sendTestBtn').click(async function() {
@@ -543,7 +267,7 @@ $link = "http://localhost/bfpoas-online/email_ack/?email_token=" . $email_token 
                 // STEP 1: Generate PDF with progress monitoring
                 updateProgress(10, 'Generating PDF document...');
 
-                const pdfResponse = await generatePDFWithProgress(scheduleId);
+                const pdfResponse = await generatePDFWithProgress(scheduleId,step);
                 console.log('PDF Generation Response:', pdfResponse);
 
                 if (!pdfResponse.success) {
@@ -615,6 +339,7 @@ $link = "http://localhost/bfpoas-online/email_ack/?email_token=" . $email_token 
                 updateProgress(0, 'Process failed');
                 showErrorMessage(step, error.message, orderNumber);
             } finally {
+                $('#sendTestBtn').prop("disabled",false).text("Re-Send Email");
                 $('#loading').hide();
                 // Hide progress bar immediately
                 setTimeout(() => {
@@ -626,31 +351,22 @@ $link = "http://localhost/bfpoas-online/email_ack/?email_token=" . $email_token 
         // ========== OPTIMIZED HELPER FUNCTIONS ==========
 
         // Generate PDF with better error handling
-        async function generatePDFWithProgress(scheduleId) {
-            return new Promise((resolve, reject) => {
-                $.ajax({
-                    url: '../includes/generate_pdf.php',
-                    type: 'POST',
-                    data: {
-                        schedule_id: scheduleId,
-                        generate_pdf: 1
-                    },
-                    dataType: 'json',
-                    timeout: 10000, // Reduced timeout to 15 seconds
-                    success: function(response) {
-                        if (response.success) {
-                            resolve(response);
-                        } else {
-                            reject(new Error('PDF Generation Failed: ' + response
-                                .message));
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        reject(new Error('PDF Generation Request Failed: ' + error));
-                    }
-                });
+        async function generatePDFWithProgress(scheduleId, step) {
+            // Just call generate_pdf.php - it will handle caching internally
+            return await $.ajax({
+                url: '../includes/generate_pdf.php',
+                type: 'POST',
+                data: {
+                    schedule_id: scheduleId,
+                    step: step,
+                    generate_pdf: 1
+                },
+                dataType: 'json',
+                timeout: 15000
             });
         }
+
+
 
         // Wait for file to be accessible with exponential backoff
         async function waitForFileAccess(filepath, scheduleId, maxAttempts = 10) {
@@ -746,8 +462,9 @@ $link = "http://localhost/bfpoas-online/email_ack/?email_token=" . $email_token 
                 4: 'Email sent to Fire Marshal for approval.'
             };
 
-            $('#result').addClass('alert alert-success')
+            $('#result').addClass('card shadow')
                 .html(`
+                <div class="card-body">
                     <h5>✓ ${messages[step] || 'Email sent successfully'}</h5>
                     <p>Inspection Order Number: ${orderNumber}</p>
                     <p>Recipient: ${recipientName} (${recipientEmail})</p>
@@ -755,6 +472,7 @@ $link = "http://localhost/bfpoas-online/email_ack/?email_token=" . $email_token 
                     <p>PDF: ${filename} (${formatBytes(fileSize)})</p>
                     ${nextStep > 0 ? `<p><small>Next: Step ${nextStep}</small></p>` : ''}
                     <small class="text-muted">${new Date().toLocaleTimeString()}</small>
+                </div>
                    `);
         }
 

@@ -1,134 +1,167 @@
 <?php
-// generate_pdf.php - FOR INSPECTION ORDERS
+// generate_pdf.php - FOR INSPECTION ORDERS (WITH FILE CACHING)
 require_once "../includes/_init.php";
 require_once('../vendor/autoload.php');
 
 header('Content-Type: application/json');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $schedule_id = intval($_POST['schedule_id'] ?? 0);
-    
-    if (!$schedule_id) {
-        echo json_encode(['success' => false, 'message' => 'No schedule ID provided']);
-        exit;
-    }
-    
-    try {
-        // Set schedule_id for the included file
-        $_GET['id'] = $schedule_id;
-        
-        // Start output buffering to capture HTML
-        ob_start();
-        include "../pages/fsed9f_email_attachment_template.php";
-        $html_content = ob_get_clean();
-        
-        // Add CSS styling to the HTML content
-        $html_content = addPdfStyling($html_content);
-        
-        // Convert images to Base64
-        $html_content = convertImagesToBase64($html_content, $schedule_id);
-        
-        // Create PDF using TCPDF
-        $pdf = new \TCPDF('P', 'mm', 'Legal', true, 'UTF-8', false);
-        
-        // Set document information
-        $pdf->SetCreator('BFP Oas System');
-        $pdf->SetAuthor('Bureau of Fire Protection');
-        $pdf->SetTitle('Inspection Order - ' . $schedule_id);
-        $pdf->SetSubject('Fire Safety Inspection Order');
-        
-        // Remove default header/footer
-        $pdf->setPrintHeader(false);
-        $pdf->setPrintFooter(false);
-        
-        // Set margins (left, top, right)
-        $pdf->SetMargins(5, 5, 5);
-      //  $pdf->SetAutoPageBreak(true, 15);
-        
-        // Add a page
-        $pdf->AddPage();
-        
-        // Set font for better readability in PDF
-        //$pdf->SetFont('helvetica', '', 10);
-        
-        // Write HTML content
-        $pdf->writeHTML($html_content, true, false, true, false, '');
-        
-        // Save PDF file
-        $unique_filename = 'Inspection_Order_' . $schedule_id . '_' . date('Ymd_His') . '.pdf';
-        $temp_dir = dirname(__FILE__) . '/../temp_pdfs/';
-        $filepath = $temp_dir . $unique_filename;
-        
-        // Create directory if it doesn't exist
-        if (!file_exists($temp_dir)) {
-            mkdir($temp_dir, 0777, true);
-        }
-        
-        // Output to file with verification
-        $output_result = $pdf->Output($filepath, 'F');
-        
-        // Ensure file is closed and permissions are set
-        if ($output_result !== false && file_exists($filepath)) {
-            chmod($filepath, 0644); // Make it readable
-            
-            // Verify file is valid PDF by checking header
-            $is_valid_pdf = false;
-            $handle = @fopen($filepath, 'r');
-            if ($handle) {
-                $header = fread($handle, 5);
-                fclose($handle);
-                $is_valid_pdf = (strpos($header, '%PDF-') === 0);
-            }
-            
-            if ($is_valid_pdf) {
-                echo json_encode([
-                    'success' => true,
-                    'filename' => $unique_filename,
-                    'filepath' => $filepath,
-                    'filesize' => filesize($filepath),
-                    'generated_at' => date('Y-m-d H:i:s'),
-                    'valid_pdf' => true
-                ]);
-            } else {
-                // Clean up invalid file
-                if (file_exists($filepath)) {
-                    unlink($filepath);
-                }
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Generated file is not a valid PDF'
-                ]);
-            }
-        } else {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Failed to save PDF file'
-            ]);
-        }
-        
-    } catch (Exception $e) {
-        // Clean up any partially created file
-        if (isset($filepath) && file_exists($filepath)) {
-            @unlink($filepath);
-        }
-        
-        echo json_encode([
-            'success' => false,
-            'message' => 'Error generating PDF: ' . $e->getMessage(),
-            'trace' => $e->getTraceAsString()
-        ]);
-        exit;
-    }
-} else {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'message' => 'Invalid request']);
     exit;
+}
+
+$schedule_id = intval($_POST['schedule_id'] ?? 0);
+$step = intval($_POST['step'] ?? 0);
+
+if (!$schedule_id) {
+    echo json_encode(['success' => false, 'message' => 'No schedule ID provided']);
+    exit;
+}
+
+// Generate unique filename based on schedule_id and step
+$unique_filename = 'Inspection_Order_' . $schedule_id . '_' . $step . '.pdf';
+$temp_dir = dirname(__FILE__) . '/../temp_pdfs/';
+$filepath = $temp_dir . $unique_filename;
+
+// 1. CHECK IF FILE ALREADY EXISTS AND IS VALID
+if (file_exists($filepath)) {
+    $file_is_valid = validatePdfFile($filepath);
+    
+    if ($file_is_valid) {
+        // File exists and is valid - return cached version
+        echo json_encode([
+            'success' => true,
+            'filename' => $unique_filename,
+            'filepath' => $filepath,
+            'filesize' => filesize($filepath),
+            'generated_at' => date('Y-m-d H:i:s', filemtime($filepath)),
+            'valid_pdf' => true,
+            'cached' => true,
+            'message' => 'Using cached PDF file'
+        ]);
+        exit;
+    } else {
+        // File exists but is invalid - delete it
+        @unlink($filepath);
+    }
+}
+
+// 2. GENERATE NEW PDF FILE
+try {
+    // Set schedule_id for the included file
+    $_GET['id'] = $schedule_id;
+    
+    // Start output buffering to capture HTML
+    ob_start();
+    include "../pages/fsed9f_email_attachment_template.php";
+    $html_content = ob_get_clean();
+    
+    // Add CSS styling to the HTML content
+    $html_content = addPdfStyling($html_content);
+    
+    // Convert images to Base64
+    $html_content = convertImagesToBase64($html_content, $schedule_id);
+    
+    // Create PDF using TCPDF
+    $pdf = new \TCPDF('P', 'mm', 'Legal', true, 'UTF-8', false);
+    
+    // Set document information
+    $pdf->SetCreator('BFP Oas System');
+    $pdf->SetAuthor('Bureau of Fire Protection');
+    $pdf->SetTitle('Inspection Order - ' . $schedule_id);
+    $pdf->SetSubject('Fire Safety Inspection Order');
+    
+    // Remove default header/footer
+    $pdf->setPrintHeader(false);
+    $pdf->setPrintFooter(false);
+    
+    // Set margins (left, top, right)
+    $pdf->SetMargins(5, 5, 5);
+    
+    // Add a page
+    $pdf->AddPage();
+    
+    // Write HTML content
+    $pdf->writeHTML($html_content, true, false, true, false, '');
+    
+    // Ensure directory exists
+    if (!file_exists($temp_dir)) {
+        mkdir($temp_dir, 0777, true);
+    }
+    
+    // Save PDF file
+    $output_result = $pdf->Output($filepath, 'F');
+    
+    // Verify file was created and is valid
+    if ($output_result !== false && file_exists($filepath)) {
+        chmod($filepath, 0644); // Make it readable
+        
+        $is_valid_pdf = validatePdfFile($filepath);
+        
+        if ($is_valid_pdf) {
+            echo json_encode([
+                'success' => true,
+                'filename' => $unique_filename,
+                'filepath' => $filepath,
+                'filesize' => filesize($filepath),
+                'generated_at' => date('Y-m-d H:i:s'),
+                'valid_pdf' => true,
+                'cached' => false,
+                'message' => 'New PDF generated successfully'
+            ]);
+        } else {
+            // Clean up invalid file
+            @unlink($filepath);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Generated file is not a valid PDF'
+            ]);
+        }
+    } else {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Failed to save PDF file'
+        ]);
+    }
+    
+} catch (Exception $e) {
+    // Clean up any partially created file
+    if (isset($filepath) && file_exists($filepath)) {
+        @unlink($filepath);
+    }
+    
+    echo json_encode([
+        'success' => false,
+        'message' => 'Error generating PDF: ' . $e->getMessage()
+    ]);
+    exit;
+}
+
+/**
+ * Validate if file is a valid PDF
+ */
+function validatePdfFile($filepath) {
+    if (!file_exists($filepath) || filesize($filepath) === 0) {
+        return false;
+    }
+    
+    // Quick check: Read first 5 bytes to check for PDF header
+    $handle = @fopen($filepath, 'r');
+    if (!$handle) {
+        return false;
+    }
+    
+    $header = fread($handle, 5);
+    fclose($handle);
+    
+    return strpos($header, '%PDF-') === 0;
 }
 
 /**
  * Add CSS styling for PDF generation
  */
 function addPdfStyling($html) {
-    $css = '
+   $css = '
      <style>
         /* Bootstrap 5 Reset and Base */
         * {
@@ -498,10 +531,9 @@ function addPdfStyling($html) {
     ';
     
     // Insert CSS at the beginning of the HTML
-    $html = preg_replace('/<head>/', '<head>' . $css, $html, 1);
-    
-    // If no head tag exists, wrap the content
-    if (strpos($html, '<head>') === false) {
+    if (strpos($html, '<head>') !== false) {
+        $html = preg_replace('/<head>/', '<head>' . $css, $html, 1);
+    } else {
         $html = '<!DOCTYPE html><html><head>' . $css . '</head><body>' . $html . '</body></html>';
     }
     
@@ -606,3 +638,4 @@ function convertImagesToBase64($html, $schedule_id) {
     
     return $html;
 }
+?>

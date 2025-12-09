@@ -3,8 +3,8 @@ include_once "../includes/_init.php";
 
 if (isset($_GET['email_token']) && isset($_GET['schedule_id']) && isset($_GET['step'])) {
     $email_token = $_GET['email_token'];
-    $schedule_id = intval($_GET['schedule_id']);
-    $step = intval($_GET['step']);
+    $schedule_id = $_GET['schedule_id'];
+    $step = htmlentities($_GET['step']);
 
     
     // Check if token exists in email_token table
@@ -63,7 +63,7 @@ if (isset($_GET['email_token']) && isset($_GET['schedule_id']) && isset($_GET['s
                             break;
                     }
                     
-                    // Get next recipient info
+                    // // Get next recipient info
                     if ($next_user_id) {
                         $next_user_info = select('users', ['user_id' => $next_user_id])[0] ?? [];
                         $next_recipient = $next_user_info['email'] ?? Config::ADMIN_EMAIL;
