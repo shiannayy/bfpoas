@@ -660,6 +660,14 @@ function handleDefault(user) {
     loadInspectionSchedules(user);
 }
 
+function safeGetIcon(name) {
+    try {
+        return typeof getIcon === "function" ? getIcon(name) : '';
+    } catch (e) {
+        return '';
+    }
+}
+
 function getIcon(type) {
     switch (type) {
         case "menu":

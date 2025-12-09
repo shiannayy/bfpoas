@@ -14,11 +14,16 @@
         ?>
         <div class="row px-0">
             <div class="col-12 mx-0 px-0">
-                    <div class="d-flex justify-content-between m-3" id="estSearchForm">
-                        <input placeholder="Search Establishment" type="search" id="searchEst" class="form-control w-25 mx-3 border border-3 border-top-0 border-start-0 border-end-0 rounded-0 border-dark">
-                        <?= getIcon("search") ?>
-                        <a href="?page=new_est" class="btn btn-gold">+ New</a>
-                    </div>
+                <form action="" method="GET">
+                        <div class="d-flex justify-content-between  m-3" id="estSearchForm">
+                       
+                        <input type="hidden" name="page" value="est_list">
+                        <input name="searchEst" placeholder="Search Establishment" type="text" id="searchEst" class="form-control w-25 border border-3 border-top-0 border-start-0 border-end-0 rounded-0 border-dark">
+                        <button  type="submit" class="btn btn-outline-gold rounded rounded-3 btn-sm"> <b class="my-auto me-auto align-middle"><?= getIcon("search") ?></b></button>
+                    
+                        <a href="?page=new_est" class="ms-auto btn btn-gold">+ New</a>
+                        </div>
+                    </form>
                     <div class="table-responsive">
                         <table class="table table-striped table-hover align-middle">
                             <thead class="table-navy">
@@ -32,12 +37,15 @@
                             </thead>
                             <tbody>
                                 <?php
+                                $where = [];
                                 // Fetch general_info records
-                                if(isClient()){
-                                    $where = ["owner_id" => $_SESSION['user_id'] ];
+                                if(isset($_GET['searchEst'])){
+                                    $searchEst = mysqli_real_escape_string($CONN, $_GET['searchEst']);
+                                    $where += ['building_name' => "%${searchEst}%"];
                                 }
-                                else {
-                                    $where = null;
+
+                                if(isClient()){
+                                    $where += ["owner_id" => $_SESSION['user_id'] ];
                                 }
                                     $buildings = select_join(
                                         ["general_info gi"],

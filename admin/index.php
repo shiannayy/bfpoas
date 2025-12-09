@@ -145,9 +145,18 @@ enforceRoleAccess(['administrator']);
             'ins_list' => 'inspection.js',
         ];
 
+        if(isset($_GET['view'])){
+        $page = $_GET['view'];
+            $scripts = [
+                    'stat' => 'inspection_sched_stat.js',
+                    'list' => 'inspection_sched.js'
+            ];
+        }
+
         if (array_key_exists($page, $scripts)) {
             echo '<script src="../assets/js/' . htmlspecialchars($scripts[$page]) . '"></script>';
         }
+        
     }
     ?>
 

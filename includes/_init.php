@@ -1596,7 +1596,7 @@ function successResponse($result) {
 }
 function getOwnerInfo($gen_info_id){
     $tables = ['users'];
-    $columns = ['email', 'user_id', 'full_name','contact_no'];
+    $columns = ['email', 'user_id', 'full_name','contact_no', ];
     $joins = [
             [
                 'type' => 'INNER',
@@ -2062,6 +2062,11 @@ function getIcon( $type, $size = ["16", "16","px"]) {
                             <path d='M10.828.122A.5.5 0 0 1 11 .5V1h.5A1.5 1.5 0 0 1 13 2.5V15h1.5a.5.5 0 0 1 0 1h-13a.5.5 0 0 1 0-1H3V1.5a.5.5 0 0 1 .43-.495l7-1a.5.5 0 0 1 .398.117M11.5 2H11v13h1V2.5a.5.5 0 0 0-.5-.5M4 1.934V15h6V1.077z'/>
                         </svg>";
                 break;
+            case "search":
+                return "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-search' viewBox='0 0 16 16'>
+                        <path d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0'/>
+                        </svg>";
+                        break;
             default: return;
         }
 }
