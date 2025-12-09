@@ -1,6 +1,6 @@
 <?php
 include_once "../includes/_init.php";
-$GLOBALS['USER_LOGGED'] = $_SESSION['user_id'];
+//$_SESSION['user_id'] = $_SESSION['user_id'];
 //if(!isset($_SESSION['OR_NUMBER'])){
 //    $_SESSION['OR_NUMBER'] = config::REGION . randomNDigits(5);
 //    $or_number = $_SESSION['OR_NUMBER'];
@@ -10,7 +10,7 @@ $GLOBALS['USER_LOGGED'] = $_SESSION['user_id'];
 //}
 //Set Inspection Order Number
 $g=query("select max(schedule_id) + 1 as max_id FROM `inspection_schedule`");
-$new_id = $g[0]['max_id'];
+$new_id = $g[0]['max_id'] ?? 1;
 $formatted = str_pad($new_id, 4, "0", STR_PAD_LEFT);
 ?>
 
@@ -93,6 +93,7 @@ $formatted = str_pad($new_id, 4, "0", STR_PAD_LEFT);
                             </div>
                             <div class="col-md-3">
                                 <div class="form-floating mb-3 position-relative">
+                                    <!--                                    Auto populate when clicked establishment -->
                                     <input type="hidden" name="establishment_id" id="establishment_id" required>
                                     <input type="text" class="form-control" id="proceed" name="proceed" placeholder=" " autocomplete="off" required>
                                     <label for="proceed">4. Proceed to (<i class="fw-italic">Establishment Location</i>) <span class="text-danger">*</span></label>

@@ -1,10 +1,6 @@
 <?php
 include_once "../includes/_init.php";
 $alert_type = ""; $alert = "";
-
-
-
-
 if(isset($_GET['action']) && isset($_GET['u'])){
     $action = $_GET['action'];
     $val = ($action == "x" ? 0 : ($action == "y" ? 1 : null));
@@ -26,20 +22,13 @@ if(isset($_GET['action']) && isset($_GET['u'])){
         $alert = "User not found.";
             $alert_type = "alert-danger";
     }
-} ?>
-
-
-
-
-<?php
-        
+}       
 if (isset($_SESSION['rolelabel'])) {
 
     $roleLabel = $_SESSION['rolelabel'];
     $where = null;
     $limit = null;
     $wherebit = null;
-
     //--------------------------------------------
     // 🔍 SEARCH
     //--------------------------------------------
@@ -132,16 +121,17 @@ if (isset($_SESSION['rolelabel'])) {
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
+    <!-- <meta charset="UTF-8">
     <title>List of Establishments</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Bootstrap CSS -->
-    <!--    <link href="../assets/css/bootstrap.min.css" rel="stylesheet">-->
+     Bootstrap CSS
+       <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom Styles -->
+    
     <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/color_pallette.css">
+    <link rel="stylesheet" href="../assets/css/color_pallette.css"> 
+-->
     <style>
         .dropdown-toggle::after {
             display: none !important;
@@ -164,25 +154,9 @@ if (isset($_SESSION['rolelabel'])) {
 </head>
 
 <body>
-
-    <div class="container-fluid px-0" style="margin-top:65px">
+    <div class="container-fluid px-0" style="margin-top: 65px; margin-bottom:50px;">
         <div class="d-flex align-items-center gap-2 flex-wrap px-2 my-2">
             <span class="fs-4 mb-0 me-3">Users</span>
-
-            <?php if(isDataEntry()) { ?>
-            <a href="?page=new_user" class="btn btn-gold my-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-plus" viewBox="0 0 16 16">
-                    <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
-                    <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5" />
-                </svg>
-                <b class="fw-bold">Add New User</b>
-            </a>
-            <?php } ?>
-
-
-
-
-
             <form action="" method="get">
                 <div class="input-group">
                     <input type="hidden" name="page" value="user_list">
@@ -195,10 +169,20 @@ if (isset($_SESSION['rolelabel'])) {
                 </div>
             </form>
             <div class="py-1 mt-3 alert <?= $alert_type ?>"><?php echo $alert ?></div>
+
+            <?php if(isDataEntry()) { ?>
+            <a href="?page=new_user" class="btn btn-gold my-2 ms-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-plus" viewBox="0 0 16 16">
+                    <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
+                    <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5" />
+                </svg>
+                <b class="fw-bold">Add New User</b>
+            </a>
+            <?php } ?>
         </div>
 
         <div class="table-responsive overflow-y-scroll px-0">
-            <div class="container pagination"></div>
+            <div class="container-fluid pagination"></div>
             <table class="mx-0 w-100 table table-striped table-responsive table-hover table-bordered align-middle" id="scheduleTable">
                 <thead class="table-navy">
                     <tr>

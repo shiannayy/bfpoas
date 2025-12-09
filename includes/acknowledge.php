@@ -3,7 +3,7 @@ require_once "../includes/_init.php";
  
 if (isset($_GET['ack_sched_id']) && isLoggedIn() ) {
     $schedule_id = intval($_GET['ack_sched_id']);
-    $user_id = $GLOBALS['USER_LOGGED'];
+    $user_id = $_SESSION['user_id'];
     $role = null;
 
   if (isClient()) {

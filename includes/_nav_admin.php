@@ -49,13 +49,6 @@ if (isset($_SESSION['user_id'])) {
                         <small class="d-inline d-lg-none d-md-none">HOME</small>
                     </a>
                 </li>
-
-                <?php 
-                         $role = $_SESSION['rolelabel'];
-                            foreach($roleButtons[$role] as $btns){
-                                echo navBarBtn($btns['link'],$btns['icon'],$btns['label']);
-                            }
-                         ?>
                 <li class="nav-item">
                     <a class="nav-link" href="?page=map_loc" data-link="locator"><svg xmlns="http://www.w3.org/2000/svg"
                             width="20" height="20" fill="currentColor" class="bi bi-map" viewBox="0 0 16 16">

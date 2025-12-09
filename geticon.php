@@ -2,7 +2,7 @@
 function getIcon( $type, $size = ["16", "16","px"]) {
     $w = $size[0];
     $h = $size[1];
-    $p = $size[2]
+    $p = $size[2];
 
                     switch( $type ) {
                         case "attach":

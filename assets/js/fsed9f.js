@@ -331,10 +331,54 @@ $(document).on("focus", "#to", function () {
             data: $form.serialize(),
             dataType: "json",
             success: function (response) {
+
                 if (response.success) {
-                    $(".form-reset").click();
+                   // $(".form-reset").click();
                     fetchMaxSchedId();
-                    //fetchNewORNumber();
+                    //--send to email asynchronously
+                    // Open email sending page in new tab
+                        if (response.schedule_data && response.schedule_data.schedule_id) {
+                            console.log("creating a form for email");
+                            // Create a form to submit to the email wrapper
+                            const form = document.createElement('form');
+                            form.method = 'GET';
+                            form.action = '../pages/wrapper_send_IO_mail.php'; // Path to your wrapper
+                            form.target = '_blank'; // Open in new tab
+                            
+                            // Add schedule_id
+                            const scheduleIdInput = document.createElement('input');
+                            scheduleIdInput.type = 'hidden';
+                            scheduleIdInput.name = 'schedule_id';
+                            scheduleIdInput.value = response.schedule_data.schedule_id;
+                            form.appendChild(scheduleIdInput);
+
+                              // ✅ ADD EMAIL_TOKEN from response
+                            if (response.schedule_data.email_token) {
+                                const emailTokenInput = document.createElement('input');
+                                emailTokenInput.type = 'hidden';
+                                emailTokenInput.name = 'email_token';
+                                emailTokenInput.value = response.schedule_data.email_token;
+                                form.appendChild(emailTokenInput);
+                            }
+                        
+                              const inspectionSchedStep = document.createElement('input');
+                                inspectionSchedStep.type = 'hidden';
+                                inspectionSchedStep.name = 'step';
+                                inspectionSchedStep.value = 1;
+                                form.appendChild(inspectionSchedStep);
+                            
+                            // Submit the form
+                            document.body.appendChild(form);
+                            form.submit();
+                            document.body.removeChild(form);
+                            console.log("Form Created, removed and submitted");
+                            // Show notification about email sending
+                            setTimeout(function() {
+                                showAlert("Sending Email to Receipient...", "info");
+                            }, 500);
+                        }
+                    //------------end send email----
+
                     showAlert(response.message || "Schedule saved successfully!", "success");
                     setTimeout(function(){
                             location.reload();

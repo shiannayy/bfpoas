@@ -139,7 +139,7 @@ if (isset($_POST['search']) && !empty($_POST['search'])) {
     // Wrap all conditions in an AND group
     $where[] = [
         'group' => $searchConditions,
-        'logic' => 'AND'
+        'logic' => 'OR'
     ];
 }
 
@@ -164,8 +164,10 @@ switch ($roleLabel) {
         break;
 }
 
-// Always sort by scheduled_date as secondary
-$order_by = ['inspection_schedule.scheduled_date' => 'DESC', 'inspection_schedule.created_at' => 'DESC'];
+// Always sort by scheduled_date as secondary, then created_at as tertiary
+$order_by['inspection_schedule.created_at'] = 'DESC';
+$order_by['inspection_schedule.scheduled_date'] = 'DESC';
+
 
 
 // ---------- LIMIT ----------

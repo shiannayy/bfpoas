@@ -61,7 +61,9 @@
 <body class="d-flex flex-column min-vh-100">
     <main class="flex-grow-1">
         
-        <?php include_once "../includes/_nav_ins.php";
+        <?php
+        include_once "../pages/modals.php";
+        include_once "../includes/_nav_ins.php";
         if(!isset($_GET['page'])){
             include_once "app_nav.php";
             ?>

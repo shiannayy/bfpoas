@@ -730,8 +730,6 @@ function select_join($tables = [], $columns = ['*'], $joins = [], $where = null,
     }
     return $data;
 }
-
-
 function select_join_bit(
     array $tables = [],
     array $columns = ['*'],
@@ -1596,7 +1594,23 @@ function successResponse($result) {
     echo json_encode($result);
     exit;
 }
-
+function getOwnerInfo($gen_info_id){
+    $tables = ['users'];
+    $columns = ['email', 'user_id', 'full_name','contact_no'];
+    $joins = [
+            [
+                'type' => 'INNER',
+                'table' => 'general_info',
+                'on' => 'users.user_id = general_info.owner_id'
+            ]
+    ];
+    $where = [
+        'gen_info_id' => $gen_info_id
+    ];
+    $order_by = [];
+    $limit = 1;
+    return select_join($tables, $columns, $joins, $where, $order_by , $limit);
+}
 
 function isLoggedIn(): bool {
     global $USER_LOGGED;
@@ -1795,9 +1809,9 @@ function markScheduleUnseen( $schedule_id, $rolesToNotify = [], $skipRole = null
                         $updates['updated_at'] = date( 'Y-m-d H:i:s' );
                         return update_data( 'inspection_schedule', $updates,
                         ['schedule_id' => $schedule_id] );
-                    }
+}
 
-                    function sys_log( $msg, $action = null, $val = null ) {
+function sys_log( $msg, $action = null, $val = null ) {
                         $table = "logs";
                         $col = "user_id";
                         $now = date( "Y-m-d H:i:s" );
@@ -1853,32 +1867,25 @@ function markScheduleUnseen( $schedule_id, $rolesToNotify = [], $skipRole = null
                     return htmlspecialchars( ( string )$str, ENT_QUOTES, 'UTF-8' );
                 }
 
-                function getConfigValue( $key ) {
-                    global $CONN;
+function getConfigValue( $key ) {
+    global $CONN;
+    // Sanitize key to prevent SQL injection
+    $safe_key = mysqli_real_escape_string( $CONN, $key );
+    // Fetch record using your select_data() helper
+    $rows = select_data( 'system_config', ['config_key' => $safe_key] );
+    if ( empty( $rows ) ) return null;
+    $row = $rows[0];
+    $encrypted_value = $row['config_value'];
+    $iv = base64_decode( $row['iv_value'] );
+    // Use a constant or config variable instead of hardcoding
+    $secret = config::APP_SECRET;
+    // Decrypt value
+    $decrypted_value = openssl_decrypt( $encrypted_value, 'AES-128-CTR', $secret, 0, $iv );
 
-                    // Sanitize key to prevent SQL injection
-                    $safe_key = mysqli_real_escape_string( $CONN, $key );
+    return $decrypted_value ?: null;
+}
 
-                    // Fetch record using your select_data() helper
-                    $rows = select_data( 'system_config', "config_key = '{$safe_key}'" );
-
-                    if ( empty( $rows ) ) return null;
-
-                    $row = $rows[0];
-
-                    $encrypted_value = $row['config_value'];
-                    $iv = base64_decode( $row['iv_value'] );
-
-                    // Use a constant or config variable instead of hardcoding
-                    $secret = config::APP_SECRET;
-
-                    // Decrypt value
-                    $decrypted_value = openssl_decrypt( $encrypted_value, 'AES-128-CTR', $secret, 0, $iv );
-
-                    return $decrypted_value ?: null;
-                }
-
-                function getSchedInfo( $sched_id ) {
+function getSchedInfo( $sched_id ) {
                     global $CONN;
 
                     $data = select( "inspection_schedule", ["schedule_id" => $sched_id], null, 1 );
@@ -1892,7 +1899,7 @@ function markScheduleUnseen( $schedule_id, $rolesToNotify = [], $skipRole = null
 
                 }
 
-                function getGenInfo( $gen_info_id ) {
+function getGenInfo( $gen_info_id ) {
                     global $CONN;
 
                     $gen_info_id = intval( $gen_info_id );
@@ -2098,7 +2105,8 @@ function getRoleLabel ( $mainrole, $subrole ) {
                     'inspection_sched' => ["label" => "INSPECTION SCHEDULE", "link" => "?page=ins_sched", "section" => "inspections", "icon" => "calendar"],
                     'inspection_list' => ["label" => "INSPECTIONS CERTIFICATE", "link" => "?page=ins_list", "section" => "inspections", "icon" => "award"],
                     'user_list' => ["label" => "USERS", "link" => "?page=user_list", "section" => "users", "icon" => "user"],
-                    'new_user' => ["label" => "ADD USERS", "link" => "?page=new_user", "section" => "users", "icon" => "new_user"]
+                    'new_user' => ["label" => "NEW USER", "link" => "?page=new_user", "section" => "users", "icon" => "new_user"],
+                    'divider' => ["label" => "", "link" => "#", "section" => "none", "icon" => "divider"]
                 ];
                 $roleButtons = [
                     "Recommending Approver" => [
@@ -2108,11 +2116,16 @@ function getRoleLabel ( $mainrole, $subrole ) {
                         $pages['establishment'], $pages['inspection_sched'], $pages['inspection_list']
                     ],
                     "Admin_Assistant" => [
-                        $pages['user_list']
+                          $pages['divider']
                         , $pages['new_user']
+                        , $pages['new_est']  
                         , $pages['sched_ins']
-                        , $pages['checklist'], $pages['establishment']
-                        , $pages['new_est'], $pages['inspection_sched']
+                        , $pages['divider']
+                        , $pages['checklist']
+                        , $pages['establishment']
+                        , $pages['user_list']
+                        , $pages['inspection_sched']
+                        , $pages['divider']
                         , $pages['inspection_list']
                     ],
                     "Inspector" => [

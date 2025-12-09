@@ -11,7 +11,6 @@ enforceRoleAccess(['administrator']);
 
     <!-- Bootstrap CSS -->
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Custom Styles -->
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/color_pallette.css">
@@ -44,92 +43,96 @@ enforceRoleAccess(['administrator']);
     </style>
 </head>
 
-<body class="d-flex flex-column">
-    <main class="flex-grow-1">
-        <!-- Static Top Navbar -->
-        <?php include_once "../includes/_nav_admin.php";
-        
-        
-        if(!isset($_GET['page'])){
-            include_once "app_nav.php";
-            ?>
-                <div class="container mb-3">
-                    <div class="row" id="counts">
+<body id="main_container">
+    <div class="container-fluid">
 
-                    </div>
+        <?php 
+        include_once "../pages/modals.php";
+        include_once "../includes/_nav_admin.php"; ?>
+        <div class="row">
+            <div class="col-0 bg-navy col-lg-2 col-md-2 d-sm-none d-md-inline d-lg-inline p-0 position-fixed vh-100 start-0 top-0 overflow-y-auto">
+                <!-- Navigation -->
+                 <?php include_once "app_nav.php"; ?>
+                 <!-- Navigation -->
+            </div>
+            <div class="col-12 col-lg-10 col-md-10 offset-lg-2 offset-md-2 ps-3 pe-3 overflow-y-auto h-100" style="padding-top: 65px;">
+                <!-- Main Content -->
+                 <?php if(!isset($_GET['page'])){ ?>
+                <div class="container-fluid mt-2 mb-3">
+                    <div class="row" id="counts"></div>
                 </div>
 
-                <div class="container">
+                <div class="container-fluid p-0 mb-3">
                     <div class="row" id="chartsContainer">
                         
                     </div>
                 </div>
-        <?php }
-        else{
-            switch($_GET['page']){
-                case 'new_user':
-                    require_once "../pages/add-user.php";
-                    break;
-                case 'new_est':
-                    if(isset($_SESSION['gen_info_id'])){
-                        unset($_SESSION['gen_info_id']);
+                    <?php }
+                    else{
+                        switch($_GET['page']){
+                            case 'new_user':
+                                require_once "../pages/add-user.php";
+                                break;
+                            case 'new_est':
+                                if(isset($_SESSION['gen_info_id'])){
+                                    unset($_SESSION['gen_info_id']);
+                                }
+                                require_once "../pages/gen_info.php";
+                                break;
+                            case 'est_list':
+                                require_once "../pages/establishment-list.php";
+                                break;
+                            case 'edit_gen_info':
+                                require_once "../pages/gen_info.php"; break;
+                            case 'sched_ins':
+                                require_once "../pages/fsed_9F.php";
+                                break;
+                            case 'ins_sched':
+                                require_once "../pages/inspection_schedule.php";
+                                break;
+                            case 'ins_list':
+                                require_once "../pages/inspection-list.php";
+                                break;
+                            case 'user_list':
+                                require_once "../pages/users.php";
+                                break;
+                                
+                            case 'view_checklists':
+                                require_once "../pages/checklists.php";
+                                break;
+                            case 'map_loc':
+                                include_once "../pages/map.php";
+                                break;    
+                            default: include_once "app_nav.php";
+                        }
                     }
-                    require_once "../pages/gen_info.php";
-                    break;
-                case 'est_list':
-                    require_once "../pages/establishment-list.php";
-                    break;
-                case 'edit_gen_info':
-                    require_once "../pages/gen_info.php"; break;
-                case 'sched_ins':
-                    require_once "../pages/fsed_9F.php";
-                    break;
-                case 'ins_sched':
-                    require_once "../pages/inspection_schedule.php";
-                    break;
-                case 'ins_list':
-                    require_once "../pages/inspection-list.php";
-                    break;
-                case 'user_list':
-                    require_once "../pages/users.php";
-                    break;
-                    
-                case 'view_checklists':
-                    require_once "../pages/checklists.php";
-                    break;
-                case 'map_loc':
-                    include_once "../pages/map.php";
-                    break;    
-                default: include_once "app_nav.php";
-            }
-        }
-        ?>
-        
+                    ?>
+                 <!-- Main Content -->                
+            </div>
+        </div>
+    </div>
+
+    <main class="d-none d-flex flex-column flex-grow-1">
+        <!-- Static Top Navbar -->
+        <?php include_once "../includes/_nav_admin.php"; ?>
+        <?php include_once "../includes/_footer.php"; ?>
     </main>
     
 
     <!-- Footer -->
-    <?php include_once "../includes/_footer.php"; ?>
+    
 
     <!-- Bootstrap Bundle JS -->
     <script src="../assets/js/jquery.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-<!--    <script src="../assets/js/bootstrap.bundle.min.js"></script>-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
-    <!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
-    
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/_dashboard.js"></script>
     <script src="../assets/js/admin_charts.js"></script>
-    
     <script src="../assets/js/navbar.js"></script>
-    
-    
-    
-    
+    <script src="../assets/js/send_mail.js"></script>
     <?php if(isset($_GET['page'])){
     $page = $_GET['page'] ?? '';
         $scripts = [

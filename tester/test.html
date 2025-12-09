@@ -1,0 +1,518 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+    
+    * {
+        box-sizing: border-box;
+    }
+    body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        background-color: #fff;
+    }
+    .container-fluid {
+        width: 100%;
+        padding-right: 12px;
+        padding-left: 12px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+    .card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+    }
+    .card.border-4 {
+        border-width: 4px !important;
+    }
+
+    .card.border-dark {
+        border-color: #212529 !important;
+    }
+
+    .card.my-1 {
+        margin-top: 0.25rem !important;
+        margin-bottom: 0.25rem !important;
+    }
+
+    .rounded-0 {
+        border-radius: 0 !important;
+    }
+
+    /* Card Header */
+    .card-header {
+        padding: 0.5rem 1rem;
+        margin-bottom: 0;
+        background-color: rgba(0, 0, 0, 0.03);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    }
+    .card-body {
+        flex: 1 1 auto;
+        padding: 1rem;
+    }
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -12px;
+        margin-left: -12px;
+    }
+    .col-1 {
+        flex: 0 0 8.333333%;
+        max-width: 8.333333%;
+    }
+    .col-2 {
+        flex: 0 0 16.666667%;
+        max-width: 16.666667%;
+    }
+    .col-3 {
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+    .col-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+    .col-5 {
+        flex: 0 0 41.666667%;
+        max-width: 41.666667%;
+    }
+    .col-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    .col-8 {
+        flex: 0 0 66.666667%;
+        max-width: 66.666667%;
+    }
+    .col-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .col-1,
+    .col-2,
+    .col-3,
+    .col-4,
+    .col-5,
+    .col-6,
+    .col-8,
+    .col-12 {
+        position: relative;
+        width: 100%;
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    .offset-1 {
+        margin-left: 8.333333%;
+    }
+
+    /* Spacing Utilities */
+    .m-0 {
+        margin: 0 !important;
+    }
+
+    .mt-0 {
+        margin-top: 0 !important;
+    }
+
+    .mt-3 {
+        margin-top: 1rem !important;
+    }
+
+    .mb-0 {
+        margin-bottom: 0 !important;
+    }
+
+    .mb-1 {
+        margin-bottom: 0.25rem !important;
+    }
+
+    .mb-2 {
+        margin-bottom: 0.5rem !important;
+    }
+
+    .my-1 {
+        margin-top: 0.25rem !important;
+        margin-bottom: 0.25rem !important;
+    }
+
+    .p-0 {
+        padding: 0 !important;
+    }
+
+    /* Text Utilities */
+    .text-center {
+        text-align: center !important;
+    }
+
+    .text-start {
+        text-align: left !important;
+    }
+
+    .text-uppercase {
+        text-transform: uppercase !important;
+    }
+
+    .text-danger {
+        color: #dc3545 !important;
+    }
+
+    .text-dark {
+        color: #212529 !important;
+    }
+
+    .fw-bold {
+        font-weight: 700 !important;
+    }
+
+    .small {
+        font-size: 0.875em;
+    }
+
+    .h6 {
+        font-size: 1rem;
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        line-height: 1.2;
+    }
+    .align-center {
+        align-items: center !important;
+    }
+
+    /* Position */
+    .position-relative {
+        position: relative !important;
+    }
+
+    .position-absolute {
+        position: absolute !important;
+    }
+
+    .bottom-0 {
+        bottom: 0 !important;
+    }
+
+    .start-0 {
+        left: 0 !important;
+    }
+
+    /* Table */
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #212529;
+        border-collapse: collapse;
+    }
+    .table-bordered {
+        border: 2px solid #000000ff;
+    }
+
+    .table-bordered td {
+        border: 1px solid #000000ff;
+    }
+
+    .border-1 {
+        border-width: 1px !important;
+    }
+
+    .border-dark {
+        border-color: #212529 !important;
+    }
+
+    .table td {
+        padding: 0.375rem;
+        vertical-align: top;
+        border-top: 1px solid #000000ff;
+    }
+
+    .w-100 {
+        width: 100% !important;
+    }
+
+    
+    .line {
+        display: inline-block;
+        min-width: 250px;
+        border-bottom: 1px solid #000;
+    }
+
+    /* Custom Print Sizes */
+    .fine-print-small {
+        font-size: 0.5rem;
+        line-height: 1;
+        margin: 0;
+        padding: 0;
+    }
+
+    .fine-print-small span {
+        display: block;
+        line-height: 1;
+        margin: 0;
+        padding: 0;
+    }
+
+    .small-print {
+        font-size: 0.8rem;
+    }
+
+    .normal-print {
+        font-size: 0.9rem;
+    }
+
+    .small-fine-print {
+        font-size: 0.7rem;
+        line-height: 1.2;
+    }
+
+    /* Image */
+    .img-fluid {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .img-responsive {
+        display: block;
+        max-width: 100%;
+        height: auto;
+    }
+
+    .img-signature {
+        mix-blend-mode: darken;
+    }
+
+    /* Horizontal Rule */
+    hr {
+        margin: 0.5rem 0;
+        color: inherit;
+        background-color: currentColor;
+        border: 0;
+        opacity: 0.25;
+    }
+
+    hr.my-1 {
+        margin-top: 0.25rem !important;
+        margin-bottom: 0.25rem !important;
+    }
+
+    /* Signature Section */
+    .signature {
+        text-align: center;
+    }
+
+    .signature .line {
+        width: 280px;
+        margin: 0 auto;
+    }
+
+    /* Header Title */
+    .header-title {
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    /* Underline */
+    u {
+        text-decoration: underline;
+    }
+
+    /* Italic */
+    i,
+    em {
+        font-style: italic;
+    }
+
+    /* Print Styles */
+    @media print {
+        button {
+            display: none;
+        }
+
+        .container-fluid {
+            max-width: 100%;
+        }
+
+        .card {
+            border: 4px solid #000 !important;
+        }
+
+        body {
+            font-family: "Times New Roman", serif;
+            font-size: 14px;
+        }
+    }
+    </style></head><body><!DOCTYPE html>
+<html lang="en">
+<body>
+    <div class="container-fluid card border-4 border-dark my-1 rounded-0" id="print-area">
+        <div class="card-header">
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr style="text-align: center; vertical-align: middle;">
+                    <td style="width: 16.6666%; padding: 0;">
+                        <img src="../assets/img/dilg.png" height="60px" alt="IMG NOT FOUND" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+                    </td>
+                    <td style="width: 66.6666%; padding: 0;">
+                        <small style="font-size: 0.7rem; line-height: 1.2; display: block;">
+                            <span>Republic of the Philippines</span><br>
+                            <span><b>Department of the Interior and Local Government</b></span><br>
+                            <span><b>Bureau of Fire Protection</b></span>
+                        </small>
+                    </td>
+                    <td style="width: 16.6666%; padding: 0;">
+                        <img src="../assets/img/bfp-logo.png" height="60px" alt="IMG NOT FOUND" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="card-body">
+            <!-- Top Info -->
+            <div class="row text-center mb-2 normal-print">
+                <div class="col-12 mb-0">REGION V</div>
+                <div class="col-12 mb-0">3rd District of Albay</div>
+                <div class="col-12 mb-0">Oas Fire Station</div>
+                <div class="col-12 mb-0">Brgy. Iraya Norte, Oas, Albay</div>
+                <div class="col-12 mb-0">(+63) 917 701 7938 / oasfirestation@yahoo.com</div>
+            </div>
+
+            <!-- Header: Inspection Order / Date -->
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 0; font-size: 0.9rem;">
+                <tr style="vertical-align: top;">
+                    <td style="width: 50%; padding: 0;">
+                        <b style="font-weight: bold; text-transform: uppercase; margin-bottom: 0.25rem; display: block;">INSPECTION ORDER</b>
+                        <p style="margin-top: 0;">
+                            NUMBER:
+                            <span style="display: inline-block; min-width: 250px; border-bottom: 1px solid #000; text-align: center;">
+                                R05-ADV-0008                            </span><br>
+                            <i style="text-align: center; font-style: italic; display: block;">(Pre-numbered)</i>
+                        </p>
+                    </td>
+                    <td style="width: 33.3333%; padding: 0; padding-left: 8.3333%; text-align: center;">
+                        <span style="display: inline-block; min-width: 200px; border-bottom: 1px solid #000;">
+                            2025-11-05 00:00:00                        </span><br>
+                        <span>DATE</span>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- Main Details Table -->
+            <table class="table table-bordered border-1 border-dark w-100 mb-0 normal-print">
+                <tbody>
+                    <tr>
+                        <td class="fw-bold col-3">TO</td>
+                        <td class="col-1">:</td>
+                        <td class="col-8">Sr Fire Officer Inspecsyon Taka</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">PROCEED</td>
+                        <td>:</td>
+                        <td>OPS - Oas Polytechnic School, 1, Oas, Albay, Philippines</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">PURPOSE</td>
+                        <td>:</td>
+                        <td>Conduct inspection of the said Establishment as required by RA 9514 RIRR Fire Code of the Philippines 2008 RIRR</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">DURATION</td>
+                        <td>:</td>
+                        <td>Until the end of Inspection</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">REMARKS OR ADDITIONAL INSTRUCTION/S</td>
+                        <td>:</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Signatures -->
+            <table style="width: 100%; border-collapse: collapse; margin-top: 0; font-size: 0.9rem;">
+                <tr style="vertical-align: top;">
+                    <td style="width: 50%; padding: 0; margin-top: 0; text-align: center;">
+                        <p style="font-weight: bold; font-size: 0.875em; margin: 0.25rem 0;">RECOMMEND APPROVAL:</p>
+                        <div style="text-align: center;">
+                                                        <img src="../assets/signatures/" height="70px" alt="" style="mix-blend-mode: darken; max-width: 100%; height: auto; display: block; margin: 0 auto;">
+                                                        <br>
+                            <u style="text-transform: uppercase; text-decoration: underline; display: block; margin: 0.25rem 0;">
+                                                            </u>
+                            <p style="text-align: center; font-size: 0.875em; margin: 0.25rem 0;">Chief, Fire Safety Enforcement Section</p>
+                        </div>
+                    </td>
+                    <td style="width: 50%; padding: 0; margin-top: 0; text-align: center;">
+                        <p style="font-weight: bold; font-size: 0.875em; margin: 0.25rem 0;">APPROVED:</p>
+                        <div style="text-align: center;">
+                                                        <br>
+                            <u style="text-transform: uppercase; text-decoration: underline; display: block; margin: 0.25rem 0;">
+                                                            </u>
+                            <p style="text-align: center; font-size: 0.875em; margin: 0.25rem 0;">CITY / MUNICIPAL FIRE MARSHAL</p>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- Acknowledgement -->
+            <table style="width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.8rem;">
+                <tr>
+                    <td colspan="3" style="padding: 0;">
+                        <hr style="margin: 0.25rem 0; border: 0; border-top: 1px solid rgba(0,0,0,0.25);">
+                        <p style="font-weight: bold; text-align: center; margin-bottom: 0;">ACKNOWLEDGEMENT</p>
+                        <p style="font-size: 0.875em; margin: 0.5rem 0;">
+                            This is to acknowledge that permission was granted to the above-named
+                            Fire Safety Inspector/s accompanied by authorized representative to conduct
+                            Fire Safety Inspection within the premises in accordance with law.
+                        </p>
+                    </td>
+                </tr>
+                <tr style="vertical-align: bottom;">
+                    <td style="width: 50%; padding: 0; text-align: center;">
+                        <div style="text-align: center; font-size: 0.875em;">
+                                                        <img src="../assets/signatures/" height="60px" alt="" style="mix-blend-mode: darken; max-width: 100%; height: auto; display: block; margin: 0 auto;">
+                            <br>
+                                                        <u style="text-transform: uppercase; text-decoration: underline; display: block; margin: 0.25rem 0;">
+                                                            </u>
+                            <br>
+                            <p style="font-size: 0.875em; margin: 0.25rem 0;">Signature over Printed Name/Authorized Representative</p>
+                        </div>
+                    </td>
+                    <td style="width: 8.3333%; padding: 0;"></td>
+                    <td style="width: 41.6667%; padding: 0; text-align: center; position: relative;">
+                        <div style="position: absolute; bottom: 0; left: 0; font-size: 0.875em;">
+                            <u></u><br>
+                            Date/Time
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- Footer Notes -->
+            <div class="row mt-3 small-print">
+                <div class="col-12">
+                    <p class="small text-danger text-center">
+                        <b>PAALALA: "MAHIGPIT NA IPINAGBABAWAL NG PAMUNUAN NG BUREAU OF FIRE PROTECTION SA MGA KAWANI
+                            NITO ANG MAGBENTA O MAGREKOMENDA NG ANUMANG BRAND NG FIRE EXTINGUISHER"</b>
+                    </p>
+                </div>
+                <div class="col-12">
+                    <h3 class="h6 text-center fw-bold text-dark">"FIRE SAFETY IS OUR MAIN CONCERN"</h3>
+                </div>
+                <div class="col-12 mt-2">
+                    <small class="fine-print-small">
+                        <span>DISTRIBUTION:</span>
+                        <span>Duplicate (BFP Copy - Email Attachment)</span>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="text-center mt-2">
+        <small class="text-center small fw-bold">BFP-QSF-FSED-009 Rev. 01 (07.05.19)</small>
+    </div>
+</body>
+</html></body></html>

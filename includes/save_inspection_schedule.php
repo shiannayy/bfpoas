@@ -7,24 +7,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     startTransaction();
     
     try {
+        // Process form data
+        $data = processFormData($_POST);
         
         if (isset($_POST['schedule_id'])) {
-            rollbackTransaction();
+            //rollbackTransaction();
+            updateInspectionSchedule($schedule_id, $data);
             echo json_encode([
-                "success" => false,
-                "message" => "Error: Cannot update existing schedules. Please create a new schedule instead."
+                "success" => true,
+                "message" => "Schedule updated."
             ]);
             exit;
         }
         
-        $or_number = $_POST['OR_Number'] ?? '';
-        error_log("DEBUG: OR NUMBER:" . $or_number );
-        // 🚫 Check if OR Number already exists
+        $or_number = $data['OR_number'] ?? '';
+    
         if (!empty($or_number)) {
             $or_Exists = select("payment", ["OR_number" => $or_number]);
             if (!empty($or_Exists)) {
                 $OR_FROM_DB = $or_Exists['OR_number'];
-                error_log("DEBUG: OR FROM DB: " . $OR_FROM_DB);
+                
                 unset($_SESSION['OR_NUMBER']);
                 rollbackTransaction();
                 echo json_encode([
@@ -36,21 +38,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         // 🚫 Check if establishment exists
-        $est_exist = select("general_info", ["gen_info_id" => $_POST['establishment_id']]);
+        $est_exist = select("general_info", ["gen_info_id" => $data['gen_info_id'] ]);
         if (empty($est_exist)) {
             rollbackTransaction();
             echo json_encode([
                 "success" => false,
+                "data" => $est_exist,
                 "message" => "Error: Establishment is not yet registered. Please make sure its on the list of Establishments"
             ]);
             exit;
         }
 
-        // Process form data
-        $processed_data = processFormData($_POST);
         
         // Validate required fields
-        $validation_result = validateRequiredFields($processed_data);
+        $validation_result = validateRequiredFields($data);
         if (!$validation_result['success']) {
             rollbackTransaction();
             echo json_encode($validation_result);
@@ -66,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // }
 
         // ✅ Only create new schedules
-        $result = createInspectionSchedule($processed_data);
+        $result = createInspectionSchedule($data);
 
         // Commit transaction if everything succeeded
         commitTransaction();
@@ -178,6 +179,41 @@ function createInspectionSchedule($data) {
         throw new Exception("Failed to insert inspection schedule. Returned ID: " . $schedule_id);
     }
 
+    /*EMAIl TOKEN*/
+    // ✅ CREATE EMAIL TOKEN HERE - Step 0
+    $email_token = bin2hex(random_bytes(8)); // 16-character unique token
+    
+    // Get all required user IDs
+    $ownerInfo = getOwnerInfo($data['gen_info_id']);
+    $owner_id = $ownerInfo[0]['user_id'] ?? 0;
+    $inspector_id = $data['inspector_id'] ?? 0;
+    
+    // Get Chief FSES and Fire Marshal IDs
+    $chief = select('users', ['sub_role' => 'Chief FSES'], null, 1);
+    $chiefFses_id = $chief[0]['user_id'] ?? 56; // Default
+    
+    $fm = select('users', ['sub_role' => 'Fire Marshall'], null, 1);
+    $fm_id = $fm[0]['user_id'] ?? 57; // Default
+    
+    // Create entry in email_token table
+    $token_data = [
+        'email_token' => $email_token,
+        'schedule_id' => $schedule_id,
+        'client_id' => $owner_id,
+        'inspector_id' => $inspector_id,
+        'chiefFses_id' => $chiefFses_id,
+        'fm_id' => $fm_id,
+        'update_ts' => date('Y-m-d H:i:s')
+    ];
+    
+    $token_inserted = insert_data("email_token", $token_data);
+    
+    if (!$token_inserted) {
+        error_log("Failed to create email_token for schedule_id: $schedule_id");
+        // Don't throw exception - continue without token
+    }
+    /*EMAIl TOKEN END*/
+
     // Handle Payment Details
     $payment_result = handlePayment($schedule_id, $data['or_number'], $data['amount_paid']);
     
@@ -186,13 +222,25 @@ function createInspectionSchedule($data) {
     }
     
     unset($_SESSION['OR_NUMBER']);
+
+    //fetch owner email for the initial sending for acknowledgement
+    $ownerInfo = getOwnerInfo($data['gen_info_id']);
+    $order_number = $data['order_number'];
     
     return [
         "success" => true,
         "message" => "Inspection Schedule created successfully for " . date('F j, Y g:i A', strtotime($data['scheduled_date'])) . " for {$data['proceed_instructions']}, assigned to {$data['to_officer']}.",
+        "sendfsed9f" => true,
+        "recepient" => $ownerInfo[0]['email'], //clientemail_address
         "schedule_data" => [
             "schedule_id" => $schedule_id,
-            "scheduled_datetime" => $data['scheduled_date']
+            "scheduled_datetime" => $data['scheduled_date'],
+            "owner" => $ownerInfo[0]['full_name'],
+            "recepient" => $ownerInfo[0]['email'],
+            "order_number" => $order_number,
+            "establishment" => $data['proceed_instructions'],
+            "owner_id" => $ownerInfo[0]['user_id'],
+            "email_token" => $email_token 
         ],
         "payment" => $payment_result['payment_data']
     ];
@@ -462,7 +510,7 @@ function updateInspectionSchedule($schedule_id, $data) {
         "to_officer"              => $data['to_officer'],
         "inspector_id"            => $data['inspector_id'],
         "assigned_to_officer_id"  => $data['assigned_to_officer_id'],
-        "gen_info_id"             => $data['gen_info_id'],
+        "gen_info_id"             => $data['establishment_id'],
         "proceed_instructions"    => $data['proceed_instructions'],
         "purpose"                 => $data['purpose'],
         "fsic_purpose"            => $data['fsic_purpose'],
@@ -471,6 +519,7 @@ function updateInspectionSchedule($schedule_id, $data) {
         "noi_id"                  => $data['noi_id'],
         "updated_at"              => date("Y-m-d H:i:s")
     ];
+     
 
     $update_result = update_data("inspection_schedule", $update_data, ["schedule_id" => $schedule_id]);
 

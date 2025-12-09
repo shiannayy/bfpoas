@@ -135,7 +135,7 @@ $general = $row[0];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>General Info</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <!-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"> -->
 </head>
 
 <body>

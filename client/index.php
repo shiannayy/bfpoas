@@ -1,6 +1,9 @@
 <?php
 include_once "../includes/_init.php";
-enforceRoleAccess(['client']);
+
+
+    enforceRoleAccess(['client']);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,8 +51,10 @@ enforceRoleAccess(['client']);
 <body class="d-flex flex-column min-vh-100">
     <main class="flex-grow-1">
         <!-- Static Top Navbar -->
-        <?php include_once "../includes/_nav_client.php";?>
         <?php 
+        include_once "../pages/modals.php";
+        include_once "../includes/_nav_client.php";
+        
         if(!isset($_GET['page'])){
             include_once "app_nav.php";
         }

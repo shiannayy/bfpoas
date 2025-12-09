@@ -1,7 +1,6 @@
 <?php
 /*FSED 9F*/
 include_once "../includes/_init.php";
-
 $schedule_id = intval($_GET['id']);
 $schedule = select_join(
     ['inspection_schedule'],
@@ -88,7 +87,8 @@ $data = $schedule[0];
             <div class="container-fluid m-0">
                 <div class="row text-center align-center">
                     <div class="col-2">
-                        <img src="../assets/img/dilg.png" height="60px" alt="" class="img-fluid">
+                        <!-- <img src="../assets/img/dilg.png" height="60px" alt="" class="img-fluid"> -->
+                        <img src="<?= Config::DILG_LOGO ?>" height="60px" alt="" class="img-fluid">
                     </div>
                     <div class="col-8">
                         <small class="small-fine-print">
@@ -244,9 +244,13 @@ $data = $schedule[0];
         </div>
     </div>
     <small class="text-start small fw-bold">BFP-QSF-FSED-009 Rev. 01 (07.05.19)</small>
+    <?php
+    if(isset($_GET['print'])){?>
     <script>
         window.print();
     </script>
+    <?php } ?>
+  
 </body>
 
 </html>

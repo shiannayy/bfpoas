@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <?php
 include_once "../includes/_init.php";
-//define("$GLOBALS['USER_LOGGED']",$_SESSION['user_id']);
 
 if(!isLoggedin()){
     header("location: ../?not_allowed_there_buddy");
@@ -12,11 +11,11 @@ if(!isLoggedin()){
 $filter = [];
 
 if(isClient()){
-    $filter = array_merge($filter,['g.owner_id' => $GLOBALS['USER_LOGGED'] ]);
+    $filter = array_merge($filter,['g.owner_id' => $_SESSION['user_id'] ]);
     
 }
 else if (isInspector()){
-    $filter = array_merge($filter,['ins.to_officer' => getUserInfo($GLOBALS['USER_LOGGED'], "full_name") ]);   
+    $filter = array_merge($filter,['ins.to_officer' => getUserInfo($_SESSION['user_id'], "full_name") ]);   
 }
 else{
     $filter = array_merge($filter,[1 => 1]);
@@ -187,77 +186,7 @@ $schedules = select_join(
 
 <body>
     <!-- Signature Preview Modal -->
-    <div class="modal fade" id="signaturePreviewModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Preview Signature</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <img id="signaturePreviewImg" src="" class="img-fluid border p-2" alt="Signature Preview">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="confirmSaveSignature">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <!--    reschedule request-->
-    <div class="offcanvas offcanvas-start bg-navy-dark text-gold" tabindex="-1" id="reschedCanvas" aria-labelledby="reschedCanvasLabel">
-        <div class="offcanvas-header">
-            <h5 id="reschedCanvasLabel">Request Reschedule</h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-            <form id="reschedForm">
-                <input type="text" name="schedule_id" id="schedule_id">
-
-                <div class="mb-3">
-                    <label for="preferred_date" class="form-label">Preferred Date</label>
-                    <input type="date" class="form-control" id="preferred_date" name="preferred_date" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="reason" class="form-label">Reason for Rescheduling</label>
-                    <textarea class="form-control" id="reason" name="reason" rows="3" required></textarea>
-                </div>
-
-                <button type="submit" class="btn btn-primary w-100">Submit Request</button>
-            </form>
-        </div>
-    </div>
-    <!---->
-
-    <!-- Fullscreen Offcanvas -->
-    <div class="offcanvas offcanvas-bottom h-100" tabindex="-1" id="signatureOffcanvas">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title">Draw Signature
-                <?php if(esignature($GLOBALS['USER_LOGGED']) !== NULL ){
-                        $hasSignature = true;
-                    ?>
-                <!-- Thumbnail -->
-                <img src="../assets/signatures/<?php echo esignature($GLOBALS['USER_LOGGED']);?>" alt="Signature" height="50px" data-bs-toggle="modal" data-bs-target="#signaturePreviewModal">
-                <?php } ?>
-
-            </h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
-        </div>
-        <div class="offcanvas-body p-0 d-flex flex-column">
-            <!-- Signature Canvas -->
-            <canvas id="signatureCanvas"></canvas>
-
-            <!-- Buttons -->
-            <div class="d-flex justify-content-between p-3 bg-light border-top">
-                <button class="btn btn-secondary" id="clearSignature">Clear</button>
-                <button class="btn btn-primary" id="saveSignature">Save</button>
-            </div>
-        </div>
-    </div>
-
+  
     <div class="container-fluid mt-4" style="margin-top: 100px">
 
         <h4 class="mb-3">Inspection Schedules

@@ -2,7 +2,7 @@
 <html lang="en">
 
 <body>
-   <div class="container-fluid px-0 mx-0" style="margin-top:70px">
+   <div class="container-fluid px-0 mt-3">
        <div class="row m-0 p-0">
            <div class="col-12 px-0">
                <?php 

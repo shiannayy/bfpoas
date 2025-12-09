@@ -276,7 +276,8 @@ function createAlertContainer(defaultMessage = "No information available.") {
     $("#alerts").remove();
 
     // place into <main> if present, otherwise body
-    const appendTo = $("main").length ? $("main") : $("body");
+    //const appendTo = $("body").length ? $("body") : $("body");
+    const appendTo = $("body#main_container").length ? $("body#main_container") : $("body.main");
 
     const html = `
     <div id="alerts" class="container-fluid w-100 p-0 me-2 mb-2 position-fixed bottom-0 end-0" style="z-index:1000; display:none;">

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <?php
 include_once "../includes/_init.php";
-define($GLOBALS['USER_LOGGED'],$_SESSION['user_id']);
+//define($_SESSION['user_id'],$_SESSION['user_id']);
 $hasSignature = false;
     /*-----------*/
 
@@ -81,33 +81,16 @@ $hasSignature = false;
     </div>
   </div>
 </div>
-    <!-- Signature Preview Modal -->
-    <div class="modal fade" id="signaturePreviewModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Preview Signature</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <img id="signaturePreviewImg" src="" class="img-fluid border p-2" alt="Signature Preview">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="confirmSaveSignature">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
+   
     <!-- Fullscreen Offcanvas -->
     <div class="offcanvas offcanvas-bottom h-100" tabindex="-1" id="signatureOffcanvas">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title">Draw Signature
-                <?php if(esignature($GLOBALS['USER_LOGGED']) !== NULL ){
+                <?php if(esignature($_SESSION['user_id']) !== NULL ){
                         $hasSignature = true;
                     ?>
                 <!-- Thumbnail -->
-                <img src="../assets/signatures/<?php echo esignature($GLOBALS['USER_LOGGED']);?>" alt="Signature" height="50px" data-bs-toggle="modal" data-bs-target="#signaturePreviewModal">
+                <img src="../assets/signatures/<?php echo esignature($_SESSION['user_id']);?>" alt="Signature" height="50px" data-bs-toggle="modal" data-bs-target="#signaturePreviewModal">
                 <?php } ?>
 
             </h5>
