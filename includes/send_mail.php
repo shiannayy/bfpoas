@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
-    $subject = "[TEST - IGNORE] " . ($_POST['subject'] ?? 'No Subject');
+    $subject = "[BFP OAS - FSIC] " . ($_POST['subject'] ?? 'No Subject');
     $message = $_POST['message'] ?? 'No message content';
     
     // Check if we have valid emails

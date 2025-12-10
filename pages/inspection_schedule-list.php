@@ -71,23 +71,9 @@ if(isset($_GET['action']) && isset($_GET['sched_id'])){
 <div class="container-fluid px-0">
         <div class="table-responsive overflow-y-scroll px-0" style="min-height: 50vh">
             <div class="container pagination"></div>
-            <table class="mx-0 w-100 table table-striped table-responsive table-hover table-bordered align-middle"
+            <table class="mx-0 w-100 table table-striped table-responsive table-hover align-middle"
                 id="scheduleTable">
                 <thead class="table-navy" id="inspectionTableHeader">
-                    <tr class="text-center align-middle">
-
-                        <th>Created</th>
-                        <th>Scheduled Inspection Status</th>
-                        <th>Order No.</th>
-                        <th>Scheduled Date</th>
-                        <th class="d-none d-md-table-cell">Preferred Date</th>
-                        <th>Owner</th>
-                        <th class="d-none d-md-table-cell">Acknowledgement Progress</th>
-                        
-                        <th class="d-none d-md-table-cell">Remarks</th>
-                        <th class="d-none d-md-table-cell">Has defects</th>
-                        <th></th>
-                    </tr>
                 </thead>
 
                 <tbody id="inspectionTableBody" class="overflow-y-scroll">

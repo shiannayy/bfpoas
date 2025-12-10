@@ -262,10 +262,8 @@ function loadInspectionSchedules(user = {}, search = null, rpp = 25, sortBy = nu
             { key: "sched_status", label: "Scheduled Inspection Status" },
             { key: "order_number", label: "Order No." },
             { key: "scheduled_date", label: "Scheduled Date" },
-            
             { key: "owner_full_name", label: "Owner" },
             { key: "Acknowledgement", label: "Acknowledgement", class: "d-none d-md-table-cell" },
-            { key: "has_defects", label: "Has Defects", class: "d-none d-md-table-cell" },
             { key: "actions", label: "" }
         ];
 
@@ -414,7 +412,9 @@ function simpleProgressBar(item) {
                             month: 'long', day: 'numeric', year: 'numeric',
                             hour: 'numeric', minute: '2-digit', hour12: true
                         })}`
-                        : status}</td>
+                        : ((status == "Scheduled" && item.hasFinalApproval === 1 )?  "For Inspection" :
+                           (status == "Scheduled" && item.hasRecommendingApproval === 1 ? "Recommended" : 
+                           (status == "Scheduled" && item.hasInspectorAck === 1 ? "Inspector Acknowledgement" : status ) ) )}</td>
                     <td>${item.order_number || ""}</td>
                     <td class="${status == "Completed" ? "" : getScheduleClass(item.scheduled_date)}">
                         ${formatScheduleDateOnly(item.scheduled_date)} at ${item.schedule_time}
@@ -427,20 +427,6 @@ function simpleProgressBar(item) {
                     </td>
                     <td class="text-center">
                         ${simpleProgressBar(item)}
-                    </td>
-                    <td class="d-none d-md-table-cell">
-                        <div class="container-fluid" style="width:300px;max-height:200px;overflow-y:scroll;">
-                            ${item.sched_remarks || ""}
-                        </div>
-                    </td>
-                    <td class="d-none d-md-table-cell">
-                        ${
-                          !item.has_defects
-                            ? ""
-                            : item.has_defects == "1"
-                              ? "<div class='badge text-bg-warning'>Has defects</div>"
-                              : "No Issues"
-                        }
                     </td>
                     <td class="text-center">
                         <div class="btn-group">
