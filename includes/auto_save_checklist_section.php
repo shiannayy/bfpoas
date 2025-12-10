@@ -3,10 +3,10 @@
 require_once "../includes/_init.php";
 header("Content-Type: application/json");
 
-$checklist_id = intval($_POST['checklist_id'] ?? 0); 
-$schedule_id  = intval($_POST['schedule_id'] ?? 0);
-$section      = $_POST['section'] ?? '';
-$items        = $_POST['items'] ?? [];
+$checklist_id = $_POST['checklist_id']; 
+$schedule_id  = $_POST['schedule_id'];
+$section      = $_POST['section'];
+$items        = $_POST['items'];
 
 if (!$schedule_id || !$section) {
     echo json_encode(["success" => false, "message" => "Invalid data"]);

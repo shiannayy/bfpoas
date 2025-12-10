@@ -31,9 +31,9 @@ $(document).ready(function () {
 $(document).on("change", ".section-input, .proof-upload, .manualpassbtn, .notApplicableBtn",  function(){
         let $sectionCard = $(this).closest(".card");
         let section = $sectionCard.data("section");
-        let scheduleId = $("input[name='schedule_id']").val();
-        let checklistId = $("input[name='checklist_id']").val();
-        let inspectionId = $("input[name='inspection_id']").val();
+        let scheduleId = $("input[data-name='schedule_id']").val();
+        let checklistId = $("input[data-name='checklist_id']").val();
+        let inspectionId = $("input[data-name='inspection_id']").val();
 
         // Prepare FormData to handle text + file data
         let formData = new FormData();

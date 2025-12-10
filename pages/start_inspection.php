@@ -168,9 +168,9 @@ foreach ($items as $item) {
         </div>
         <div class="col-12">
             <form id="inspectionForm" method="POST" enctype="multipart/form-data">
-                <input type="hidden" name="checklist_id" value="<?php echo $checklist_id; ?>">
-                <input type="hidden" name="schedule_id" value="<?php echo $schedule_id; ?>">
-                <input type="hidden" name="inspection_id" value="<?php echo $inspection_id; ?>">
+                <input type="hidden" data-name="checklist_id" name="checklist_id" value="<?php echo $checklist_id; ?>">
+                <input type="hidden" data-name="schedule_id"  name="schedule_id" value="<?php echo $schedule_id; ?>">
+                <input type="hidden" data-name="inspection_id" name="inspection_id" value="<?php echo $inspection_id; ?>">
                 
                 <?php 
                 if(!empty($grouped)){
