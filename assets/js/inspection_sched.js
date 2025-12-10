@@ -262,18 +262,9 @@ function loadInspectionSchedules(user = {}, search = null, rpp = 25, sortBy = nu
             { key: "sched_status", label: "Scheduled Inspection Status" },
             { key: "order_number", label: "Order No." },
             { key: "scheduled_date", label: "Scheduled Date" },
-            { key: "preferredSchedule", label: "Preferred Date", class: "d-none d-md-table-cell" },
+            
             { key: "owner_full_name", label: "Owner" },
-            { key: "HasClientAck", label: "Client Acknowledgement", class: "d-none d-md-table-cell" },
-            { key: "hasInspectorAck", label: "Inspector Acknowledgement", class: "d-none d-md-table-cell" },
-            { key: "hasRecommendingApproval", label: "Chief FSES Acknowledgement", class: "d-none d-md-table-cell" },
-            { key: "hasFinalApproval", label: "Fire Marshall Acknowledgement", class: "d-none d-md-table-cell" },
-            { key: "ins_full_name", label: "Assigned Inspector", class: "d-none d-md-table-cell" },
-            { key: "proceed_instructions", label: "Establishment", class: "d-none d-md-table-cell" },
-            { key: "checklist_title", label: "Checklist Type", class: "d-none d-md-table-cell" },
-            { key: "fsic_purpose", label: "FSIC Purpose", class: "d-none d-md-table-cell" },
-            { key: "noi_desc", label: "Nature of Inspection", class: "d-none d-md-table-cell" },
-            { key: "sched_remarks", label: "Remarks", class: "d-none d-md-table-cell" },
+            { key: "Acknowledgement", label: "Acknowledgement", class: "d-none d-md-table-cell" },
             { key: "has_defects", label: "Has Defects", class: "d-none d-md-table-cell" },
             { key: "actions", label: "" }
         ];
@@ -321,6 +312,51 @@ function loadInspectionSchedules(user = {}, search = null, rpp = 25, sortBy = nu
             }
         });
     }
+
+    function getApprovalProgress(item) {
+    const steps = [
+        item.HasClientAck === 'Y' || item.HasClientAck === 1,
+        item.hasInspectorAck === 1 || item.hasInspectorAck === 'Y',
+        item.hasRecommendingApproval === 1 || item.hasRecommendingApproval === 'Y',
+        item.hasFinalApproval === 1 || item.hasFinalApproval === 'Y'
+    ];
+    
+    const completed = steps.filter(Boolean).length;
+    const percent = (completed / 4) * 100;
+    
+    return { completed, percent };
+}
+
+// Simple progress bar function - use this in your table
+function simpleProgressBar(item) {
+    const { completed, percent } = getApprovalProgress(item);
+    
+    // Get color based on progress
+    let color = "bg-secondary";
+    if (percent === 100) color = "bg-success";
+    else if (percent >= 75) color = "bg-info";
+    else if (percent >= 50) color = "bg-primary";
+    else if (percent >= 25) color = "bg-warning";
+    
+    // Simple tooltip text
+    const tooltip = `Approval: ${completed}/4 steps (${Math.round(percent)}%)`;
+    
+    return `
+        <div class="progress-container" title="${tooltip}" data-bs-toggle="tooltip">
+            <div class="progress" style="height: 8px;">
+                <div class="progress-bar ${color}" 
+                     style="width: ${percent}%"
+                     role="progressbar"
+                     aria-valuenow="${percent}"
+                     aria-valuemin="0"
+                     aria-valuemax="100">
+                </div>
+            </div>
+            <small class="text-muted d-block text-center mt-1">${completed}/4</small>
+        </div>
+    `;
+}
+
 
     // -------------------------------------------
     // RENDER TABLE BODY
@@ -383,23 +419,15 @@ function loadInspectionSchedules(user = {}, search = null, rpp = 25, sortBy = nu
                     <td class="${status == "Completed" ? "" : getScheduleClass(item.scheduled_date)}">
                         ${formatScheduleDateOnly(item.scheduled_date)} at ${item.schedule_time}
                     </td>
-                    <td class="d-none d-md-table-cell ${status == "Completed" ? "" : getScheduleClass(item.preferredSchedule)}">
-                        ${formatScheduleDate(item.preferredSchedule)}
-                    </td>
                     <td>
                         <a href="#" class="text-decoration-none fw-bold showContactInfo" data-user-id="${item.owner_id}">${item.owner_full_name || ""}</a>
                         <br>
                         <span>${item.proceed_instructions || ""} </span>
                         
                     </td>
-                    <td class="d-none d-md-table-cell">${badgedResponse(item.HasClientAck, "Acknowledged", "Pending", "Denied")}</td>
-                    <td class="d-none d-md-table-cell">${badgedResponse(item.hasInspectorAck, "Acknowledged", "Pending", "Denied")}</td>
-                    <td class="d-none d-md-table-cell">${badgedResponse(item.hasRecommendingApproval, "Recommended for Approval", "Pending", "Denied")}</td>
-                    <td class="d-none d-md-table-cell">${badgedResponse(item.hasFinalApproval, "Approved", "Pending", "Denied")}</td>
-                    <td class="d-none d-md-table-cell">${item.ins_full_name || ""}</td>
-                    <td class="d-none d-md-table-cell">${item.checklist_title || ""}</td>
-                    <td class="d-none d-md-table-cell">${item.fsic_purpose || ""}</td>
-                    <td class="d-none d-md-table-cell">${item.noi_desc || ""}</td>
+                    <td class="text-center">
+                        ${simpleProgressBar(item)}
+                    </td>
                     <td class="d-none d-md-table-cell">
                         <div class="container-fluid" style="width:300px;max-height:200px;overflow-y:scroll;">
                             ${item.sched_remarks || ""}

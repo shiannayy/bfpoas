@@ -82,14 +82,8 @@ if(isset($_GET['action']) && isset($_GET['sched_id'])){
                         <th>Scheduled Date</th>
                         <th class="d-none d-md-table-cell">Preferred Date</th>
                         <th>Owner</th>
-                        <th class="d-none d-md-table-cell">Client Acknowledgement</th>
-                        <th class="d-none d-md-table-cell">Inspector Acknowledgement</th>
-                        <th class="d-none d-md-table-cell">Chief FSES Acknowledgement</th>
-                        <th class="d-none d-md-table-cell">Fire Marshall Acknowledgement</th>
-                        <th class="d-none d-md-table-cell">Assigned Inspector</th>
-                        <th class="d-none d-md-table-cell">Checklist Type</th>
-                        <th class="d-none d-md-table-cell">FSIC Purpose</th>
-                        <th class="d-none d-md-table-cell">Nature of Inspection</th>
+                        <th class="d-none d-md-table-cell">Acknowledgement Progress</th>
+                        
                         <th class="d-none d-md-table-cell">Remarks</th>
                         <th class="d-none d-md-table-cell">Has defects</th>
                         <th></th>
