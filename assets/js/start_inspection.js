@@ -211,6 +211,7 @@ $(document).on("change", ".section-input, .proof-upload, .manualpassbtn, .notApp
     $(document).on("submit", "#inspectionForm", function (e) {
         e.preventDefault();
         const formData = $(this).serialize();
+        
         const $doneBtn = $(".done-inspection");
 
         $doneBtn.removeClass("show");

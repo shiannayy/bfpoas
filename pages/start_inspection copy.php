@@ -169,10 +169,9 @@ foreach ($items as $item) {
         <div class="col-12">
             <form id="inspectionForm" method="POST" enctype="multipart/form-data">
                 <input type="hidden" data-name="checklist_id" name="checklist_id" value="<?php echo $checklist_id; ?>">
-                <input type="hidden" data-name="schedule_id" name="schedule_id" value="<?php echo $schedule_id; ?>">
-                <input type="hidden" data-name="inspection_id" name="inspection_id"
-                    value="<?php echo $inspection_id; ?>">
-
+                <input type="hidden" data-name="schedule_id"  name="schedule_id" value="<?php echo $schedule_id; ?>">
+                <input type="hidden" data-name="inspection_id" name="inspection_id" value="<?php echo $inspection_id; ?>">
+                
                 <?php 
                 if(!empty($grouped)){
                 foreach ($grouped as $section_id => $sectionData) { ?>
@@ -186,7 +185,7 @@ foreach ($items as $item) {
                     </div>
 
                     <div class="card-body">
-
+                       
                         <?php 
                         if(!empty($sectionData['items'])){
                         foreach ($sectionData['items'] as $item) { 
@@ -259,135 +258,131 @@ foreach ($items as $item) {
                                             $isManOverrideChecked = false;
                                     }
                             ?>
-                        <div class="container-fluid p-0 mb-2">
-                            <div class="row align-items-center g-2">
-                                <!-- Left side: Proof preview, attach button, and controls -->
-                                <div class="col-auto d-flex align-items-center">
-                                    <!-- Thumbnail / Preview Link -->
-                                    <div class="proof-preview align-content-center me-1"
-                                        id="proof_preview_<?= $item['item_id'] ?>">
-                                        <?php if (!empty($savedImg)): ?>
-                                        <a href="#" class="open-proof-modal"
-                                            data-proof-file="<?= htmlspecialchars($savedImg) ?>"
-                                            data-item-id="<?= $savedResponseId ?>">
-                                            <img id="img_proof_<?= $savedResponseId ?>"
-                                                src="../assets/proof/Schedule_<?= $schedule_id . '/' . htmlspecialchars($savedImg); ?>"
-                                                alt="Proof" class="img-thumbnail response-img-proof"
-                                                style="width:50px;height:50px;object-fit:cover;">
-                                        </a>
-                                        <?php endif; ?>
-                                    </div>
+                        <div class="mb-2 input-group align-content-center flex-wrap">
+                            <!-- Thumbnail / Preview Link -->
+                            <div class="proof-preview align-content-center" id="proof_preview_<?= $item['item_id'] ?>">
+                                <?php if (!empty($savedImg)): ?>
+                                <a href="#" class="open-proof-modal"
+                                    data-proof-file="<?= htmlspecialchars($savedImg) ?>"
+                                    data-item-id="<?= $savedResponseId ?>">
+                                    <img id="img_proof_<?= $savedResponseId ?>"
+                                        src="../assets/proof/Schedule_<?= $schedule_id . '/' . htmlspecialchars($savedImg); ?>"
+                                        alt="Proof" class="img-thumbnail response-img-proof"
+                                        style="width:50px;height:50px;object-fit:cover;">
+                                </a>
+                                <?php endif; ?>
 
-                                    <label title="Attach Proof" for="proof_item_<?= $item['item_id'] ?>"
-                                        class="btn btn-sm btn-navy rounded-2 align-content-center me-1">
-                                        <?= getIcon("attach") ?>
+                            </div>
+                            <label title="Attach Proof" for="proof_item_<?= $item['item_id'] ?>" class="btn btn-navy rounded-2 ms-0 align-content-center"><?= getIcon("attach") ?></label>
+                            <input type="file" class="form-control proof-upload d-none"
+                                data-item-id="<?= $item['item_id'] ?>" id="proof_item_<?= $item['item_id'] ?>"
+                                name="proof_item_<?= $item['item_id'] ?>">
+
+                            
+                            <div class="align-content-center d-inline not-applicable ms-1 p-0 <?= (!$notapp) ? 'd-none' : '' ?>"  id="na_<?= $item['item_id'] ?>">  
+                                <input id="notApplicable_<?= $item['item_id'] ?>" 
+                                    <?= ($isNotAppChecked) ? 'checked' : '' ?>
+                                    type="checkbox"
+                                    name="notApplicable_<?= $item['item_id'] ?>" 
+                                    class="notApplicableBtn btn-check"
+                                    value="1" 
+                                    autocomplete="off" />
+                                <label for="notApplicable_<?= $item['item_id'] ?>"
+                                        class="pt-2 m-0 me-1 h-100 align-content-center btn btn-outline-warning text-secondary"> 
+                                        <b class="d-lg-none d-md-none">N/A</b> 
+                                        <b class="d-none d-lg-inline d-md-inline">Not Applicable</b> 
+                                </label>
+                            </div>
+
+                            <div class="dropdown align-content-center d-inline manual-pass ms-1 p-0 <?= (!$manualOverride) ? 'd-none' : '' ?>"
+                                id="mp_<?= $item['item_id'] ?>">
+                                <input id="manual_pass_<?= $item['item_id'] ?>" 
+                                    <?= $isManOverrideChecked ? 'checked' : ''?>
+                                    type="checkbox"
+                                    name="manual_pass_<?= $item['item_id'] ?>" 
+                                    class="btn-check manualpassbtn" value="1"
+                                    autocomplete="off" />
+                                <label for="manual_pass_<?= $item['item_id'] ?>"
+                                    class="btn btn-outline-success pt-2 m-0 h-100 align-content-center"> 
+                                        <b class="d-lg-none d-md-none">PASS</b> 
+                                        <b class="d-none d-lg-inline d-md-inline"><?= getIcon("patchcaution") ?> OVERRIDE: Pass</b> 
+                                </label>
+                            </div>
+                            
+
+
+                            <div class="border-0 fw-light d-flex me-auto align-content-center align-middle flex-grow-1 min-width-0">
+                                <span data-item-id="eval_<?= $item['item_id'] ?>"
+                                    class="evaluation-result badge <?= $colorBG ?>">
+                                    <?= $icon ?>
+                                </span>
+                                <span class="text-wrap my-auto flex-grow-1 min-width-0">
+                                    <?php echo htmlspecialchars($item['item_text']);
+                                        if ($item['required']) { ?><span class="text-danger">*</span><?php } ?>
+                                </span>
+                            </div>
+
+                            <?php if ($item['input_type'] === "checkbox") {   ?>
+                            <div class="ms-1 input-group-text border-0">
+                                <div class="form-check">
+                                    <input type="checkbox" class="btn-check section-input"
+                                        name="item_<?= $item['item_id'] ?>" value="1"
+                                        <?= ((int)$savedValue == 1) ? "checked" : "" ?>>
+                                    <label class="btn btn-sm btn-outline-secondary">
+                                        <?= $item['unit_label'] ?: "YES" ?>
                                     </label>
-
-                                    <input type="file" class="form-control proof-upload d-none"
-                                        data-item-id="<?= $item['item_id'] ?>" id="proof_item_<?= $item['item_id'] ?>"
-                                        name="proof_item_<?= $item['item_id'] ?>">
-
-                                    <div class="align-content-center d-inline not-applicable p-0 <?= (!$notapp) ? 'd-none' : '' ?>"
-                                        id="na_<?= $item['item_id'] ?>">
-                                        <input id="notApplicable_<?= $item['item_id'] ?>"
-                                            <?= ($isNotAppChecked) ? 'checked' : '' ?> type="checkbox"
-                                            name="notApplicable_<?= $item['item_id'] ?>"
-                                            class="notApplicableBtn btn-check" value="1" autocomplete="off" />
-                                        <label for="notApplicable_<?= $item['item_id'] ?>"
-                                            class="btn btn-sm btn-outline-navy rounded-2 align-content-center me-1">
-                                            <b class="d-lg-none d-md-none">N</b>
-                                            <b class="d-none d-lg-inline d-md-inline">Not Applicable</b>
-                                        </label>
-                                    </div>
-
-                                    <div class="align-content-center d-inline manual-pass p-0 <?= (!$manualOverride) ? 'd-none' : '' ?>" id="mp_<?= $item['item_id'] ?>">
-                                        <input id="manual_pass_<?= $item['item_id'] ?>"
-                                            <?= $isManOverrideChecked ? 'checked' : ''?> type="checkbox"
-                                            name="manual_pass_<?= $item['item_id'] ?>" class="btn-check manualpassbtn"
-                                            value="1" autocomplete="off" />
-                                        <label for="manual_pass_<?= $item['item_id'] ?>"
-                                            class="btn btn-outline-success pt-2 m-0 h-100 align-content-center">
-                                            <b class="d-lg-none d-md-none">PASS</b>
-                                            <b class="d-none d-lg-inline d-md-inline"><?= getIcon("patchcaution") ?>
-                                                OVERRIDE: Pass</b>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Middle: Item text with evaluation badge -->
-                                <div class="col flex-grow-1 min-width-0">
-                                    <div class="border-0 fw-light d-flex align-items-center h-100">
-                                        <span data-item-id="eval_<?= $item['item_id'] ?>"
-                                            class="evaluation-result badge <?= $colorBG ?> me-1">
-                                            <?= $icon ?>
-                                        </span>
-                                        <span class="text-wrap my-auto flex-grow-1 min-width-0">
-                                            <?php echo htmlspecialchars($item['item_text']);
-                                    if ($item['required']) { ?><span class="text-danger">*</span><?php } ?>
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <!-- Right side: Input field/control -->
-                                <div class="col-lg-auto col-sm-12 col-md-12">
-                                    <?php if ($item['input_type'] === "checkbox") {   ?>
-                                    <div class="d-flex border-0 justify-content-center">
-                                        <div class="form-check">
-                                            <input type="checkbox" class="form-check-input p-2 section-input" name="item_<?= $item['item_id'] ?>" value="1" <?= ((int)$savedValue == 1) ? "checked" : "" ?> />
-                                            <label class="form-check-label"> YES </label>
-                                        </div>
-                                    </div>
-                                    <?php }
-                                    else if ($item['input_type'] === "select") { 
-                                    $options = select( "checklist_item_select_options", ["item_id" => $item['item_id']], ["sort_order" => "ASC"] ); ?>
-                                    <select class="form-select section-input" name="item_<?php echo $item['item_id'] ?>"
-                                        <?php echo $item['required'] ? 'required' : '' ?>>
-                                        <option value="">-- Select --</option>
-                                        <?php foreach ($options as $opt) { ?>
-                                        <option value="<?php echo htmlspecialchars($opt['option_value']) ?>"
-                                            <?php echo ($savedValue == $opt['option_value']) ? "selected" : "" ?>>
-                                            <?php echo htmlspecialchars($opt['option_label']) ?>
-                                        </option>
-                                        <?php } ?>
-                                    </select>
-                                    <?php }
-                                    else if ($item['input_type'] === "text") { ?>
-                                    <input type="text" class="form-control section-input"
-                                        name="item_<?= $item['item_id'] ?>"
-                                        value="<?= htmlspecialchars($savedValue ?? '') ?>"
-                                        <?= $item['required'] ? 'required' : '' ?>>
-                                    <?php } 
-                                    elseif ($item['input_type'] === "number") { ?>
-                                    <div class="input-group">
-                                        <input type="number" step="0.1" class="form-control section-input"
-                                            name="item_<?= $item['item_id'] ?>"
-                                            value="<?= htmlspecialchars($savedValue ?? '') ?>"
-                                            <?= $item['required'] ? 'required' : '' ?> />
-                                        <?php if ($item['unit_label']) { ?>
-                                        <span
-                                            class="input-group-text"><?= htmlspecialchars($item['unit_label']) ?></span>
-                                        <?php } ?>
-                                    </div>
-                                    <?php 
-                                    } elseif ($item['input_type'] === "date") { ?>
-                                    <input type="date" class="form-control section-input"
-                                        name="item_<?= $item['item_id'] ?>"
-                                        value="<?= htmlspecialchars($savedValue ?? '') ?>"
-                                        <?= $item['required'] ? 'required' : '' ?> />
-                                    <?php 
-                                    } elseif ($item['input_type'] === "textarea") { ?>
-                                    <textarea class="form-control section-input" name="item_<?= $item['item_id'] ?>"
-                                        <?= $item['required'] ? 'required' : '' ?>><?= htmlspecialchars($savedValue ?? '') ?></textarea>
-                                    <?php 
-                                    } else{
-                                        echo "Not Valid";
-                                    } ?>
                                 </div>
                             </div>
+                            <?php
+                            }
+                            else if ($item['input_type'] === "select") { 
+                            $options = select( "checklist_item_select_options", ["item_id" => $item['item_id']], ["sort_order" => "ASC"] ); ?>
+                            <select class="ms-1 border-0 form-select section-input" name="item_<?php echo $item['item_id'] ?>"
+                                <?php echo $item['required'] ? 'required' : '' ?>>
+                                <option value="">-- Select --</option>
+                                <?php foreach ($options as $opt) { ?>
+                                <option value="<?php echo htmlspecialchars($opt['option_value']) ?>"
+                                    <?php echo ($savedValue == $opt['option_value']) ? "selected" : "" ?>>
+                                    <?php echo htmlspecialchars($opt['option_label']) ?>
+                                </option>
+                                <?php } ?>
+                            </select>
+                            <?php 
+                            }
+                            else if ($item['input_type'] === "text") { ?>
+                                <input type="text" class="ms-1 form-control section-input" name="item_<?= $item['item_id'] ?>"
+                                    value="<?= htmlspecialchars($savedValue ?? '') ?>"
+                                    <?= $item['required'] ? 'required' : '' ?>>
+                                <?php } 
+                            elseif ($item['input_type'] === "number") { ?>
+                            <input type="number" step="0.1" class="ms-1 form-control section-input"
+                                name="item_<?= $item['item_id'] ?>" value="<?= htmlspecialchars($savedValue ?? '') ?>"
+                                <?= $item['required'] ? 'required' : '' ?> />
+                                <?php if ($item['unit_label']) { ?>
+                                <span class="input-group-text"><?= htmlspecialchars($item['unit_label']) ?></span>
+                                <?php } ?>
+
+                            <?php 
+                            } elseif ($item['input_type'] === "date") { ?>
+                            <input type="date" class="ms-1 form-control section-input" name="item_<?= $item['item_id'] ?>"
+                                value="<?= htmlspecialchars($savedValue ?? '') ?>"
+                                <?= $item['required'] ? 'required' : '' ?> />
+
+                            <?php 
+                            } elseif ($item['input_type'] === "textarea") { ?>
+                            <textarea class="ms-1 form-control section-input" name="item_<?= $item['item_id'] ?>"
+                                <?= $item['required'] ? 'required' : '' ?>><?= htmlspecialchars($savedValue ?? '') ?>
+                                </textarea>
+                            <?php 
+                            } else{
+                                echo "Not Valid";
+                            } ?>
+
+
                         </div>
                         <?php } 
                         }else{ ?>
-                        <div class="text-center">No Active Items Available</div>
+                            <div class="text-center">No Active Items Available</div>
                         <?php }
                         ?>
                     </div>
@@ -395,7 +390,7 @@ foreach ($items as $item) {
                 <?php } 
                 }
                 else{ ?>
-                <div class="text-center">No Active Items Available</div>
+                    <div class="text-center">No Active Items Available</div>
                 <?php } ?>
 
                 <button type="submit"

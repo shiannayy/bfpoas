@@ -58,7 +58,7 @@
     </style>
 </head>
 
-<body class="d-flex flex-column min-vh-100">
+<body id="main_container" class="d-flex flex-column min-vh-100">
     <main class="flex-grow-1">
         
         <?php
