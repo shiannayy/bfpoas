@@ -1,14 +1,17 @@
 <?php 
  class config {
-    public const DB_HOST= "localhost";
-    public const DB_USER= "u444252215_fsed";
-    public const DB_PASS= "#4syzjWK";
-    public const DB_NAME= "u444252215_fsedoas";
+    //public const DB_HOST= "localhost";
+    //public const DB_USER= "u444252215_fsed";
+    //public const DB_PASS= "#4syzjWK";
+    //public const DB_NAME= "u444252215_fsedoas";
   
-  //public const DB_HOST= "localhost";
-  // public const DB_USER= "root";
-  // public const DB_PASS= "";
-  // public const DB_NAME= "fsed";
+  public const DB_HOST= "localhost";
+  public const DB_USER= "root";
+  public const DB_PASS= "";
+  public const DB_NAME= "fsed";
+
+    public const ADMIN_EMAIL= "ashianna395@gmail.com";
+
      
     public const APP_SECRET='my_super_secret_encryption_key';
     public const REGION= "R05";
@@ -25,6 +28,9 @@
     public const BFP_REV="BFP-QSF-FSED-005 Rev. 03 (03.03.20)";
     const BASE_FS_CODE = "050108";
 
+
+   public const DILG_LOGO = "../assets/img/dilg.jpg";
+    public const BFP_LOGO = "../assets/img/bfp-logo.jpg";
 }
 
 define("FS_CODE", "R". config::BASE_FS_CODE . "-" . date('y'));

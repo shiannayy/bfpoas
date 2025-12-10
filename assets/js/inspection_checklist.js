@@ -84,7 +84,7 @@ $(document).ready(function () {
         croppedCtx.putImageData(ctx.getImageData(minX, minY, cropWidth, cropHeight), 0, 0);
 
         // Use cropped PNG for preview
-        let croppedDataUrl = croppedCanvas.toDataURL("image/png");
+        let croppedDataUrl = croppedCanvas.toDataURL("image/jpg");
         $("#signaturePreviewImg").attr("src", croppedDataUrl);
         $("#signaturePreviewModal").modal("show");
 

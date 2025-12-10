@@ -86,7 +86,7 @@ function resizeCanvas(canvas, signaturePadInstance) {
         const croppedCtx = croppedCanvas.getContext("2d");
         croppedCtx.putImageData(ctx.getImageData(minX, minY, cropWidth, cropHeight), 0, 0);
 
-        const croppedDataUrl = croppedCanvas.toDataURL("image/png");
+        const croppedDataUrl = croppedCanvas.toDataURL("image/jpg");
         $("#signaturePreviewImg").attr("src", croppedDataUrl);
         $("#signaturePreviewModal").modal("show");
 

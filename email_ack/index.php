@@ -32,10 +32,11 @@ if (isset($_GET['email_token']) && isset($_GET['schedule_id']) && isset($_GET['s
         
         if ($user_id) {
             // Get user info
-            $user_info = select('users', ['user_id' => $user_id])[0] ?? [];
+            $user_info = select('users', ['user_id' => $user_id])[0];
             
             if (!empty($user_info)) {
                 // Set session for acknowledgement
+                session_destroy();
                 $_SESSION['user_id'] = $user_info['user_id'];
                 $_SESSION['role'] = $user_info['role'];
                 $_SESSION['name'] = $user_info['full_name'];
@@ -61,11 +62,13 @@ if (isset($_GET['email_token']) && isset($_GET['schedule_id']) && isset($_GET['s
                         case 4: // Next: Fire Marshal
                             $next_user_id = $token_data['fm_id'];
                             break;
+
+                        default: $next_user_id = $token_data['fm_id'];
                     }
                     
                     // // Get next recipient info
                     if ($next_user_id) {
-                        $next_user_info = select('users', ['user_id' => $next_user_id])[0] ?? [];
+                        $next_user_info = select('users', ['user_id' => $next_user_id])[0];
                         $next_recipient = $next_user_info['email'] ?? Config::ADMIN_EMAIL;
                         $next_recipient_name = $next_user_info['full_name'] ?? 'Recipient';
                     }

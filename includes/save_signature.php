@@ -17,7 +17,7 @@ if (!$user_id || !$image) {
 $folder = "../assets/signatures/";
 
 // Filename format: SIGN-userid-role.png
-$filename = "SIGN-" . $user_id . "-" . $role . ".png";
+$filename = "SIGN-" . $user_id . "-" . $role . ".jpg";
 $path     = $folder . $filename;
 
 // Decode base64 image and save
