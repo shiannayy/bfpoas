@@ -17,7 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // GET FORM DATA WITH PROPER VALIDATION
     $to_emails = [];
-    
     // Handle both array and string formats
     if (isset($_POST['to_email'])) {
         if (is_array($_POST['to_email'])) {
@@ -28,7 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $to_emails = preg_split('/[;,]/', $_POST['to_email']);
         }
     }
-    
     // Clean and validate emails
     $valid_emails = [];
     foreach ($to_emails as $email) {
@@ -95,14 +93,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'message' => 'Failed to send email'
             ]);
         }
-        
     } catch (Exception $e) {
         echo json_encode([
             'success' => false,
             'message' => 'Error: ' . $e->getMessage()
         ]);
     }
-    
 } else {
     echo json_encode([
         'success' => false,
