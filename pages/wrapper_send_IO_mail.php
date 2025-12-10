@@ -167,7 +167,7 @@ $link = "http://localhost/bfpoas-online/email_ack/?email_token=" . $email_token 
         </div>
 
         <div class="email-container d-none" data-name="emailContent">
-            <a class="btn btn-primary" style="padding: 3px; background-color: blue; border-radius: 10px;" href="<?= $link ?>">Acknowledge Link</a>
+            <a class="btn btn-primary" style="text-decoration: none;padding: 3px; background-color: blue; border-radius: 10px; color: white;" href="<?= $link ?>">Acknowledge Link</a>
             <hr>
             <?php if($step == 1) { ?>
             <h4>Inspection Order Acknowledgement</h4>
@@ -178,7 +178,7 @@ $link = "http://localhost/bfpoas-online/email_ack/?email_token=" . $email_token 
             <a class="btn btn-primary" style="" href="<?= $link ?>">Acknowledge Inspection Order</a>
             <p><small>Inspection Order Number: <?= $order_number ?></small></p>
 
-            <?php } else if($step == 2){ ?>
+            <?php }  if($step == 2){ ?>
             <h4>Inspection Assignment</h4>
             <p>Hi <?= $recipient_info['name'] ?>,</p>
             <p>You have been assigned to inspect the following establishment:</p>
@@ -187,7 +187,7 @@ $link = "http://localhost/bfpoas-online/email_ack/?email_token=" . $email_token 
             <a class="btn btn-primary" href="<?= $link ?>">Acknowledge Assignment</a>
             <p><small>Inspection Order Number: <?= $order_number ?></small></p>
 
-            <?php } else if($step == 3) {?>
+            <?php }  if($step == 3) {?>
             <h4>Recommendation Required</h4>
             <p>Hi <?= $recipient_info['name'] ?>,</p>
             <p>The inspection order for <strong><?= $establishment ?></strong> requires your recommendation.</p>
@@ -195,7 +195,7 @@ $link = "http://localhost/bfpoas-online/email_ack/?email_token=" . $email_token 
             <a class="btn btn-primary" href="<?= $link ?>">Recommend Inspection</a>
             <p><small>Inspection Order Number: <?= $order_number ?></small></p>
 
-            <?php } else if($step == 4){ ?>
+            <?php }  if($step == 4){ ?>
             <h4>Approval Required</h4>
             <p>Hi <?= $recipient_info['name'] ?>,</p>
             <p>The inspection order for <strong><?= $establishment ?></strong> requires your final approval.</p>
@@ -242,8 +242,7 @@ $link = "http://localhost/bfpoas-online/email_ack/?email_token=" . $email_token 
         const step = parseInt(dataContainer.find('[data-name="step"]').text());
         const nextStep = parseInt(dataContainer.find('[data-name="nextStep"]').text());
         const emailContentHTML = $('div.email-container[data-name="emailContent"]').html();
-        alert(emailContentHTML);
-
+        
         console.log('Loaded data:', {
             scheduleId,
             orderNumber,

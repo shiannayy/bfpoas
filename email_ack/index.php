@@ -4,7 +4,7 @@ include_once "../includes/_init.php";
 if (isset($_GET['email_token']) && isset($_GET['schedule_id']) && isset($_GET['step'])) {
     $email_token = $_GET['email_token'];
     $schedule_id = $_GET['schedule_id'];
-    $step = htmlentities($_GET['step']);
+    $step = $_GET['step'];
 
     
     // Check if token exists in email_token table
@@ -45,7 +45,7 @@ if (isset($_GET['email_token']) && isset($_GET['schedule_id']) && isset($_GET['s
                 // Acknowledge the schedule
                 $acknowledged = acknowledgeSchedule($schedule_id, $user_info['user_id'], getRoleLabel($user_info['role'], $user_info['sub_role']));
                 
-                if ($acknowledged && $step < 4) {
+                if ($acknowledged && $step <= 4) {
                     // Prepare next step
                     $next_step = $step + 1;
                     
