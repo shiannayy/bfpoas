@@ -167,8 +167,8 @@ $link = "http://localhost/bfpoas-online/email_ack/?email_token=" . $email_token 
         </div>
 
         <div id="EmailContent">
-            <?= $link ?>
-            
+            <a class="btn btn-primary" style="padding: 3px; background-color: blue; border-radius: 10px;" href="<?= $link ?>">Acknowledge Link</a>
+            <hr>
             <?php if($step === 1): ?>
             <h4>Inspection Order Acknowledgement</h4>
             <p>Hi <?= $recipient_info['name'] ?>,</p>
