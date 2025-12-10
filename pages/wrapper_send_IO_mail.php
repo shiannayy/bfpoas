@@ -166,7 +166,7 @@ $link = "http://localhost/bfpoas-online/email_ack/?email_token=" . $email_token 
             <span data-name="link"><?= $link ?></span>
         </div>
 
-        <emailContent class="d-none">
+        <div id="EmailContent" class="collapsed">
             <?php if($step === 1): ?>
             <h4>Inspection Order Acknowledgement</h4>
             <p>Hi <?= $recipient_info['name'] ?>,</p>
@@ -201,7 +201,7 @@ $link = "http://localhost/bfpoas-online/email_ack/?email_token=" . $email_token 
             <a class="btn btn-primary" href="<?= $link ?>">Approve Inspection</a>
             <p><small>Inspection Order Number: <?= $order_number ?></small></p>
             <?php endif; ?>
-        </emailContent>
+            </div>
 
         <button id="sendTestBtn" class="btn btn-primary mt-3">
             Send Email
@@ -239,7 +239,7 @@ $link = "http://localhost/bfpoas-online/email_ack/?email_token=" . $email_token 
         const establishment = dataContainer.find('[data-name="establishment"]').text();
         const step = parseInt(dataContainer.find('[data-name="step"]').text());
         const nextStep = parseInt(dataContainer.find('[data-name="nextStep"]').text());
-        const emailContentHTML = $("emailContent").html();
+        const emailContentHTML = $("div#emailContent").html();
 
         console.log('Loaded data:', {
             scheduleId,
