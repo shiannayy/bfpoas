@@ -11,8 +11,8 @@
   //public const DB_NAME= "fsed";
 
     public const ADMIN_EMAIL= "ashianna395@gmail.com";
+    public const ADMIN_EMAIL= "https://bfp-oas-fsic.site";
 
-     
     public const APP_SECRET='my_super_secret_encryption_key';
     public const REGION= "R05";
     public const P_REGION= "REGION V";
