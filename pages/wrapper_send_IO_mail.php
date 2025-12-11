@@ -117,7 +117,7 @@ switch($step) {
 //     update_data("email_token",['email_token' => $email_token], ['email_token' => $old_email_token]);
 // }
 
-$link = "http://localhost/bfpoas/email_ack/?email_token=" . $email_token . 
+$link = Config::WEBSITE_BASE_URL . "/email_ack/?email_token=" . $email_token . 
         "&schedule_id=" . $schedule_id . 
         "&step=" . $step;
  
