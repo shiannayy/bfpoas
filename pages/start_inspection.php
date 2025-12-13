@@ -59,6 +59,7 @@ foreach ($items as $item) {
     $grouped[$section_id]['items'][] = $item;
 }
 ?>
+<div id="alerts"></div>
 <div class="modal fade" id="proofModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
@@ -72,7 +73,7 @@ foreach ($items as $item) {
         </div>
     </div>
 </div>
-<div id="alerts"></div>
+
 <section id="infosection" data-info="Inspecting an Establishment"></section>
 <div class="container-fluid" style="margin-top:70px">
     <div class="row m-0 p-0">

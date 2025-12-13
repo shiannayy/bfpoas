@@ -80,7 +80,7 @@ function buildCertEmail($role, $recipientName, $orderNumber, $establishment, $co
             'button' => 'Recommend for Approval',
             'description' => 'An inspection requires your recommendation for certification.'
         ],
-        'FireMarshal' => [
+        'FireMarshall' => [
             'title' => 'Approval Required',
             'button' => 'Approve Certification',
             'description' => 'An inspection requires your final approval.'

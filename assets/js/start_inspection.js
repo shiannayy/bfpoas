@@ -478,9 +478,6 @@ function resetSubmitButton($button) {
     `).prop('disabled', false);
 }
 
-// Print report function
-
-
 // Download PDF function (you need to implement this)
 function downloadReportPDF() {
     // Implement PDF generation and download

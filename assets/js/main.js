@@ -269,12 +269,13 @@ function getRoleLabel(mainRole, subRole) {
 function createAlertContainer(defaultMessage = "No information available.") {
     // remove any existing
     $("#alerts").remove();
+    console.log("Removing Alerts Container");
 
     // place into <main> if present, otherwise body
     const appendTo = $("body#main_container").length ? $("body#main_container") : $("body.main");
 
     const html = `
-    <div id="alerts" class="position-fixed z-1050 d-none start-50 top-0">
+    <div id="alerts" class="position-fixed d-none start-50 top-0" style="z-index: 1050">
       <div class="card border-0 shadow-lg" style="width: 320px; max-width: 90vw;">
         <div class="card-header bg-navy text-gold d-flex align-items-center justify-content-between pt-3">
           <h6 class="card-title mb-0">FSIC</h6>
@@ -286,6 +287,7 @@ function createAlertContainer(defaultMessage = "No information available.") {
     `;
 
     appendTo.append(html);
+    console.log("---Appending Alerts Container---");
 
     // Delegated close button handler
     $(document)
@@ -1017,6 +1019,8 @@ function buildHeader(scheduleId, inspection_details, statistics, isForEmail = fa
                     </span>
                 </div>
             </div>
+            <hr style="padding:0">
+            <i>Do not forget to check if you have actions at the bottom of the result</i>
         `;
     }
     

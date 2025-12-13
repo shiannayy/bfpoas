@@ -20,6 +20,8 @@
 </head>
 
 <body>
+<div id="alerts" class="d-none" style="position: absolute;left: 45%;bottom: 10px;"></div>
+
     <div id="info" class="position-absolute top-0 start-0 m-2 z-5"></div>
     <div id="map"></div>
     <!-- Bootstrap 5 Collapse Legend -->
@@ -84,7 +86,6 @@
         </button>
     </div>
 
-    <div id="alerts" class="d-none" style="position: absolute;left: 45%;bottom: 10px;"></div>
 
     <!-- ✅ Load Google Maps JS API -->
     <script src="../assets/js/bootstrap.bundle.min.js"></script>
