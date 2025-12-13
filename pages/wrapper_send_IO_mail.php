@@ -110,19 +110,10 @@ switch($step) {
         ];
 }
 
-// if($step > 0 && $step < 4){
-//     //prevent from resending the email
-//     $old_email_token = $email_token;
-//     $email_token = bin2hex(random_bytes(8));
-//     update_data("email_token",['email_token' => $email_token], ['email_token' => $old_email_token]);
-// }
-
-$link = Config::WEBSITE_EMAIL_URL . "email_ack/?email_token=" . $email_token . 
+$link = Config::WEBSITE_BASE_URL . "email_ack/?email_token=" . $email_token . 
         "&schedule_id=" . $schedule_id . 
         "&step=" . $step;
  
-
-//$link = "http://localhost/bfpoas-online/email_ack/?" . http_build_query($query_params);
 ?>
 <html lang="en">
 
