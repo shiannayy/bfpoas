@@ -168,11 +168,6 @@ $('#passwordInput').on('keypress', function(e) {
     }
 });
 
-// Optional: Helper function for showing alerts
-
-
-
-
 function fetchData(url, method = 'POST', payload = {}) {
     return new Promise((resolve, reject) => {
         $.ajax({
@@ -276,21 +271,16 @@ function createAlertContainer(defaultMessage = "No information available.") {
     $("#alerts").remove();
 
     // place into <main> if present, otherwise body
-    //const appendTo = $("body").length ? $("body") : $("body");
     const appendTo = $("body#main_container").length ? $("body#main_container") : $("body.main");
 
     const html = `
-    <div id="alerts" class="container-fluid w-100 p-0 me-2 mb-2 position-fixed bottom-0 end-0" style="z-index:1000; display:none;">
-      <div class="row">
-        <div class="col-12 col-md-6 col-lg-4 ms-auto">
-          <div class="card border-0 shadow-lg">
-            <div class="card-header bg-navy text-gold d-flex align-items-center justify-content-between pt-3">
-              <h6 class="card-title mb-0">FSIC</h6>
-              <button type="button" class="btn-close btn-close-alert" aria-label="Close"></button>
-            </div>
-            <div class="card-body" id="alertsBody">${defaultMessage}</div>
-          </div>
+    <div id="alerts" class="position-fixed z-1050 d-none start-50 top-0">
+      <div class="card border-0 shadow-lg" style="width: 320px; max-width: 90vw;">
+        <div class="card-header bg-navy text-gold d-flex align-items-center justify-content-between pt-3">
+          <h6 class="card-title mb-0">FSIC</h6>
+          <button type="button" class="btn-close btn-close-alert" aria-label="Close"></button>
         </div>
+        <div class="card-body" id="alertsBody">${defaultMessage}</div>
       </div>
     </div>
     `;
@@ -310,15 +300,37 @@ function createAlertContainer(defaultMessage = "No information available.") {
 
 // showAlert: message (string or html), type, duration (ms), buttonText optional, buttonLink optional
 // ✅ showAlert() with native anchor button link
-function showAlert(message, type = "info", duration = 5000, buttonText = null, buttonLink = null) {
-    // Ensure container exists
-    if ($("#alerts").length === 0 || $("#alertsBody").length === 0) {
-        createAlertContainer();
-    }
+function showAlert(message, type = "info", duration = 5000, buttonText = null, buttonLink = null, position = "start-50 top-0") {
+    console.log("Creating Alert Container...");
+    createAlertContainer();
 
     const $alerts = $("#alerts");
     const $body = $("#alertsBody");
     const $header = $alerts.find(".card-header");
+    
+    // Define all valid positions
+    const validPositions = [
+        "start-0 top-0",
+        "start-50 top-0",
+        "end-0 top-0",
+        "end-0 top-50",
+        "end-0 bottom-0",
+        "start-50 bottom-0",
+        "start-0 bottom-0",
+        "start-0 top-50",
+        "start-50 top-50 translate-middle"
+    ];
+    
+    // Use default if position is invalid
+    if (!validPositions.includes(position)) {
+        position = "start-50 top-0";
+    }
+    
+    // Remove all position classes and reset transform
+    $alerts.removeClass(validPositions.join(" ")).css("transform", "");
+    
+    // Apply the selected position
+    $alerts.addClass(position);
 
     // header class mapping
     const headerMap = {
@@ -351,8 +363,8 @@ function showAlert(message, type = "info", duration = 5000, buttonText = null, b
     // build optional anchor button
     let buttonHtml = "";
     if (buttonText && buttonLink) {
-        const safeText = $("<div>").text(buttonText).html();
-        const safeLink = $("<div>").text(buttonLink).html();
+        const safeText = $("div").text(buttonText).html();
+        const safeLink = $("div").text(buttonLink).html();
         buttonHtml = `
             <div class="mt-3 text-end">
                 <a href="${safeLink}" class="${btnClass}" id="alertDynamicLink">${safeText}</a>
@@ -377,9 +389,8 @@ function showAlert(message, type = "info", duration = 5000, buttonText = null, b
         const t = setTimeout(() => $alerts.fadeOut(300), duration);
         $alerts.data("hideTimeout", t);
     }
+    console.log("Alert:" + message);
 }
-
-
 
 // ✅ Session, API, and Icon Utilities
 async function getApiKey() {
@@ -568,9 +579,6 @@ function showContactModal(userId) {
         }
     });
 }
-
-
-
 function checkSessionRole() {
     $.ajax({
         url: "../includes/_session_check.php",
@@ -610,8 +618,6 @@ function checkSessionRole() {
         },
     });
 }
-
-
 /* --------------------------
    ROLE-BASED FUNCTIONS
 --------------------------- */
@@ -853,116 +859,351 @@ $(document).on("input", "input[type=number]", function () {
 });
 
 
-function buildInspectionReportHTML(scheduleId, reportData, isForPrint = false) {
-    console.log("DEBUG: buildInspectionReportHTML starting");
+
+async function buildInspectionReport(scheduleId, targetElementId = null, options = {}) {
+    const {
+        isForPrint = false,
+        isForEmail = false,
+        includeAcknowledgement = false,
+        acknowledgementLink = ''
+    } = options;
+    
+    try {
+        console.log(`DEBUG: Building report for schedule ${scheduleId}`, options);
+        
+        // Fetch the data
+        const response = await fetch('../includes/export_inspection_report.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `schedule_id=${scheduleId}`
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+            throw new Error(data.message || 'Failed to fetch inspection report');
+        }
+        
+        const reportData = data.data;
+        
+        // Build the HTML with different options
+        const html = buildInspectionReportHTML(
+            scheduleId, 
+            reportData, 
+            isForPrint,
+            isForEmail,
+            includeAcknowledgement,
+            acknowledgementLink
+        );
+        
+        // If target element is provided, insert it
+        if (targetElementId) {
+            const container = document.getElementById(targetElementId);
+            if (container) {
+                container.innerHTML = html;
+                console.log(`DEBUG: Report displayed in #${targetElementId}`);
+            }
+        }
+        
+        return {
+            data: reportData,
+            html: html
+        };
+        
+    } catch (error) {
+        console.error('DEBUG: Failed to build inspection report:', error);
+        throw error;
+    }
+}
+/***********************************************/
+/*    Build Inspection Report Helpers          */
+/***********************************************/
+function buildInspectionReportHTML(
+    scheduleId, 
+    reportData, 
+    isForPrint = false, 
+    isForEmail = false,
+    includeAcknowledgement = false,
+    acknowledgementLink = ''
+) {
     const { inspection_details, statistics, inspection_items } = reportData;
+    const { compliance_rate, has_defects } = statistics;
+    
+    // Add email/print specific classes
+    const emailClass = isForEmail ? 'email-report' : '';
+    const printClass = isForPrint ? 'print-mode' : '';
+    const ackClass = includeAcknowledgement ? 'has-acknowledgement' : '';
+    
+    // Start building HTML with wrapper
+    let html = `<div class="inspection-report ${emailClass} ${printClass} ${ackClass}">`;
+    
+    // Add email-specific styles if needed
+    if (isForEmail) {
+         
+        html += `
+            <style>
+                .inspection-report { font-family: Arial, sans-serif; max-width: 800px; }
+                .email-only { display: block; }
+                .print-only { display: none; }
+                .acknowledgement-section { display: block; }
+                @media print {
+                    .email-only { display: none !important; }
+                    .print-only { display: block !important; }
+                    .acknowledgement-section { display: none !important; }
+                }
+            </style>
+        `;
+    }
+    
+    // Build the main report sections
+    html += `
+        ${buildHeader(scheduleId, inspection_details, statistics, isForEmail)}
+        ${buildSummaryCards(statistics, isForEmail)}
+        ${buildGeneralInfoTable(inspection_details, isForEmail)}
+        ${buildInspectionItemsTable(scheduleId, inspection_items, isForEmail)}
+    `;
+    
+    // Add print button for display mode (not email)
+    if (isForPrint && !isForEmail) {
+        html += `
+            <div class="text-center mt-4 mb-3 print-only">
+                <button class="btn btn-primary" onclick="window.print()">
+                    <i class="bi bi-printer"></i> Print / Save as PDF
+                </button>
+            </div>
+        `;
+    }
+    
+    // Add acknowledgement section if needed
+    if (includeAcknowledgement && acknowledgementLink && !isForPrint) {
+        html += buildAcknowledgementSection(acknowledgementLink, {isForEmail: true, role: 'client'});
+    }
+    
+    // Close the container
+    html += `</div>`;
+    
+    return html;
+}
+// Helper functions
+function buildHeader(scheduleId, inspection_details, statistics, isForEmail = false) {
+    const { compliance_rate, has_defects } = statistics;
+    const hasDefectText = has_defects ? "Has Defects" : "Passed";
+    const hasDefectClass = has_defects ? "warning" : "success";
+    const complianceClass = compliance_rate >= 75 ? "success" : "danger";
     const now = new Date().toLocaleString();
     
-    // Use pre-computed statistics from backend
-    const { 
-        total_items, 
-        passed_items, 
-        failed_items, 
-        not_applicable_items,
-        required_items, 
-        required_passed, 
-        compliance_rate,
-        passed_percentage, 
-        failed_percentage, 
-        not_applicable_percentage,
-        required_passed_percentage,
-        inspection_score, 
-        has_defects 
-    } = statistics;
-
-    const has_defect_ind = has_defects ? "Has Defects" : "Passed";
-    const has_defect_ind_class = has_defects ? "warning" : "success";
-    const ins_score_class = inspection_score >= 75 ? "success" : "danger";
-    let html =`<input type="hidden" id="getSchedIdHere" value="${inspection_details.schedule_id}">`;
-
-     html += `
+    if (isForEmail) {
+        return `
+            <div class="email-header" style="background: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
+                <h1 style="color: #333; margin-bottom: 10px; font-size: 24px;">Inspection Report</h1>
+                <p style="color: #666; margin-bottom: 15px; font-size: 14px;">
+                    Schedule ID: <strong>#${inspection_details.schedule_id}</strong> | 
+                    Generated: <strong>${now}</strong>
+                </p>
+                <div>
+                    <span style="display: inline-block; padding: 5px 15px; border-radius: 20px; 
+                           background: ${has_defects ? '#ffc107' : '#28a745'}; color: white; 
+                           font-weight: bold; font-size: 14px;">
+                        ${hasDefectText}
+                    </span>
+                    <span style="margin-left: 10px; font-weight: bold; color: ${complianceClass === 'success' ? '#28a745' : '#dc3545'};">
+                        Compliance Rate: ${compliance_rate}%
+                    </span>
+                </div>
+            </div>
+        `;
+    }
+    
+    return `
+        <input type="hidden" id="getSchedIdHere" value="${inspection_details.schedule_id}">
         <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
-            <div class="badge bg-${has_defect_ind_class} p-2 fs-6">${has_defect_ind}</div>
-            <div class="badge bg-${ins_score_class} p-2 fs-6">Score: ${inspection_score}%</div>
-            <div class="badge bg-info p-2 fs-6">Items: ${total_items}</div>
-            <div class="badge bg-success p-2 fs-6">Passed: ${passed_items}</div>
-            <div class="badge bg-danger p-2 fs-6">Failed: ${failed_items}</div>
-            <div class="badge bg-warning p-2 fs-6">Required: ${required_items}</div>
-            <div class="badge bg-secondary p-2 fs-6">N/A: ${not_applicable_items}</div>
+            <div class="badge bg-${hasDefectClass} p-2 fs-6">${hasDefectText}</div>
+            <div class="badge bg-${complianceClass} p-2 fs-6">Compliance Rate: ${compliance_rate}%</div>
         </div>
         <div class="small text-muted mb-3">Generated: ${now}</div>
     `;
+}
+function buildSummaryStats(total, passed, failed, na, required, reqPassed, 
+                          passPct, failPct, naPct, reqPassPct, compliance, complianceClass) {
+    const stats = [
+        { label: "Total Items", value: total, color: "primary" },
+        { label: "Passed", value: passed, sub: `${passPct}%`, color: "success" },
+        { label: "Failed", value: failed, sub: `${failPct}%`, color: "danger" },
+        { label: "Not Applicable", value: na, sub: `${naPct}%`, color: "info" },
+        { label: "Required Items", value: required, color: "warning" },
+        { label: "Required Passed", value: reqPassed, sub: `${reqPassPct}%`, color: "success" },
+        { label: "Required Failed", value: required - reqPassed, sub: `${100 - reqPassPct}%`, color: "danger" },
+        { label: "Compliance Rate", value: `${compliance}%`, color: complianceClass }
+    ];
 
-    // Statistics Summary Card
-    html += `
+    return `
     <div class="card mb-4 border-0 shadow-sm">
         <div class="card-header bg-light">
             <h5 class="card-title mb-0">Inspection Summary</h5>
         </div>
         <div class="card-body">
             <div class="row text-center">
-                <div class="col-6 col-md-3 mb-3">
-                    <div class="border rounded p-3 bg-white">
-                        <div class="h4 text-primary mb-1">${total_items}</div>
-                        <div class="small text-muted">Total Items</div>
+                ${stats.map((stat, index) => `
+                    <div class="col-6 col-md-3 mb-3">
+                        <div class="border rounded p-3 bg-white">
+                            <div class="h4 text-${stat.color} mb-1">${stat.value}</div>
+                            <div class="small text-muted">${stat.label}</div>
+                            ${stat.sub ? `<div class="small text-muted">${stat.sub}</div>` : ''}
+                        </div>
                     </div>
-                </div>
-                <div class="col-6 col-md-3 mb-3">
-                    <div class="border rounded p-3 bg-white">
-                        <div class="h4 text-success mb-1">${passed_items}</div>
-                        <div class="small text-muted">Passed</div>
-                        <div class="small text-muted">${passed_percentage}%</div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3 mb-3">
-                    <div class="border rounded p-3 bg-white">
-                        <div class="h4 text-danger mb-1">${failed_items}</div>
-                        <div class="small text-muted">Failed</div>
-                        <div class="small text-muted">${failed_percentage}%</div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3 mb-3">
-                    <div class="border rounded p-3 bg-white">
-                        <div class="h4 text-info mb-1">${not_applicable_items}</div>
-                        <div class="small text-muted">Not Applicable</div>
-                        <div class="small text-muted">${not_applicable_percentage}%</div>
-                    </div>
-                </div>
-            </div>
-            <div class="row text-center">
-                <div class="col-6 col-md-3 mb-3">
-                    <div class="border rounded p-3 bg-white">
-                        <div class="h4 text-warning mb-1">${required_items}</div>
-                        <div class="small text-muted">Required Items</div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3 mb-3">
-                    <div class="border rounded p-3 bg-white">
-                        <div class="h4 text-success mb-1">${required_passed}</div>
-                        <div class="small text-muted">Required Passed</div>
-                        <div class="small text-muted">${required_passed_percentage}%</div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3 mb-3">
-                    <div class="border rounded p-3 bg-white">
-                        <div class="h4 text-danger mb-1">${required_items - required_passed}</div>
-                        <div class="small text-muted">Required Failed</div>
-                        <div class="small text-muted">${100 - required_passed_percentage}%</div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3 mb-3">
-                    <div class="border rounded p-3 bg-white">
-                        <div class="h4 text-secondary mb-1">${compliance_rate}%</div>
-                        <div class="small text-muted">Compliance Rate</div>
-                    </div>
-                </div>
+                `).join('')}
             </div>
         </div>
-    </div>
-    `;
+    </div>`;
+}
 
-    // General Information Section
-    html += `
+function buildSummaryCards(statistics, isForEmail = false) {
+    const { 
+        total_items, passed_items, failed_items, not_applicable_items,
+        required_items, required_passed, compliance_rate,
+        passed_percentage, failed_percentage, not_applicable_percentage,
+        required_passed_percentage
+    } = statistics;
+    
+    const complianceClass = compliance_rate >= 75 ? "success" : "danger";
+    
+    const stats = [
+        { label: "Total Items", value: total_items, color: "primary", sub: "" },
+        { label: "Passed", value: passed_items, sub: `${passed_percentage}%`, color: "success" },
+        { label: "Failed", value: failed_items, sub: `${failed_percentage}%`, color: "danger" },
+        { label: "Not Applicable", value: not_applicable_items, sub: `${not_applicable_percentage}%`, color: "info" },
+        { label: "Required Items", value: required_items, color: "warning", sub: "" },
+        { label: "Required Passed", value: required_passed, sub: `${required_passed_percentage}%`, color: "success" },
+        { label: "Required Failed", value: required_items - required_passed, sub: `${100 - required_passed_percentage}%`, color: "danger" },
+        { label: "Compliance Rate", value: `${compliance_rate}%`, color: complianceClass, sub: "" }
+    ];
+    
+    if (isForEmail) {
+        // Email version - simpler table layout
+        return `
+        <div style="margin: 20px 0; background: white; padding: 20px; border-radius: 5px; border: 1px solid #ddd;">
+            <h3 style="color: #333; margin-bottom: 15px; font-size: 18px;">Inspection Summary</h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                <tbody>
+                    ${stats.map((stat, index) => {
+                        if (index % 2 === 0) {
+                            const stat1 = stats[index];
+                            const stat2 = stats[index + 1] || null;
+                            return `
+                            <tr>
+                                <td style="padding: 8px; border-bottom: 1px solid #eee; width: 50%;">
+                                    <strong>${stat1.label}:</strong> 
+                                    <span style="color: ${getColorCode(stat1.color)}; font-weight: bold;">
+                                        ${stat1.value}
+                                    </span>
+                                    ${stat1.sub ? `<br><small style="color: #666;">${stat1.sub}</small>` : ''}
+                                </td>
+                                ${stat2 ? `
+                                <td style="padding: 8px; border-bottom: 1px solid #eee; width: 50%;">
+                                    <strong>${stat2.label}:</strong> 
+                                    <span style="color: ${getColorCode(stat2.color)}; font-weight: bold;">
+                                        ${stat2.value}
+                                    </span>
+                                    ${stat2.sub ? `<br><small style="color: #666;">${stat2.sub}</small>` : ''}
+                                </td>
+                                ` : '<td></td>'}
+                            </tr>
+                            `;
+                        }
+                        return '';
+                    }).join('')}
+                </tbody>
+            </table>
+        </div>
+        `;
+    }
+    // Normal display version
+    return `
+    <div class="card mb-4 border-0 shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="card-title mb-0">Inspection Summary</h5>
+        </div>
+        <div class="card-body">
+            <div class="row text-center">
+                ${stats.map((stat, index) => `
+                    <div class="col-6 col-md-3 mb-3">
+                        <div class="border rounded p-3 bg-white">
+                            <div class="h4 text-${stat.color} mb-1">${stat.value}</div>
+                            <div class="small text-muted">${stat.label}</div>
+                            ${stat.sub ? `<div class="small text-muted">${stat.sub}</div>` : ''}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    </div>`;
+}
+
+function getColorCode(colorName) {
+    const colors = {
+        primary: '#0d6efd',
+        success: '#28a745',
+        danger: '#dc3545',
+        warning: '#ffc107',
+        info: '#17a2b8'
+    };
+    return colors[colorName] || '#666';
+}
+// Helper function to build general info table with email options
+function buildGeneralInfoTable(details, isForEmail = false) {
+    const infoFields = [
+        { label: "Building", value: details.building_name },
+        { label: "Location of Construction", value: details.location_of_construction },
+        { label: "Project Title", value: details.project_title },
+        { label: "Owner", value: details.owner_name },
+        { label: "Occupant Name", value: details.occupant_name },
+        { label: "Representative Name", value: details.representative_name },
+        { label: "Administrator Name", value: details.administrator_name },
+        { label: "Owner Contact No.", value: details.owner_contact_no },
+        { label: "Representative Contact No.", value: details.representative_contact_no },
+        { label: "Other Contact Info", value: details.telephone_email },
+        { label: "Business Name", value: details.business_name },
+        { label: "Establishment Name", value: details.establishment_name },
+        { label: "Nature of Business", value: details.nature_of_business },
+        { label: "Classification of Occupancy", value: details.classification_of_occupancy },
+        { label: "Healthcare Facility Name", value: details.healthcare_facility_name },
+        { label: "Healthcare Facility Type", value: details.healthcare_facility_type },
+        { label: "Height of Building", value: details.height_of_building },
+        { label: "Number of Storeys", value: details.no_of_storeys },
+        { label: "Area per Floor", value: details.area_per_floor },
+        { label: "Total Floor Area", value: details.total_floor_area },
+        { label: "Portion Occupied", value: details.portion_occupied },
+        { label: "Bed Capacity", value: details.bed_capacity }
+    ];
+    
+    if (isForEmail) {
+        return `
+        <div style="margin: 20px 0; background: white; padding: 20px; border-radius: 5px; border: 1px solid #ddd;">
+            <h3 style="color: #333; margin-bottom: 15px; font-size: 18px;">General Information</h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                <tbody>
+                    ${infoFields.map(field => `
+                        <tr>
+                            <td style="padding: 8px; border-bottom: 1px solid #eee; width: 40%; font-weight: bold;">
+                                ${field.label}:
+                            </td>
+                            <td style="padding: 8px; border-bottom: 1px solid #eee; width: 60%;">
+                                ${field.value || ''}
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>`;
+    }
+    
+    return `
     <div class="container-fluid px-1">
         <div class="row">
             <div class="col-12">
@@ -970,80 +1211,29 @@ function buildInspectionReportHTML(scheduleId, reportData, isForPrint = false) {
                 <div class="table-responsive">
                   <table class="table table-bordered table-sm align-middle">
                     <tbody>
-                      <tr><th>Building</th><td>${inspection_details.building_name || ''}</td></tr>
-                      <tr><th>Location of Construction</th><td>${inspection_details.location_of_construction || ''}</td></tr>
-                      <tr><th>Project Title</th><td>${inspection_details.project_title || ''}</td></tr>
-                      <tr><th>Owner</th><td>${inspection_details.owner_name || ''}</td></tr>
-                      <tr><th>Occupant Name</th><td>${inspection_details.occupant_name || ''}</td></tr>
-                      <tr><th>Representative Name</th><td>${inspection_details.representative_name || ''}</td></tr>
-                      <tr><th>Administrator Name</th><td>${inspection_details.administrator_name || ''}</td></tr>
-                      <tr><th>Owner Contact No.</th><td>${inspection_details.owner_contact_no || ''}</td></tr>
-                      <tr><th>Representative Contact No.</th><td>${inspection_details.representative_contact_no || ''}</td></tr>
-                      <tr><th>Other Contact Info</th><td>${inspection_details.telephone_email || ''}</td></tr>
-                      <tr><th>Business Name</th><td>${inspection_details.business_name || ''}</td></tr>
-                      <tr><th>Establishment Name</th><td>${inspection_details.establishment_name || ''}</td></tr>
-                      <tr><th>Nature of Business</th><td>${inspection_details.nature_of_business || ''}</td></tr>
-                      <tr><th>Classification of Occupancy</th><td>${inspection_details.classification_of_occupancy || ''}</td></tr>
-                      <tr><th>Healthcare Facility Name</th><td>${inspection_details.healthcare_facility_name || ''}</td></tr>
-                      <tr><th>Healthcare Facility Type</th><td>${inspection_details.healthcare_facility_type || ''}</td></tr>
-                      <tr><th>Height of Building</th><td>${inspection_details.height_of_building || ''}</td></tr>
-                      <tr><th>Number of Storeys</th><td>${inspection_details.no_of_storeys || ''}</td></tr>
-                      <tr><th>Area per Floor</th><td>${inspection_details.area_per_floor || ''}</td></tr>
-                      <tr><th>Total Floor Area</th><td>${inspection_details.total_floor_area || ''}</td></tr>
-                      <tr><th>Portion Occupied</th><td>${inspection_details.portion_occupied || ''}</td></tr>
-                      <tr><th>Bed Capacity</th><td>${inspection_details.bed_capacity || ''}</td></tr>
+                      ${infoFields.map(field => `
+                        <tr><th>${field.label}</th><td>${field.value || ''}</td></tr>
+                      `).join('')}
                     </tbody>
                   </table>
                 </div>
             </div>
         </div>
-    </div>
-    `;
+    </div>`;
+}
 
-    // Inspection Details Table
-    html += `
-        <div class="table-responsive mt-4">
-            <h3 class="fw-bold">Inspection Details</h3>
-            <table class="table table-bordered table-striped align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th style="width:10%">Section</th>
-                        <th style="width:15%">Item</th>
-                        <th style="width:10%">Response</th>
-                        <th style="width:30%">Criteria</th>
-                        <th style="width:10%">Remarks</th>
-                        <th style="width:15%">Proof</th>
-                        <th style="width:5%">Required</th>
-                        <th style="width:5%">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-    `;
+function buildInspectionTable(scheduleId, items) {
+    const tableRows = items.map(row => {
+        const proofHTML = row.response_proof_img 
+            ? `<img src="../assets/proof/Schedule_${scheduleId}/${row.response_proof_img}" class="img-fluid rounded" style="width:80px;height:80px;object-fit:cover;">`
+            : `<span class="text-muted">No Image</span>`;
 
-    inspection_items.forEach(row => {
-        const proofHTML = row.response_proof_img ?
-            `<img src="../assets/proof/Schedule_${scheduleId}/${row.response_proof_img}" class="img-fluid rounded" style="width:80px;height:80px;object-fit:cover;" alt="Proof Image">` :
-            `<span class="text-muted">No Image</span>`;
+        const { remarksHTML, statusBadge } = getRemarksStatus(row.remarks);
+        const requiredBadge = row.required == 1 
+            ? '<span class="badge bg-warning">YES</span>' 
+            : '<span class="badge bg-secondary">NO</span>';
 
-        let remarksHTML, statusBadge;
-        const remarks = parseInt(row.remarks);
-        
-        if (remarks === 1) {
-            remarksHTML = `<span class="text-success">${getIcon("patchcheck")} Pass</span>`;
-            statusBadge = `<span class="badge bg-success">Pass</span>`;
-        } else if (remarks === 8) {
-            remarksHTML = `<span class="text-info">${getIcon("dash-circle")} N/A</span>`;
-            statusBadge = `<span class="badge bg-info">N/A</span>`;
-        } else {
-            remarksHTML = `<span class="text-danger">${getIcon("patchcaution")} Failed</span>`;
-            statusBadge = `<span class="badge bg-danger">Failed</span>`;
-        }
-
-        const requiredBadge = row.required == 1 ? 
-            '<span class="badge bg-warning">YES</span>' : 
-            '<span class="badge bg-secondary">NO</span>';
-
-        html += `
+        return `
             <tr>
                 <td>${row.section || ""}</td>
                 <td>${row.item_text || ""}</td>
@@ -1055,26 +1245,244 @@ function buildInspectionReportHTML(scheduleId, reportData, isForPrint = false) {
                 <td>${statusBadge}</td>
             </tr>
         `;
-    });
+    }).join('');
 
-    html += `</tbody></table></div>`;
-
-    // Print Button (if needed)
-    if (isForPrint) {
-        html += `
-            <div class="text-center mt-4 mb-3">
-                <button class="btn btn-primary" onclick="window.print()">
-                    <i class="bi bi-printer"></i> Print / Save as PDF
-                </button>
-            </div>
-        `;
-    }
-    console.log("DEBUG: buildInspectionReportHTML End.");
-    return html;
-    
+    return `
+    <div class="table-responsive mt-4">
+        <h3 class="fw-bold">Inspection Details</h3>
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Section</th>
+                    <th>Item</th>
+                    <th>Response</th>
+                    <th>Criteria</th>
+                    <th>Remarks</th>
+                    <th>Proof</th>
+                    <th>Required</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>${tableRows}</tbody>
+        </table>
+    </div>`;
 }
 
+function getRemarksStatus(remarks) {
+    const remarksInt = parseInt(remarks);
+    
+    if (remarksInt === 1) {
+        return {
+            remarksHTML: `<span class="text-success">${getIcon("patchcheck")} Pass</span>`,
+            statusBadge: `<span class="badge bg-success">Pass</span>`
+        };
+    } else if (remarksInt === 8) {
+        return {
+            remarksHTML: `<span class="text-info">${getIcon("dash-circle")} N/A</span>`,
+            statusBadge: `<span class="badge bg-info">N/A</span>`
+        };
+    } else {
+        return {
+            remarksHTML: `<span class="text-danger">${getIcon("patchcaution")} Failed</span>`,
+            statusBadge: `<span class="badge bg-danger">Failed</span>`
+        };
+    }
+}
 
+function getRemarksText(remarks) {
+    const remarksInt = parseInt(remarks);
+    if (remarksInt === 1) return "✓ Pass";
+    if (remarksInt === 8) return "◯ N/A";
+    return "✗ Failed";
+}
+
+function buildPrintButton() {
+    return `
+    <div class="text-center mt-4 mb-3">
+        <button class="btn btn-primary" onclick="window.print()">
+            <i class="bi bi-printer"></i> Print / Save as PDF
+        </button>
+    </div>`;
+}
+
+function buildAcknowledgementSection(acknowledgementLink, options = {}) {
+    const {
+        isForEmail = false,
+        role = 'client', // 'client', 'ChiefFSES', 'FireMarshal'
+        scheduleId = '',
+        inspectionId = ''
+    } = options;
+    
+    // FIXED: Use correct role names that cert.php expects
+    const roleConfigs = {
+        'client': {
+            title: 'Acknowledgement Required',
+            icon: '📋',
+            buttonText: 'Acknowledge Inspection Report',
+            description: 'Please acknowledge receipt of this inspection report by clicking the button below:',
+            note: 'Acknowledgement is required from the building owner only.'
+        },
+        'ChiefFSES': { // NOTE: Capital 'C' and 'S'
+            title: 'Recommendation Required',
+            icon: '✅',
+            buttonText: 'Recommend for Certification Approval',
+            description: 'As Chief FSES, please review and recommend this inspection for certification approval:',
+            note: 'Your recommendation is required before final approval.'
+        },
+        'FireMarshal': { // NOTE: Capital 'F' and 'M', no hyphen
+            title: 'Approval Required',
+            icon: '🏛️',
+            buttonText: 'Approve Certification',
+            description: 'As Fire Marshal, please review and approve this inspection for certification:',
+            note: 'Your approval will finalize the certification process.'
+        }
+    };
+    
+    const config = roleConfigs[role] || roleConfigs['client'];
+    
+    const actionLink = acknowledgementLink;
+    
+    if (isForEmail) {
+        return `
+        <div class="acknowledgement-section email-only" style="background: #e7f3ff; padding: 20px; border-radius: 5px; margin: 30px 0;">
+            <h3 style="color: #0c63e4; margin-bottom: 15px; font-size: 18px;">${config.title}</h3>
+            <p style="margin-bottom: 15px; font-size: 14px;">
+                ${config.description}
+            </p>
+            <div style="text-align: center; margin: 25px 0;">
+                <a href="${actionLink}" 
+                   style="display: inline-block; background: #0d6efd; color: white; 
+                          padding: 12px 30px; text-decoration: none; border-radius: 5px;
+                          font-size: 16px; font-weight: bold;">
+                    ${config.icon} ${config.buttonText}
+                </a>
+            </div>
+            <p style="font-size: 14px; color: #666; margin-bottom: 10px;">
+                If the button doesn't work, copy and paste this link into your browser:
+            </p>
+            <div style="background: white; padding: 10px; border-radius: 3px; font-family: monospace; 
+                        font-size: 12px; word-break: break-all;">
+                    ${actionLink}
+            </div>
+            <p style="font-size: 12px; color: #666; margin-top: 15px;">
+                <strong>Note:</strong> ${config.note}
+            </p>
+        </div>
+        `;
+    }
+    
+    // Display version (for UI)
+    return `
+    <div class="acknowledgement-section mt-4 p-4 border rounded bg-light">
+        <h4 class="text-${role === 'client' ? 'danger' : role === 'ChiefFSES' ? 'warning' : 'success'} mb-3">
+            <i class="bi ${role === 'client' ? 'bi-envelope-check' : role === 'ChiefFSES' ? 'bi-check-circle' : 'bi-shield-check'} me-2"></i>
+            ${config.title}
+        </h4>
+        <p class="mb-2">An email has been sent for ${role === 'client' ? 'acknowledgement' : role === 'ChiefFSES' ? 'recommendation' : 'approval'}.</p>
+        <p class="mb-3 small text-muted">Please use the link sent via email to ${config.buttonText.toLowerCase()}.</p>
+        <div class="bg-white p-3 rounded border">
+            <a href="${actionLink}" style="margin: 5px; text-decoration: none; padding: 10px; background-color: ${getColorCode('primary')}; border-radius: 20px; color: white">
+                ${role === 'client' ? 'Acknowledge' : role === 'ChiefFSES' ? 'Recommend for Approval' : 'Approve'}
+            </a>
+            <br><br>
+            <hr> if that didn't work use the link below:
+            <code class="small">${actionLink}</code>
+        </div>
+    </div>
+    `;
+}
+
+function buildInspectionItemsTable(scheduleId, items, isForEmail = false) {
+    const tableRows = items.map(row => {
+        const proofHTML = row.response_proof_img 
+            ? `<img src="../assets/proof/Schedule_${scheduleId}/${row.response_proof_img}" class="img-fluid rounded" style="width:80px;height:80px;object-fit:cover;">`
+            : `<span class="text-muted">No Image</span>`;
+
+        const { remarksHTML, statusBadge } = getRemarksStatus(row.remarks);
+        const requiredBadge = row.required == 1 
+            ? '<span class="badge bg-warning">YES</span>' 
+            : '<span class="badge bg-secondary">NO</span>';
+
+        return `
+            <tr>
+                <td>${row.section || ""}</td>
+                <td>${row.item_text || ""}</td>
+                <td>${row.response_value || ""} ${row.unit_label || ""}</td>
+                <td>${row.checklist_criteria || ""}</td>
+                <td>${remarksHTML}</td>
+                <td>${proofHTML}</td>
+                <td>${requiredBadge}</td>
+                <td>${statusBadge}</td>
+            </tr>
+        `;
+    }).join('');
+
+    if (isForEmail) {
+        // Simplified email version (no images, simpler layout)
+        const emailRows = items.map(row => {
+            const { remarksHTML } = getRemarksStatus(row.remarks);
+            return `
+                <tr>
+                    <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 12px;">
+                        ${row.section || ""}
+                    </td>
+                    <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 12px;">
+                        ${row.item_text || ""}
+                    </td>
+                    <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 12px;">
+                        ${row.response_value || ""} ${row.unit_label || ""}
+                    </td>
+                    <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 12px;">
+                        ${getRemarksText(row.remarks)}
+                    </td>
+                </tr>
+            `;
+        }).join('');
+        
+        return `
+        <div style="margin: 20px 0; background: white; padding: 20px; border-radius: 5px; border: 1px solid #ddd;">
+            <h3 style="color: #333; margin-bottom: 15px; font-size: 18px;">Inspection Details</h3>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                    <thead style="background: #f8f9fa;">
+                        <tr>
+                            <th style="padding: 10px; border-bottom: 2px solid #dee2e6; text-align: left;">Section</th>
+                            <th style="padding: 10px; border-bottom: 2px solid #dee2e6; text-align: left;">Item</th>
+                            <th style="padding: 10px; border-bottom: 2px solid #dee2e6; text-align: left;">Response</th>
+                            <th style="padding: 10px; border-bottom: 2px solid #dee2e6; text-align: left;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>${emailRows}</tbody>
+                </table>
+            </div>
+        </div>`;
+    }
+    
+    return `
+    <div class="table-responsive mt-4">
+        <h3 class="fw-bold">Inspection Details</h3>
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Section</th>
+                    <th>Item</th>
+                    <th>Response</th>
+                    <th>Criteria</th>
+                    <th>Remarks</th>
+                    <th>Proof</th>
+                    <th>Required</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>${tableRows}</tbody>
+        </table>
+    </div>`;
+}
+/***********************************************/
+/***********************************************/
+function printReport() {
+    window.print();
+}
 
 $(document).on("click", ".checkInspectionReport", function () {
     
@@ -1310,3 +1718,160 @@ function bindExportButtonHandler(scheduleId) {
     
     console.log('Favicon loaded:', faviconPath);
 }
+
+
+
+
+/**
+ * Send email using AJAX
+ * @param {string} subject - Email subject
+ * @param {string|Array} receiverEmail - Recipient email address(es) - string (comma/semicolon separated) or array
+ * @param {string} messageContent - Email message content
+ * @param {File} [attachment=null] - Optional file attachment
+ * @param {function} [callback=null] - Optional callback function
+ * @returns {Promise} - Returns a promise for async handling
+ */
+function sendEmail(subject, receiverEmail, messageContent, attachment = null, callback = null) {
+    return new Promise((resolve, reject) => {
+        const formData = new FormData();
+        
+        // PROCESS EMAIL ADDRESSES
+        let emails = [];
+        
+        if (Array.isArray(receiverEmail)) {
+            // Already an array
+            emails = receiverEmail.filter(email => email && email.trim());
+        } else if (typeof receiverEmail === 'string') {
+            // Split string by comma or semicolon
+            emails = receiverEmail.split(/[;,]/)
+                .map(email => email.trim())
+                .filter(email => email.length > 0);
+        }
+        
+        // Validate we have emails
+        if (emails.length === 0) {
+            reject(new Error('No email addresses provided'));
+            showAlert('✗ No email addresses provided', 'error');
+            return;
+        }
+        
+        // Add emails to FormData as array
+        emails.forEach(email => {
+            formData.append('to_email[]', email);
+        });
+        
+        formData.append('subject', subject);
+        formData.append('message', messageContent);
+        
+        // Handle attachment
+        if (attachment) {
+            if (attachment instanceof File || attachment instanceof Blob) {
+                if (attachment instanceof Blob && !attachment.name) {
+                    const filename = 'attachment_' + Date.now() + '.pdf';
+                    attachment = new File([attachment], filename, { 
+                        type: attachment.type || 'application/pdf' 
+                    });
+                }
+                formData.append('attachment', attachment);
+            }
+        }
+        showAlert("Sending Notification Email...");
+        
+        // Send AJAX request
+        $.ajax({
+            url: '../includes/send_mail.php',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function(response) {
+                if (window.hideLoading) {
+                    window.hideLoading();
+                }
+                
+                resolve(response);
+                
+                if (callback && typeof callback === 'function') {
+                    callback(response);
+                }
+                
+                if (response.success) {
+                    showAlert('✓ ' + response.message, 'success');
+                         // Cleanup the PDF file if attachment exists
+                        if (attachment && attachment.name) {
+                            $.post('../includes/cleanup_pdf.php', {
+                                filename: attachment.name
+                            }).done(function(cleanupResponse) {
+                                console.log('Cleanup result:', cleanupResponse);
+                            });
+                        }
+                } else {
+                    showAlert('✗ ' + response.message, 'error');
+                }
+            },
+            error: function(xhr, status, error) {
+                if (window.hideLoading) {
+                    window.hideLoading();
+                }
+                
+                const errorMessage = 'AJAX Error: ' + error;
+                reject(new Error(errorMessage));
+                showAlert('✗ ' + errorMessage, 'error');
+                console.error('Email sending failed:', error);
+            }
+        });
+    });
+}
+
+// /**
+//  * Helper function to show messages
+//  * @param {string} message - Message to display
+//  * @param {string} type - Message type (success, error, warning)
+//  */
+// function showAlert(message, type = 'info') {
+//     $('.email-message').remove();
+    
+//     const messageDiv = $('<div class="email-message"></div>')
+//         .addClass(type)
+//         .html(message)
+//         .css({
+//             'padding': '10px',
+//             'margin': '10px 0',
+//             'border-radius': '4px',
+//             'display': 'block'
+//         });
+    
+//     switch(type) {
+//         case 'success':
+//             messageDiv.css({
+//                 'background-color': '#d4edda',
+//                 'color': '#155724',
+//                 'border': '1px solid #c3e6cb'
+//             });
+//             break;
+//         case 'error':
+//             messageDiv.css({
+//                 'background-color': '#f8d7da',
+//                 'color': '#721c24',
+//                 'border': '1px solid #f5c6cb'
+//             });
+//             break;
+//         default:
+//             messageDiv.css({
+//                 'background-color': '#d1ecf1',
+//                 'color': '#0c5460',
+//                 'border': '1px solid #bee5eb'
+//             });
+//     }
+    
+//     $('body').prepend(messageDiv);
+    
+//     if (type === 'success') {
+//         setTimeout(() => {
+//             messageDiv.fadeOut(500, function() {
+//                 $(this).remove();
+//             });
+//         }, 5000);
+//     }
+// }

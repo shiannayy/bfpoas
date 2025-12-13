@@ -4,21 +4,21 @@ header('Content-Type: application/json');
 
 try {    // Validate request
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        errorResponse("Invalid request method");
-        
+       echo errorResponse("Invalid request method");
+        exit();
     }
 
     $payload = $_POST['sendThis'] ?? null;
     
     if (!$payload || !isset($payload['action'], $payload['id'])) {
-        errorResponse("Incomplete data");
-        
+       echo errorResponse("Incomplete data");
+        exit();
     }
 
     $inspection_id = intval($payload['id']);
     if ($inspection_id <= 0) {
-        errorResponse("Invalid inspection ID");
-        
+       echo errorResponse("Invalid inspection ID");
+       exit();
     }
 
     // Get user data
@@ -30,8 +30,8 @@ try {    // Validate request
     // Get inspection data
     $inspection = getInspection($inspection_id);
     if (!$inspection) {
-        errorResponse("Inspection not found");
-        
+       echo errorResponse("Inspection not found");
+        exit();
     }
 
     // Handle action
@@ -44,14 +44,15 @@ try {    // Validate request
 
     if (isset($handlers[$action])) {
         $result = $handlers[$action]($inspection, $role_label, $user_id, $inspection_id);
-        successResponse($result);
-        
+        echo successResponse($result);   
+        exit();
     }
 
-    errorResponse("Unknown action: {$action}");
-    
+   echo errorResponse("Unknown action: {$action}");
+    exit();  
 }
  catch (Exception $e) {
-   errorResponse("An Unexpected Error Occured. Try Again.");
+  echo errorResponse("An Unexpected Error Occured. Try Again.");
+  exit();
     
 }

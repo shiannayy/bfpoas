@@ -11,7 +11,7 @@
   public const DB_NAME= "fsed";
 
     public const ADMIN_EMAIL= "ashianna395@gmail.com";
-
+    public const WEBSITE_BASE_URL = "http://localhost/bfpoas-online";
      
     public const APP_SECRET='my_super_secret_encryption_key';
     public const REGION= "R05";

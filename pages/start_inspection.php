@@ -333,8 +333,8 @@ foreach ($items as $item) {
                                     <?php if ($item['input_type'] === "checkbox") {   ?>
                                     <div class="d-flex border-0 justify-content-center">
                                         <div class="form-check">
-                                            <input type="checkbox" class="form-check-input p-2 section-input" name="item_<?= $item['item_id'] ?>" value="1" <?= ((int)$savedValue == 1) ? "checked" : "" ?> />
-                                            <label class="form-check-label"> YES </label>
+                                            <input type="checkbox" class="form-check-input p-2 section-input" id="item_<?= $item['item_id'] ?>" name="item_<?= $item['item_id'] ?>" value="1" <?= ((int)$savedValue == 1) ? "checked" : "" ?> />
+                                            <label class="form-check-label" for="item_<?= $item['item_id'] ?>" > YES </label>
                                         </div>
                                     </div>
                                     <?php }
@@ -397,23 +397,23 @@ foreach ($items as $item) {
                 else{ ?>
                 <div class="text-center">No Active Items Available</div>
                 <?php } ?>
-
-                <button type="submit"
-                    class="done-inspection btn btn-gold shadow rounded rounded-5 align-center align-middle position-fixed bottom-0 end-0 mb-2 me-2 pt-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                        class="bi bi-check-circle" viewBox="0 0 16 16">
-                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
-                        <path
-                            d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05" />
-                    </svg>
-                    Done <i class="d-none d-lg-inline"> with Inspection?</i>
-                </button>
-
+                <div class="container-fluid mt-2 g-0 p-0">
+                        <div class="row">
+                            <div class="col-12 d-flex">
+                            <button type="submit"
+                                class="done-inspection fw-bold btn btn-gold shadow rounded rounded-5 mx-auto p-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-check-circle" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                    <path
+                                        d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05" />
+                                </svg>
+                                Done with Inspection?
+                            </button>
+                            </div>
+                    </div>
+                </div>
             </form>
-
-
-
-
         </div>
     </div>
 </div>

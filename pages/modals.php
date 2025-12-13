@@ -188,3 +188,43 @@
         <div class="container-fluid" id="moreDetailsBody"></div>
     </div>
 </div>
+
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="inspectionConfirmationModal" tabindex="-1" aria-labelledby="inspectionConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="inspectionConfirmationModalLabel">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-exclamation-triangle-fill me-2" viewBox="0 0 16 16">
+                        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                    </svg>
+                    Confirm Inspection Completion
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-1"><strong>Are you sure you want to mark this inspection as complete?</strong></p>
+                <p class="text-muted small mb-0">Once submitted:</p>
+                <ul class="text-muted small">
+                    <li>You won't be able to make further changes to this inspection</li>
+                    <li>The inspection will be sent for review/processing</li>
+                    <li>You may need manager approval for certain items</li>
+                </ul>
+                
+                <!-- Optional: Show warning if required items are incomplete -->
+                <div class="alert alert-danger mt-3 d-none" id="requiredItemsWarning">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle me-1" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                        <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
+                    </svg>
+                    <span id="warningMessage"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-warning" id="confirmInspectionSubmit">Yes, Submit Inspection</button>
+            </div>
+        </div>
+    </div>
+</div>

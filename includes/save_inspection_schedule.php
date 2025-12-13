@@ -181,7 +181,7 @@ function createInspectionSchedule($data) {
 
     /*EMAIl TOKEN*/
     // ✅ CREATE EMAIL TOKEN HERE - Step 0
-    $email_token = bin2hex(random_bytes(8)); // 16-character unique token
+    $email_token = generateToken(8,"INSP"); // 16-character unique token
     
     // Get all required user IDs
     $ownerInfo = getOwnerInfo($data['gen_info_id']);

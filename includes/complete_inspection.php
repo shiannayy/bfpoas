@@ -6,6 +6,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $inspection_id = $_POST['inspection_id'] ?? null;
     $schedule_id   = $_POST['schedule_id'] ?? null;
+
+    $sched_info = select('inspection_schedule',['schedule_id' => $schedule_id])[0];
+    $gen_info_id = $sched_info['gen_info_id'];
+//client_id
+    $owner_id = select('general_info',['gen_info_id' => $gen_info_id])[0]['owner_id'];
+    $owner_email = select('users', ['user_id' => $owner_id])[0]['email'];
+//approvers email can be fetch via sched_info as well as this is the next step in the inspection procedure, the Inspection Certification so those who approved the schedule will also be the one approving the certification.
+//chiefFses_id
+$recommendingApproverId = $sched_info['RecommendingApprover'];
+$recommendingApproverEmail = select('users', ['user_id' => $recommendingApproverId])[0]['email'];
+
+//fm_id
+$finalApproverId = $sched_info['FinalApprover'];
+$finalApproverEmail = select('users', ['user_id' => $finalApproverId])[0]['email'];
+
+$orderNumber = $sched_info['order_number'];
+
     $checklist_id  = $_POST['checklist_id'] ?? null;
     $now = date('Y-m-d H:i:s');
 
@@ -153,7 +170,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "failed_items" => $stats['failed_items'] ?? 0,
             "required_passed" => $stats['required_passed'] ?? 0,
             "required_items" => $stats['required_items'] ?? 0,
-            "issues" => $issues
+            "issues" => $issues,
+            "email_info" => ["ownerEmail" => $owner_email,
+                             "recommendingEmail" => $recommendingApproverEmail,
+                            "finalApprover" => $finalApproverEmail,
+                            "orderNumber" => $orderNumber
+                    ]   
         ]);
     } else {
         error_log("Failed to update inspection #{$inspection_id} or schedule #{$schedule_id}");

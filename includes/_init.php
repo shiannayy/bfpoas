@@ -23,6 +23,44 @@ if ( !$CONN ) {
 }
 $conn = $CONN;
 
+$pages = [
+    'checklist' => ["label" => "CHECKLISTS", "link" => "?page=view_checklists", "section" => "config", "icon" => "checklist"],
+    'establishment' => ["label" => "ESTABLISHMENTS", "link" => "?page=est_list", "section" => "establishment", "icon" => "building"],
+    'new_est' => ["label" => "NEW ESTABLISHMENT", "link" => "?page=new_est", "section" => "establishment", "icon" => "newbuilding"],
+    'sched_ins' => ["label" => "SCHEDULE INSPECTION", "link" => "?page=sched_ins", "section" => "inspections", "icon" => "newsched"],
+    'inspection_sched' => ["label" => "INSPECTION SCHEDULE", "link" => "?page=ins_sched", "section" => "inspections", "icon" => "calendar"],
+    'inspection_list' => ["label" => "INSPECTIONS CERTIFICATE", "link" => "?page=ins_list", "section" => "inspections", "icon" => "award"],
+    'user_list' => ["label" => "USERS", "link" => "?page=user_list", "section" => "users", "icon" => "user"],
+    'new_user' => ["label" => "NEW USER", "link" => "?page=new_user", "section" => "users", "icon" => "new_user"],
+    'divider' => ["label" => "", "link" => "#", "section" => "none", "icon" => "divider"]
+];
+$roleButtons = [
+    "Recommending Approver" => [
+        $pages['establishment'], $pages['inspection_sched'], $pages['inspection_list']
+    ],
+    "Approver" => [
+        $pages['establishment'], $pages['inspection_sched'], $pages['inspection_list']
+    ],
+    "Admin_Assistant" => [
+            $pages['divider']
+        , $pages['new_user']
+        , $pages['new_est']  
+        , $pages['sched_ins']
+        , $pages['divider']
+        , $pages['checklist']
+        , $pages['establishment']
+        , $pages['user_list']
+        , $pages['inspection_sched']
+        , $pages['divider']
+        , $pages['inspection_list']
+    ],
+    "Inspector" => [
+        $pages['establishment'], $pages['inspection_sched'], $pages['inspection_list']
+    ],
+    "Client" => [
+            $pages['establishment'], $pages['inspection_sched'], $pages['inspection_list']
+    ]
+];
 function detect_param_type($value) {
     if (is_int($value)) return 'i';
     if (is_float($value)) return 'd';
@@ -142,6 +180,11 @@ function sanitize_where_clause($where_string) {
     $where_string = preg_replace('/[^\w\s=!<>%\.\(\),\-]/', '', $where_string);
     return $where_string;
 }  
+
+function select_data($table, $where = null, $order_by = null, $limit = null) {
+    // Alias for select() with same parameters for backward compatibility
+    return select($table, $where, $order_by, $limit);
+}
 function select($table, $where = null, $order_by = null, $limit = null, $wherebit = "AND") {
     global $CONN;
 
@@ -235,10 +278,6 @@ function select($table, $where = null, $order_by = null, $limit = null, $wherebi
     
     mysqli_stmt_close($stmt);
     return $data;
-}
-function select_data($table, $where = null, $order_by = null, $limit = null) {
-    // Alias for select() with same parameters for backward compatibility
-    return select($table, $where, $order_by, $limit);
 }
 function insert_data($table, $data) {
     global $CONN;
@@ -1022,7 +1061,6 @@ function query($sql, $params = []) {
     // For INSERT, UPDATE, DELETE
     return mysqli_stmt_affected_rows($stmt);
 }
-
 function getUserInfo($user_id, $column = "full_name") {
     $user_id = intval($user_id); // Sanitize user_id
     $allowed_columns = ["full_name", "email", "role"]; // Whitelist columns
@@ -1095,7 +1133,7 @@ function startInspection($schedule_id, $inspector_id, $user_id) {
     if (insert_data("inspections", $data)) {
         $new = select("inspections", ["schedule_id" => $schedule_id], null, 1);
         $sched = select("inspection_schedule", ["schedule_id" => $schedule_id], null, 1);
-sys_log("Inspection started: for " . $sched[0]['order_number'] . " by Inspector " . $sched[0]['to_officer'], 'ins', $new[0]['inspection_id']);
+    sys_log("Inspection started: for " . $sched[0]['order_number'] . " by Inspector " . $sched[0]['to_officer'], 'ins', $new[0]['inspection_id']);
         return $new ? $new[0] : null;
     } else {
         
@@ -1378,10 +1416,6 @@ function checkFordefects($schedule_id, $checklist_id){
         'message' => $stats['has_defects'] ? 'Inspection completed with defects' : 'Inspection passed successfully'
     ];
 }
-
-/**
- * Calculate comprehensive inspection statistics
- */
 function calculateInspectionStats($inspectionRows) {
     $stats = [
         'total_items' => count($inspectionRows),
@@ -1447,12 +1481,6 @@ function calculateInspectionStats($inspectionRows) {
 
     return $stats;
 }
-
-
-/**
- * Update inspection record with comprehensive statistics
- * Call this after checkFordefects() to save stats to database
- */
 function updateInspectionWithStats($schedule_id, $inspectionStats) {
     $updateData = [
         'inspection_score' => $inspectionStats['passed_percentage'],
@@ -1550,7 +1578,8 @@ function handleApprove($inspection, $role_label, $user_id, $inspection_id) {
     }
 
     if ($inspection['hasFinalApproval'] == 1) {
-        return errorResponse("Already approved.");
+        return $inspection_id;
+        //return errorResponse("Already approved.");
     }
 
     $update = update_data("inspections", [
@@ -1563,13 +1592,14 @@ function handleApprove($inspection, $role_label, $user_id, $inspection_id) {
         ? ["success" => true, "message" => "Inspection approved successfully."]
         : errorResponse("Failed to update approval.");
 }
+
 function handleReceive($inspection, $role_label, $user_id, $inspection_id) {
     if (!in_array($role_label, ["Client", "Admin_Assistant"])) {
         return errorResponse("You are not allowed to receive certificates.");
     }
 
     if ($inspection['hasBeenReceived'] == 1) {
-        return errorResponse("Certificate already received.");
+        return errorResponse("Inspection Already Been Acknowledged.");
     }
 
     $update = update_data("inspections", [
@@ -1579,20 +1609,44 @@ function handleReceive($inspection, $role_label, $user_id, $inspection_id) {
     ], ["inspection_id" => $inspection_id]);
 
     return $update 
-        ? ["success" => true, "message" => "Certificate received successfully."]
+        ? ["success" => true, "message" => "Inspection has been Acknowledged by Client."]
         : errorResponse("Failed to update receipt.");
 }
+
+function getInspectionDetails($schedule_id) {
+    $inspections = select("inspections", ["schedule_id" => $schedule_id]);
+    if (empty($inspections)) return null;
+    
+    $inspection = $inspections[0];
+    
+    // Add schedule info
+    $schedules = select("inspection_schedule", ["schedule_id" => $schedule_id]);
+    if (!empty($schedules)) {
+        $inspection = array_merge($inspection, $schedules[0]);
+    }
+    
+    return $inspection;
+}
+
+
+function getInspectionbySchedule($schedule_id) {
+    $inspections = select("inspections", ["schedule_id" => $schedule_id], null, 1);
+    return $inspections;
+}
+
 function getInspection($inspection_id) {
     $inspections = select("inspections", ["inspection_id" => $inspection_id], null, 1);
     return $inspections[0] ?? null;
 }
+
+
 function errorResponse($message) {
-    echo json_encode(["success" => false, "message" => $message]);
-    exit;
+    return json_encode(["success" => false, "message" => $message]);
+    
 }
 function successResponse($result) {
-    echo json_encode($result);
-    exit;
+    return json_encode($result);
+    //exit;
 }
 function getOwnerInfo($gen_info_id){
     $tables = ['users'];
@@ -1611,7 +1665,6 @@ function getOwnerInfo($gen_info_id){
     $limit = 1;
     return select_join($tables, $columns, $joins, $where, $order_by , $limit);
 }
-
 function isLoggedIn(): bool {
     global $USER_LOGGED;
 
@@ -1810,7 +1863,6 @@ function markScheduleUnseen( $schedule_id, $rolesToNotify = [], $skipRole = null
                         return update_data( 'inspection_schedule', $updates,
                         ['schedule_id' => $schedule_id] );
 }
-
 function sys_log( $msg, $action = null, $val = null ) {
                         $table = "logs";
                         $col = "user_id";
@@ -1884,7 +1936,6 @@ function getConfigValue( $key ) {
 
     return $decrypted_value ?: null;
 }
-
 function getSchedInfo( $sched_id ) {
                     global $CONN;
 
@@ -2070,20 +2121,6 @@ function getIcon( $type, $size = ["16", "16","px"]) {
             default: return;
         }
 }
-function randomNDigits( $n ) {
-                    if ( $n <= 0 ) {
-                        return 0;
-                        // invalid input
-                    }
-
-                    // Smallest number with n digits ( e.g., 1000 for n = 4 )
-                    $min = pow( 10, $n - 1 );
-
-                    // Largest number with n digits ( e.g., 9999 for n = 4 )
-                    $max = pow( 10, $n ) - 1;
-
-                    return mt_rand( $min, $max );
-                }
 
 function getRoleLabel ( $mainrole, $subrole ) {
     if ( $mainrole === "Administrator" && in_array( $subrole, ["Chief FSES"] ) ) {
@@ -2101,46 +2138,6 @@ function getRoleLabel ( $mainrole, $subrole ) {
         return "Guest";
     }
 }
-
-                $pages = [
-                    'checklist' => ["label" => "CHECKLISTS", "link" => "?page=view_checklists", "section" => "config", "icon" => "checklist"],
-                    'establishment' => ["label" => "ESTABLISHMENTS", "link" => "?page=est_list", "section" => "establishment", "icon" => "building"],
-                    'new_est' => ["label" => "NEW ESTABLISHMENT", "link" => "?page=new_est", "section" => "establishment", "icon" => "newbuilding"],
-                    'sched_ins' => ["label" => "SCHEDULE INSPECTION", "link" => "?page=sched_ins", "section" => "inspections", "icon" => "newsched"],
-                    'inspection_sched' => ["label" => "INSPECTION SCHEDULE", "link" => "?page=ins_sched", "section" => "inspections", "icon" => "calendar"],
-                    'inspection_list' => ["label" => "INSPECTIONS CERTIFICATE", "link" => "?page=ins_list", "section" => "inspections", "icon" => "award"],
-                    'user_list' => ["label" => "USERS", "link" => "?page=user_list", "section" => "users", "icon" => "user"],
-                    'new_user' => ["label" => "NEW USER", "link" => "?page=new_user", "section" => "users", "icon" => "new_user"],
-                    'divider' => ["label" => "", "link" => "#", "section" => "none", "icon" => "divider"]
-                ];
-                $roleButtons = [
-                    "Recommending Approver" => [
-                        $pages['establishment'], $pages['inspection_sched'], $pages['inspection_list']
-                    ],
-                    "Approver" => [
-                        $pages['establishment'], $pages['inspection_sched'], $pages['inspection_list']
-                    ],
-                    "Admin_Assistant" => [
-                          $pages['divider']
-                        , $pages['new_user']
-                        , $pages['new_est']  
-                        , $pages['sched_ins']
-                        , $pages['divider']
-                        , $pages['checklist']
-                        , $pages['establishment']
-                        , $pages['user_list']
-                        , $pages['inspection_sched']
-                        , $pages['divider']
-                        , $pages['inspection_list']
-                    ],
-                    "Inspector" => [
-                        $pages['establishment'], $pages['inspection_sched'], $pages['inspection_list']
-                    ],
-                    "Client" => [
-                         $pages['establishment'], $pages['inspection_sched'], $pages['inspection_list']
-                    ]
-                ];
-
 function appNavBtn( $linkHref = "#", $icon = "menu", $label = NULL,  $externalElementClass = "col-lg-3 col-6" ) {
                     return '
         <div class="' . htmlspecialchars( $externalElementClass ) . '">
@@ -2155,15 +2152,11 @@ function appNavBtn( $linkHref = "#", $icon = "menu", $label = NULL,  $externalEl
             </a>
         </div>';
 }
-
-
-
 function navBarBtn ($linkhref = '#', $icon = 'menu', $label = NULL) {
     return ' <li class="nav-item">
                     <a class="nav-link" href="' . $linkhref .'" data-link="home">' .  getIcon($icon, [20,20,'px']) . ' <small class="d-lg-none d-md-none d-inline">' . $label .'</small>' .'</a>
             </li>';
 }
-
 function encrypt_id($id) {
     $key = "bfpoas_enc"; 
     $cipher = "AES-128-CTR";
@@ -2179,3 +2172,23 @@ function decrypt_id($encrypted) {
     return openssl_decrypt(base64_decode($encrypted), $cipher, $key, 0, $iv);
 }
 
+function randomNDigits( $n ) {
+                    if ( $n <= 0 ) {
+                        return 0;
+                        // invalid input
+                    }
+
+                    // Smallest number with n digits ( e.g., 1000 for n = 4 )
+                    $min = pow( 10, $n - 1 );
+
+                    // Largest number with n digits ( e.g., 9999 for n = 4 )
+                    $max = pow( 10, $n ) - 1;
+
+                    return mt_rand( $min, $max );
+}
+
+function generateToken($charNum = 8, $prefix = "CERT") {
+        
+    $uniqid = strtoupper(substr(uniqid($prefix, true), -8));
+    return $uniqid;
+}

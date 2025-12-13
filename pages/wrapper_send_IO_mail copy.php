@@ -27,7 +27,7 @@ switch($step){
     case 1:
         $recepientRole = "client";
         $recepientSysId = $owner_id;
-        $email_token = substr(uniqid('', true), -8);
+        $email_token = generateToken(8,"sched");
             update_data("users",['email_token'=>$email_token],['user_id' => $recepientSysId]);
        
         $query_params = [
