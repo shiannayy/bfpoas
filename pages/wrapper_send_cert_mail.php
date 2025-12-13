@@ -270,25 +270,21 @@ function buildCertEmailHTML($role, $recipientName, $orderNumber, $establishment,
                 </tr>
             </table>
         </div>
-        
+
         <div style="background: #e7f3ff; padding: 20px; border-radius: 5px; text-align: center; margin: 20px 0;">
             <h4 style="margin-top: 0;">
                 { $role == 'client' ? 'Your certification is ready' : 'Action Required' }
             </h4>
-            
             <a href="{$link}" style="display: inline-block; background: #0d6efd; color: white; 
                padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">
                 {$buttonText}
             </a>
-            
             <p style="margin-top: 15px; font-size: 14px;">
                 If the button doesn't work, copy this link:<br>
                 <code style="background: white; padding: 5px; border-radius: 3px;">{$link}</code>
             </p>
         </div>
-        
         <p>Thank you for your prompt attention to this matter.</p>
-        
         <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666;">
             <p>This is an automated message from Fire Safety Evaluation System.</p>
         </div>

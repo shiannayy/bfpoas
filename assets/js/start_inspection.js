@@ -479,9 +479,7 @@ function resetSubmitButton($button) {
 }
 
 // Print report function
-function printReport() {
-    window.print();
-}
+
 
 // Download PDF function (you need to implement this)
 function downloadReportPDF() {
