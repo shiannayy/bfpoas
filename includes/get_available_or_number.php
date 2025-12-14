@@ -17,7 +17,7 @@ try {
     // Step 2: If no valid OR_NUMBER in session, generate a new one
     if (!isset($_SESSION['OR_NUMBER'])) {
         do {
-            $or_number = config::REGION . randomNDigits(5);
+            $or_number = Config::REGION . randomNDigits(5);
             $exist = select("payment", ['OR_number' => $or_number]);
         } while (!empty($exist));
 

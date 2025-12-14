@@ -88,11 +88,11 @@ if (isSignedBy('Client', $schedule_id)) {
                             <span><b>Department of the Interior and Local Government</b></span><br>
                             <span><b>Bureau of Fire Protection</b></span>
 
-                        <?= htmlspecialchars(config::P_REGION) ?> <br>
-                        <?= htmlspecialchars(config::P_DIST_OFFICE) ?> <br> 
-                        <?= htmlspecialchars(config::P_STATION) ?> <br>
-                        <?= htmlspecialchars(config::P_STATION_ADDRESS) ?> <br>
-                        <?= htmlspecialchars(config::P_STATION_CONTACT) ?> <br>
+                        <?= htmlspecialchars(Config::P_REGION) ?> <br>
+                        <?= htmlspecialchars(Config::P_DIST_OFFICE) ?> <br> 
+                        <?= htmlspecialchars(Config::P_STATION) ?> <br>
+                        <?= htmlspecialchars(Config::P_STATION_ADDRESS) ?> <br>
+                        <?= htmlspecialchars(Config::P_STATION_CONTACT) ?> <br>
                     </td>
                     <td style="width: 16.6666%; padding: 0; text-align: center; vertical-align:middle;">
                         <img src="<?= $bfp_base64 ?>" alt="IMG NOT FOUND"

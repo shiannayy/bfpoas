@@ -108,7 +108,7 @@ $hasSignature = false;
         </div>
     </div>
 
-    <div class="container-fluid" style="margin-top: 100px">
+    <div class="container-fluid">
 
         <div class="d-flex align-items-center gap-2 flex-wrap">
           <div class="mb-0">
@@ -143,13 +143,13 @@ $hasSignature = false;
                         <th>Start Date</th>
                         <th>Date Completed</th>
                         <th>Building Info</th>
-                        <th>Remarks and Score</th>
+                        <th>Compliance Rate</th>
                         <th>Inspection Statistic</th>
-                        <th>FSIC Recommended for Approval</th>
-                        <th>Approved</th>
-                        <th>Client Received</th>
+                        <th>Certificate Status</th>
+                        <!-- <th>Approved</th> -->
+                        <!-- <th>Client Received</th> -->
                         <th>Assigned Inspector</th>
-                        <th>Checklist Type</th>
+                        
                         <th></th>
                     </tr>
                 </thead>

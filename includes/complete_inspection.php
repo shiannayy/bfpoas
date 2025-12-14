@@ -108,7 +108,7 @@ $orderNumber = $sched_info['order_number'];
 
     // Handle auto-reschedule if defects found
     if ($has_defects) {
-        if ($ins_sched['rescheduleCount'] <= config::MAX_RESCHEDULE_COUNT) {
+        if ($ins_sched['rescheduleCount'] <= Config::MAX_RESCHEDULE_COUNT) {
             // Compute new date (+15 days)
             $currentDate = $ins_sched['scheduled_date'] ?? $now;
             $newDate = date('Y-m-d', strtotime($currentDate . ' +15 days'));

@@ -256,15 +256,15 @@ $general = $row[0];
                             <label for="postal_address_1">House No/Street Name ,Brgy</label>
                         </div>
                         <div class="form-floating">
-                            <input type="text" class="form-control auto-save" id="postal_address_2" name="postal_address[]" placeholder=" " value="<?= config::CURR_MUNICIPALITY ?>">    
+                            <input type="text" class="form-control auto-save" id="postal_address_2" name="postal_address[]" placeholder=" " value="<?= Config::CURR_MUNICIPALITY ?>">    
                             <label for="postal_address_2">City/Municipality</label>
                         </div>
                         <div class="form-floating">
-                            <input type="text" class="form-control auto-save" id="postal_address_3" name="postal_address[]" placeholder=" " value="<?= config::CURR_PROVINCE ?>">    
+                            <input type="text" class="form-control auto-save" id="postal_address_3" name="postal_address[]" placeholder=" " value="<?= Config::CURR_PROVINCE ?>">    
                             <label for="postal_address_3">Province</label>
                         </div>
                         <div class="form-floating">
-                            <input type="text" class="form-control auto-save" id="postal_address_4" name="postal_address[]" placeholder=" " value="<?= config::CURR_POSTAL_CODE ?>">    
+                            <input type="text" class="form-control auto-save" id="postal_address_4" name="postal_address[]" placeholder=" " value="<?= Config::CURR_POSTAL_CODE ?>">    
                             <label for="postal_address_4">Postal Code</label>
                         </div>
                     </div>
@@ -273,10 +273,10 @@ $general = $row[0];
                     <?php
                         $buildingFields = [
                             "building_name" => ["Building Name", ""],
-                            "region" => ["Region", config::P_REGION ?? ''],
-                            "district_office" => ["District Office", config::P_DIST_OFFICE ?? '' ],
-                            "station" => ["Station", config::P_STATION ?? ''],
-                            "station_address" => ["Station Address", config::P_STATION_ADDRESS ?? '']
+                            "region" => ["Region", Config::P_REGION ?? ''],
+                            "district_office" => ["District Office", Config::P_DIST_OFFICE ?? '' ],
+                            "station" => ["Station", Config::P_STATION ?? ''],
+                            "station_address" => ["Station Address", Config::P_STATION_ADDRESS ?? '']
                         ];
 
                         foreach ($buildingFields as $name => [$label, $default]) {

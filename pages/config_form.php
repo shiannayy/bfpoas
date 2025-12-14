@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $iv = openssl_random_pseudo_bytes(16);
 
     // Encryption key (store securely, not in DB)
-    $secret = config::APP_SECRET;
+    $secret = Config::APP_SECRET;
 
     // Encrypt API key
     $encrypted_key = openssl_encrypt($key, 'AES-128-CTR', $secret, 0, $iv);

@@ -24,7 +24,7 @@ $role = $_GET['role'];
 $acknowledgement_link = '';
 if ($token && $schedule_id) {
     $base_url = "https://" . $_SERVER['HTTP_HOST'];
-    $acknowledgement_link = $base_url . "/bfpoas-online/email_ack/cert.php?token=" . $token . "&schedule_id=" . $schedule_id . "&role=" . $role;
+    $acknowledgement_link = Config::WEBSITE_BASE_URL . "/email_ack/cert.php?token=" . $token . "&schedule_id=" . $schedule_id . "&role=" . $role;
 }
 ?>
 <!doctype html>

@@ -2,7 +2,7 @@
 include_once "../includes/_init.php";
 //$_SESSION['user_id'] = $_SESSION['user_id'];
 //if(!isset($_SESSION['OR_NUMBER'])){
-//    $_SESSION['OR_NUMBER'] = config::REGION . randomNDigits(5);
+//    $_SESSION['OR_NUMBER'] = Config::REGION . randomNDigits(5);
 //    $or_number = $_SESSION['OR_NUMBER'];
 //}
 //else {
@@ -57,7 +57,7 @@ $formatted = str_pad($new_id, 4, "0", STR_PAD_LEFT);
                         <div class="row g-3 mb-3">
                             <div class="col-md-12">
                                 <div class="form-floating">
-                                    <input type="text" readonly class="form-control text-bg-secondary bg-opacity-25 text-muted" id="order_number" name="order_number" placeholder=" " value="<?php echo config::REGION;?>-ADV-<?php echo $formatted; ?>" required>
+                                    <input type="text" readonly class="form-control text-bg-secondary bg-opacity-25 text-muted" id="order_number" name="order_number" placeholder=" " value="<?php echo Config::REGION;?>-ADV-<?php echo $formatted; ?>" required>
                                     <label for="order_number">Inspection Order Number</label>
                                 </div>
 

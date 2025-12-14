@@ -1,6 +1,6 @@
 <?php
 include_once "../includes/_init.php";
-$hasSignature = false;
+
 
 if(isset($_GET['action']) && isset($_GET['sched_id'])){
     $action = htmlspecialchars($_GET['action'] ?? ' ');

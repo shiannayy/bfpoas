@@ -40,76 +40,76 @@ function resizeCanvas(canvas, signaturePadInstance) {
     if (signaturePadInstance) signaturePadInstance.clear();
 }
     // Clear signature
-    $("#clearSignature").on("click", function () {
-        if (signaturePad) signaturePad.clear();
-    });
+$("#clearSignature").on("click", function () {
+    if (signaturePad) signaturePad.clear();
+});
 
-    // Save signature (crop bounds, preview, save)
-    $("#saveSignature").on("click", function () {
-        if (!signaturePad || signaturePad.isEmpty()) {
-            alert("Please draw your signature first.");
-            return;
-        }
+// Save signature (crop bounds, preview, save)
+$("#saveSignature").on("click", function () {
+    if (!signaturePad || signaturePad.isEmpty()) {
+        alert("Please draw your signature first.");
+        return;
+    }
 
-        const canvas = signaturePad.canvas;
-        const ctx = canvas.getContext("2d");
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const data = imageData.data;
+    const canvas = signaturePad.canvas;
+    const ctx = canvas.getContext("2d");
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
 
-        let minX = canvas.width,
-            maxX = 0,
-            minY = canvas.height,
-            maxY = 0;
-        for (let y = 0; y < canvas.height; y++) {
-            for (let x = 0; x < canvas.width; x++) {
-                const idx = (y * canvas.width + x) * 4;
-                if (data[idx + 3] > 0) {
-                    if (x < minX) minX = x;
-                    if (x > maxX) maxX = x;
-                    if (y < minY) minY = y;
-                    if (y > maxY) maxY = y;
-                }
+    let minX = canvas.width,
+        maxX = 0,
+        minY = canvas.height,
+        maxY = 0;
+    for (let y = 0; y < canvas.height; y++) {
+        for (let x = 0; x < canvas.width; x++) {
+            const idx = (y * canvas.width + x) * 4;
+            if (data[idx + 3] > 0) {
+                if (x < minX) minX = x;
+                if (x > maxX) maxX = x;
+                if (y < minY) minY = y;
+                if (y > maxY) maxY = y;
             }
         }
+    }
 
-        if (minX === canvas.width) {
-            alert("No signature detected!");
-            return;
-        }
+    if (minX === canvas.width) {
+        alert("No signature detected!");
+        return;
+    }
 
-        const cropWidth = maxX - minX + 1;
-        const cropHeight = maxY - minY + 1;
-        const croppedCanvas = document.createElement("canvas");
-        croppedCanvas.width = cropWidth;
-        croppedCanvas.height = cropHeight;
+    const cropWidth = maxX - minX + 1;
+    const cropHeight = maxY - minY + 1;
+    const croppedCanvas = document.createElement("canvas");
+    croppedCanvas.width = cropWidth;
+    croppedCanvas.height = cropHeight;
 
-        const croppedCtx = croppedCanvas.getContext("2d");
-        croppedCtx.putImageData(ctx.getImageData(minX, minY, cropWidth, cropHeight), 0, 0);
+    const croppedCtx = croppedCanvas.getContext("2d");
+    croppedCtx.putImageData(ctx.getImageData(minX, minY, cropWidth, cropHeight), 0, 0);
 
-        const croppedDataUrl = croppedCanvas.toDataURL("image/jpg");
-        $("#signaturePreviewImg").attr("src", croppedDataUrl);
-        $("#signaturePreviewModal").modal("show");
+    const croppedDataUrl = croppedCanvas.toDataURL("image/jpg");
+    $("#signaturePreviewImg").attr("src", croppedDataUrl);
+    $("#signaturePreviewModal").modal("show");
 
-        $("#confirmSaveSignature").off("click").on("click", function () {
-            $.ajax({
-                url: "../includes/save_signature.php",
-                method: "POST",
-                data: {
-                    user_id: userId,
-                    role: role,
-                    image: croppedDataUrl
-                },
-                success: function () {
-                    alert("Signature saved successfully!");
-                    if (bsOffcanvas) bsOffcanvas.hide();
-                    $("#signaturePreviewModal").modal("hide");
-                },
-                error: function () {
-                    alert("Error saving signature.");
-                }
-            });
+    $("#confirmSaveSignature").off("click").on("click", function () {
+        $.ajax({
+            url: "../includes/save_signature.php",
+            method: "POST",
+            data: {
+                user_id: userId,
+                role: role,
+                image: croppedDataUrl
+            },
+            success: function () {
+                alert("Signature saved successfully!");
+                if (bsOffcanvas) bsOffcanvas.hide();
+                $("#signaturePreviewModal").modal("hide");
+            },
+            error: function () {
+                alert("Error saving signature.");
+            }
         });
     });
+});
 
 });
 
@@ -118,32 +118,6 @@ $(document).on('keyup',"#SearchIns",function(){
     let val = $(this).val();
     loadInspectionTable(currentUser, val);
 });
-
-
-
-
-// function getRoleLabel(user) {
-//     if (!user) return "Unauthorized";
-//     const { role, subrole } = user;
-
-//     if (role == "Administrator" && ["Chief FSES", "Recommending Approver"].includes(subrole)) {
-//         return "Recommending Approver";
-//     } else if (role == "Administrator" && ["Admin_Assistant"].includes(subrole)) {
-//         return "Admin_Assistant";
-//     } else if (role == "Administrator" && ["Fire Marshall"].includes(subrole)) {
-//         return "Approver";
-//     } else if (role == "Client" || subrole === "Client") {
-//         return "Client";
-//     }
-//     else if (role == "Inspector" || subrole === "Fire Officer"){
-//         return "Inspector";
-//     }
-//     else{
-//         return "Unauthorized";
-//     }
-    
-// }
-
 
 $(document).on("click", ".btn-action", function (e) {
     e.preventDefault();
@@ -206,13 +180,11 @@ $(document).on("click", ".btn-action", function (e) {
 
 
 function loadInspectionTable(user = {}, search = "") {
-    
     $("#inspectionTableBody").html(`
         <tr><td colspan="14" class="text-center text-muted py-4">
             Loading inspections...
         </td></tr>
     `);
-
     $.ajax({
         url: "../includes/fetch_inspections.php",
         method: "GET",
@@ -369,7 +341,8 @@ function loadInspectionTable(user = {}, search = "") {
                             : "-";
 
                     // ====== STATUS BADGES ======
-                    const recoBadge = badgedResponse(
+                    
+                    let recoBadge = badgedResponse(
                         hasRecoApproval,
                         "Recommended for Approval",
                         "Pending",
@@ -398,7 +371,14 @@ function loadInspectionTable(user = {}, search = "") {
                                   dateReceived
                               )
                             : `<div class="badge text-bg-secondary p-2">Waiting for Approval</div>`;
-
+                    const certStatus = getCertificateStatus(
+                                    hasBeenReceived, 
+                                    hasRecoApproval, 
+                                    hasFinalApproval,
+                                    {dateReceived,
+                                    dateRecommended,
+                                    dateApproved}
+                                );
                     // ====== INSPECTION RESULTS BADGES ======
                     const hasDefects = ["1", 1].includes(has_Defects);
                     const defectBadge = hasDefects ? 
@@ -452,7 +432,7 @@ function loadInspectionTable(user = {}, search = "") {
                     // ====== TABLE ROW ======
                     rows += `
                         <tr class="text-center align-middle">
-                            <td>${order_number || "—"}</td>
+                            <td>${order_number} </td>
                             <td>${formatDateOnly(scheduled_date)} at ${schedule_time}</td>
                             <td>${formatDate(started_at)}</td>
                             <td>${formatDate(completed_at)}</td>
@@ -462,17 +442,16 @@ function loadInspectionTable(user = {}, search = "") {
                                     ${location_of_construction || ""}<br>
                                     Owned by: ${owner_name || ""}
                                 </span>
+                                <br>
+                                <small  style="font-size:8pt">(${checklist_type})</small>
                             </td>
                             <td>
                                 ${defectBadge}<br>
                                 ${scoreBadge}
                             </td>
                             <td>${statisticsHTML}</td>
-                            <td>${recoBadge}</td>
-                            <td>${finalBadge}</td>
-                            <td>${receiveBadge}</td>
+                            <td> ${certStatus.badge} </td>
                             <td>${inspector_name || "—"}</td>
-                            <td>${checklist_type || "—"}</td>
                                <td class="text-center">
                         <div class="btn-group">
                             <button type="button" class="btn btn-navy dropdown-toggle" data-bs-toggle="dropdown">
@@ -509,7 +488,6 @@ function loadInspectionTable(user = {}, search = "") {
         }
     });
 }
-
 // Helper function to bind event handlers for action buttons
 function bindInspectionActionHandlers() {
     // View Report button
@@ -542,7 +520,6 @@ function bindInspectionActionHandlers() {
     //     receiveCertificate(inspectionId);
     // });
 }
-
 // Helper function to load inspection report
 function loadInspectionReport(scheduleId) {
     console.log("loadInspectionReport:" + scheduleId);
@@ -567,7 +544,6 @@ function loadInspectionReport(scheduleId) {
         }
     });
 }
-
 // Placeholder functions for other actions
 function downloadCertificate(inspectionId) {
     const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
@@ -578,17 +554,75 @@ function downloadCertificate(inspectionId) {
     window.open(url, '_blank');
 }
 
-// function recommendInspection(inspectionId) {
-//     console.log("Recommend inspection:", inspectionId);
-//     // Implement recommendation logic
-// }
 
-// function approveInspection(inspectionId) {
-//     console.log("Approve inspection:", inspectionId);
-//     // Implement approval logic
-// }
-
-// function receiveCertificate(inspectionId) {
-//     console.log("Receive certificate for inspection:", inspectionId);
-//     // Implement receive logic
-// }
+function getCertificateStatus(hasBeenReceived, hasRecoApproval, hasFinalApproval, dates = {}) {
+    const { dateReceived, dateRecommended, dateApproved } = dates;
+    
+    // Convert to boolean for easier comparison
+    const received = ["1", 1, true, "Y"].includes(hasBeenReceived);
+    const recommended = ["1", 1, true, "Y"].includes(hasRecoApproval);
+    const approved = ["1", 1, true, "Y"].includes(hasFinalApproval);
+    
+    // Define statuses based on the progression
+    if (!received) {
+        return {
+            status: "Pending",
+            badge: '<div class="badge text-bg-secondary p-2">Pending</div>',
+            step: 0,
+            description: "Awaiting client submission"
+        };
+    }
+    
+    if (received && !recommended) {
+        return {
+            status: "Acknowledged",
+            badge: badgedResponse(
+                true,
+                "Acknowledged by Client",
+                "Pending",
+                "Denied",
+                dateReceived
+            ),
+            step: 1,
+            description: "Waiting for Recommendation"
+        };
+    }
+    
+    if (received && recommended && !approved) {
+        return {
+            status: "Recommended",
+            badge: badgedResponse(
+                true,
+                "Recommended for Approval",
+                "Pending",
+                "Denied",
+                dateRecommended
+            ),
+            step: 2,
+            description: "Waiting for Final Approval"
+        };
+    }
+    
+    if (received && recommended && approved) {
+        return {
+            status: "Approved",
+            badge: badgedResponse(
+                true,
+                "Approved Certificate",
+                "Pending",
+                "Denied",
+                dateApproved
+            ),
+            step: 3,
+            description: "Certificate is approved and ready"
+        };
+    }
+    
+    // Fallback
+    return {
+        status: "Unknown",
+        badge: '<div class="badge text-bg-dark p-2">Unknown Status</div>',
+        step: -1,
+        description: "Status could not be determined"
+    };
+}

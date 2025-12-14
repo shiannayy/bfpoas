@@ -48,7 +48,7 @@ if (isset($_SESSION['user_id'])) {
                         </svg></a>
                 </li>
 
-                <?php 
+                       <?php 
                          $role = $_SESSION['rolelabel'];
                             foreach($roleButtons[$role] as $btns){
                                 echo navBarBtn($btns['link'],$btns['icon'],$btns['label']);

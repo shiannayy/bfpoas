@@ -37,7 +37,7 @@ try {
     echo json_encode([
         "success"   => true,
         "max_id"    => $new_id,
-        "formatted" => config::REGION . "-ADV-" . $formatted
+        "formatted" => Config::REGION . "-ADV-" . $formatted
     ]);
 } catch (Exception $e) {
     echo json_encode([

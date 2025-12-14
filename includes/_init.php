@@ -16,13 +16,13 @@ $CURRENCY = $_SESSION['CURRENCY'];
 /* ===  ===  ===  ===  ===  ===  ===  ===  ===  ===  ==
 DB CONNECTION
 ===  ===  ===  ===  ===  ===  ===  ===  ===  ===  == */
-//define( "CONN", mysqli_connect( config::DB_HOST, config::DB_USER, DB_PASS, DB_NAME ) );
-$CONN = mysqli_connect( config::DB_HOST, config::DB_USER, config::DB_PASS, config::DB_NAME );
+//define( "CONN", mysqli_connect( Config::DB_HOST, Config::DB_USER, DB_PASS, DB_NAME ) );
+$CONN = mysqli_connect( Config::DB_HOST, Config::DB_USER, Config::DB_PASS, Config::DB_NAME );
 if ( !$CONN ) {
     die( "Database connection failed: " . mysqli_connect_error() );
 }
 $conn = $CONN;
-
+$hasSignature = false;
 $pages = [
     'checklist' => ["label" => "CHECKLISTS", "link" => "?page=view_checklists", "section" => "config", "icon" => "checklist"],
     'establishment' => ["label" => "ESTABLISHMENTS", "link" => "?page=est_list", "section" => "establishment", "icon" => "building"],
@@ -1930,7 +1930,7 @@ function getConfigValue( $key ) {
     $encrypted_value = $row['config_value'];
     $iv = base64_decode( $row['iv_value'] );
     // Use a constant or config variable instead of hardcoding
-    $secret = config::APP_SECRET;
+    $secret = Config::APP_SECRET;
     // Decrypt value
     $decrypted_value = openssl_decrypt( $encrypted_value, 'AES-128-CTR', $secret, 0, $iv );
 
@@ -2191,4 +2191,99 @@ function generateToken($charNum = 8, $prefix = "CERT") {
         
     $uniqid = strtoupper(substr(uniqid($prefix, true), -8));
     return $uniqid;
+}
+
+function toWordDate($mysqlDate) {
+    $date = new DateTime($mysqlDate);
+    $now = new DateTime();
+    $today = new DateTime('today');
+    $dateOnly = new DateTime($date->format('Y-m-d'));
+    
+    $interval = $now->diff($date);
+    $daysDiff = $interval->days;
+    
+    // Today
+    if ($dateOnly == $today) {
+        return 'Today';
+    }
+    
+    // Yesterday
+    if ($daysDiff == 1 && $dateOnly < $today) {
+        return 'Yesterday';
+    }
+    
+    // This week (0-6 days ago, but not yesterday or today)
+    if ($daysDiff <= 6) {
+        $dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        return $dayNames[$date->format('N') - 1]; // format('N') returns 1-7 for Mon-Sun
+    }
+    
+    
+    // Within this month
+    if ($date->format('Y-m') == $now->format('Y-m')) {
+        $weeksAgo = floor($daysDiff / 7);
+        if ($weeksAgo <= 4) {
+            return $weeksAgo == 1 ? '1 week ago' : $weeksAgo . ' weeks ago';
+        }
+    }
+    
+    // Beyond this month
+    $monthsAgo = $interval->y * 12 + $interval->m;
+    if ($monthsAgo == 0) {
+        $monthsAgo = 1; // Less than 1 month but different month (end of previous month)
+    }
+    
+    return $monthsAgo == 1 ? '1 month ago' : $monthsAgo . ' months ago';
+
+}
+
+function formatDateTime($mysqlDate) {
+    $date = new DateTime($mysqlDate);
+    $now = new DateTime();
+    $today = new DateTime('today');
+    $dateOnly = new DateTime($date->format('Y-m-d'));
+    
+    // If it's today, show only time in 12h AM/PM format
+    if ($dateOnly == $today) {
+        return $date->format('h:i A'); // e.g., 02:30 PM
+    }
+    
+    // If not today, show full date and time
+    // Format: MMM DD, YYYY HH:MM AM/PM
+    return $date->format('M d, Y h:i A'); // e.g., Jan 01, 2000 02:30 PM
+}
+function stepStatus($values) {
+    if (empty($values)) return '';
+    
+    $circleSize = 20;
+    $lineLength = 50;
+    $overlap = 10;
+    
+    $html = '<div class="d-flex align-items-center">';
+    
+    foreach ($values as $index => $value) {
+        $stepNum = $index + 1;
+        $isActive = $value == 1;
+        
+        // Step circle with negative margin for overlap
+        $marginLeft = $index > 0 ? '-' . $overlap . 'px' : '0';
+        
+        $html .= '<div class="d-flex align-items-center justify-content-center rounded-circle border position-relative ' . 
+                  ($isActive ? 'bg-success text-white border-success' : 'bg-light text-secondary') . 
+                  '" style="width: ' . $circleSize . 'px; height: ' . $circleSize . 'px; border-width: 2px !important; margin-left: ' . $marginLeft . '; z-index: 2;">';
+        $html .= $stepNum;
+        $html .= '</div>';
+        
+        // Add connecting line after circle (except for last one)
+        if ($stepNum < count($values)) {
+            $nextIsActive = $values[$index + 1] == 1;
+            $lineColor = $nextIsActive ? '#198754' : '#dee2e6';
+            
+            $html .= '<div style="width: ' . $lineLength . 'px; height: 2px; background-color: ' . $lineColor . 
+                     '; margin-left: -' . $overlap . 'px; z-index: 1;"></div>';
+        }
+    }
+    
+    $html .= '</div>';
+    return $html;
 }

@@ -298,7 +298,7 @@ $(document).on("submit", "form#inspectionForm", function (e) {
                                 const acknowledgementToken = tokenResponse.data.token;
                                 
                                 // FIXED: Include ALL required parameters in the link
-                                const acknowledgementLink = `${window.location.origin}/bfpoas-online/email_ack/cert.php?token=${acknowledgementToken}&schedule_id=${scheduleId}&role=client`;
+                                const acknowledgementLink = `<?= Config::WEBSITE_BASE_URL ?>/email_ack/cert.php?token=${acknowledgementToken}&schedule_id=${scheduleId}&role=client`;
                                 
                                 // Build report specifically for email
                                 const emailResult = await buildInspectionReport(

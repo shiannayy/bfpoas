@@ -126,11 +126,11 @@ if(isset($_GET['inspection_id']) && isset($_GET['token'])){
                                     <span class="mb-1 fs-6"><b>Department of Interior and Local Government</b></span> <br>
                                     <span class="fs-5 text-upper  text-navy-dark"><b>BUREAU OF FIRE PROTECTION</b></span>
                                     <div class="row text-center mb-2 normal-print">
-                                        <div class="col-12 mb-0"><?= config::P_REGION ?></div>
-                                        <div class="col-12 mb-0"><?= config::P_DIST_OFFICE ?></div>
-                                        <div class="col-12 mb-0"><?= config::P_STATION ?></div>
-                                        <div class="col-12 mb-0"><?= config::P_STATION_ADDRESS ?></div>
-                                        <div class="col-12 mb-0"><?= config::P_STATION_CONTACT ?></div>
+                                        <div class="col-12 mb-0"><?= Config::P_REGION ?></div>
+                                        <div class="col-12 mb-0"><?= Config::P_DIST_OFFICE ?></div>
+                                        <div class="col-12 mb-0"><?= Config::P_STATION ?></div>
+                                        <div class="col-12 mb-0"><?= Config::P_STATION_ADDRESS ?></div>
+                                        <div class="col-12 mb-0"><?= Config::P_STATION_CONTACT ?></div>
                                     </div>
                                 </small>
                             </div>
@@ -351,7 +351,7 @@ if(isset($_GET['inspection_id']) && isset($_GET['token'])){
                     
                 </div>
             </div>
-        <small class="fw-bold bottom-0 start-0"><?= config::BFP_REV ?></small>
+        <small class="fw-bold bottom-0 start-0"><?= Config::BFP_REV ?></small>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
             <script>
                     window.print();

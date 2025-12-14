@@ -108,11 +108,11 @@ $data = $schedule[0];
 
             <!-- Top Info -->
             <div class="row text-center mb-2 normal-print">
-                <div class="col-12 mb-0"><?= config::P_REGION ?></div>
-                <div class="col-12 mb-0"><?= config::P_DIST_OFFICE ?></div>
-                <div class="col-12 mb-0"><?= config::P_STATION ?></div>
-                <div class="col-12 mb-0"><?= config::P_STATION_ADDRESS ?></div>
-                <div class="col-12 mb-0"><?= config::P_STATION_CONTACT ?></div>
+                <div class="col-12 mb-0"><?= Config::P_REGION ?></div>
+                <div class="col-12 mb-0"><?= Config::P_DIST_OFFICE ?></div>
+                <div class="col-12 mb-0"><?= Config::P_STATION ?></div>
+                <div class="col-12 mb-0"><?= Config::P_STATION_ADDRESS ?></div>
+                <div class="col-12 mb-0"><?= Config::P_STATION_CONTACT ?></div>
             </div>
 
             <!-- Header: Inspection Order / Date -->
