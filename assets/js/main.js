@@ -1134,19 +1134,161 @@ function buildSummaryCards(statistics, isForEmail = false) {
             <h5 class="card-title mb-0">Inspection Summary</h5>
         </div>
         <div class="card-body">
-            <div class="row text-center">
-                ${stats.map((stat, index) => `
-                    <div class="col-6 col-md-3 mb-3">
-                        <div class="border rounded p-3 bg-white">
-                            <div class="h4 text-${stat.color} mb-1">${stat.value}</div>
-                            <div class="small text-muted">${stat.label}</div>
-                            ${stat.sub ? `<div class="small text-muted">${stat.sub}</div>` : ''}
+            <!-- Compliance Rate Card -->
+            <div class="row mb-0">
+                <div class="col-12">
+                    <div class="card border-0 bg-light">
+                        <div class="card-body text-center">
+                            <h4 class="mb-2">Compliance Rate</h4>
+                            <div class="d-flex align-items-center justify-content-center">
+                                <div class="position-relative" style="width: 200px; height: 200px;">
+                                    <!-- Circular Progress -->
+                                    <svg class="circular-progress" width="200" height="200" viewBox="0 0 200 200">
+                                        <circle cx="100" cy="100" r="90" fill="none" stroke="#e9ecef" stroke-width="20"/>
+                                        <circle cx="100" cy="100" r="90" fill="none" stroke="${complianceClass === 'success' ? '#198754' : '#dc3545'}" 
+                                                stroke-width="20" stroke-linecap="round"
+                                                stroke-dasharray="${2 * Math.PI * 90}" 
+                                                stroke-dashoffset="${2 * Math.PI * 90 * (1 - compliance_rate / 100)}"
+                                                transform="rotate(-90 100 100)"/>
+                                    </svg>
+                                    <div class="position-absolute top-50 start-50 translate-middle text-center">
+                                        <div class="display-4 fw-bold text-${complianceClass}">${compliance_rate}%</div>
+                                        <div class="text-muted small">Compliance</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                `).join('')}
+                </div>
+            </div>
+            
+            <!-- Stacked Progress Bars -->
+            <div class="row mt-0">
+                <div class="col-md-12">
+                    <h5 class="mb-3">Item Distribution</h5>
+                    <div class="mb-4">
+                        <!-- Total Items Progress -->
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="small">Total Items: ${total_items}</span>
+                            <span class="small fw-bold">100%</span>
+                        </div>
+                        <div class="progress" style="height: 30px;">
+                            <div class="progress-bar bg-success" style="width: ${passed_percentage}%" 
+                                 role="progressbar" aria-valuenow="${passed_percentage}" aria-valuemin="0" aria-valuemax="100"
+                                 data-bs-toggle="tooltip" title="Passed: ${passed_items} items (${passed_percentage}%)">
+                                <span class="d-none d-md-inline">Passed ${passed_percentage}%</span>
+                            </div>
+                            <div class="progress-bar bg-danger" style="width: ${failed_percentage}%"
+                                 role="progressbar" aria-valuenow="${failed_percentage}" aria-valuemin="0" aria-valuemax="100"
+                                 data-bs-toggle="tooltip" title="Failed: ${failed_items} items (${failed_percentage}%)">
+                                <span class="d-none d-md-inline">Failed ${failed_percentage}%</span>
+                            </div>
+                            <div class="progress-bar bg-secondary" style="width: ${not_applicable_percentage}%"
+                                 role="progressbar" aria-valuenow="${not_applicable_percentage}" aria-valuemin="0" aria-valuemax="100"
+                                 data-bs-toggle="tooltip" title="Not Applicable: ${not_applicable_items} items (${not_applicable_percentage}%)">
+                                <span class="d-none d-md-inline">N/A ${not_applicable_percentage}%</span>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <small class="text-success">${passed_items} Passed</small>
+                            <small class="text-danger">${failed_items} Failed</small>
+                            <small class="text-secondary">${not_applicable_items} N/A</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Required Items Progress 
+                    <div class="mt-4">
+                        <h5 class="mb-3">Required Items Compliance</h5>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="small">Required Items: ${required_items}</span>
+                            <span class="small fw-bold">100%</span>
+                        </div>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar bg-success" style="width: ${required_passed_percentage}%"
+                                 role="progressbar" aria-valuenow="${required_passed_percentage}" aria-valuemin="0" aria-valuemax="100"
+                                 data-bs-toggle="tooltip" title="Required Passed: ${required_passed} items (${required_passed_percentage}%)">
+                                <span class="d-none d-md-inline">Passed ${required_passed_percentage}%</span>
+                            </div>
+                            <div class="progress-bar bg-danger" style="width: ${100 - required_passed_percentage}%"
+                                 role="progressbar" aria-valuenow="${100 - required_passed_percentage}" aria-valuemin="0" aria-valuemax="100"
+                                 data-bs-toggle="tooltip" title="Required Failed: ${required_items - required_passed} items (${100 - required_passed_percentage}%)">
+                                <span class="d-none d-md-inline">Failed ${100 - required_passed_percentage}%</span>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <small class="text-success">${required_passed} Passed (${required_passed_percentage}%)</small>
+                            <small class="text-danger">${required_items - required_passed} Failed (${100 - required_passed_percentage}%)</small>
+                        </div>
+                    </div>
+                    -->
+                </div>
+                
+                <!-- Quick Stats Cards -->
+                <div class="col-md-12">
+                    <h5 class="mb-3">Quick Stats</h5>
+                    <div class="row g-2">
+                        <div class="col-12">
+                            <div class="card bg-primary border-0 shadow">
+                                <div class="card-body py-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-0 text-light">Total Items</h6>
+                                            <h4 class="mb-0 text-light">${total_items}</h4>
+                                        </div>
+                                        <i class="fas fa-clipboard-list fa-2x text-primary opacity-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card bg-success border-0 shadow text-light">
+                                <div class="card-body py-3">
+                                    <h6 class="mb-1">Passed</h6>
+                                    <h4 class="mb-0">${passed_items}</h4>
+                                    <small class="text-muted">${passed_percentage}%</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card bg-danger border-0 shadow text-light">
+                                <div class="card-body py-3">
+                                    <h6 class="mb-1">Failed</h6>
+                                    <h4 class="mb-0">${failed_items}</h4>
+                                    <small class="text-light">${failed_percentage}%</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card  bg-warning border-0 shadow text-light">
+                                <div class="card-body py-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-0 text-light">Required Items</h6>
+                                            <h4 class="mb-0 text-light">${required_items}</h4>
+                                            <small class="text-light">${required_passed_percentage}% Passed</small>
+                                        </div>
+                                        <i class="fas fa-star fa-2x text-warning opacity-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>`;
+    </div>
+    
+    <style>
+    .circular-progress circle {
+        transition: stroke-dashoffset 0.35s;
+        transform-origin: 50% 50%;
+    }
+    .progress-bar span {
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+    }
+    </style>`;
 }
 
 function getColorCode(colorName) {
