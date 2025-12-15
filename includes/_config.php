@@ -3,16 +3,16 @@
    public const DB_HOST= "localhost";
   
    /*for ONLINE*/
-    // public const DB_USER= "u444252215_fsed";
-    // public const DB_PASS= "#4syzjWK";
-    // public const DB_NAME= "u444252215_fsedoas";
-    //public const WEBSITE_BASE_URL= "https://bfp-oas-fsic.site/";
+    public const DB_USER= "u444252215_fsed";
+    public const DB_PASS= "#4syzjWK";
+    public const DB_NAME= "u444252215_fsedoas";
+    public const WEBSITE_BASE_URL= "https://bfp-oas-fsic.site/";
    
     /**FOR LOCAL HOST */
-    public const WEBSITE_BASE_URL= "localhost/bfpoas-online/";  
-    public const DB_USER= "root";
-    public const DB_PASS= "";
-    public const DB_NAME= "fsed";
+    //public const WEBSITE_BASE_URL= "localhost/bfpoas-online/";  
+    //public const DB_USER= "root";
+    //public const DB_PASS= "";
+   // public const DB_NAME= "fsed";
 
     public const ADMIN_EMAIL= "ashianna395@gmail.com";
     public const APP_SECRET='my_super_secret_encryption_key';
