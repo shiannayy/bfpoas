@@ -35,7 +35,7 @@
             <li class="nav-item">
                     <a id="inspectorLogout" class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">
                     <?= getIcon("logout") ?>   
-                    <small class="ms-2">LOGOUT</small>
+                    <small class="ms-2">Logout</small>
                     </a>
                 </li>
         </ul>
